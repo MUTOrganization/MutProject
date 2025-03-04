@@ -371,7 +371,7 @@ function SetCommission({ departmentData, depLoading }) {
                             selectedKey={tabActive}
                           >
                             <Tab key="commission" title="commission"></Tab>
-                            <Tab key="incentive" title="incentive"></Tab>
+                            {/* <Tab key="incentive" title="incentive"></Tab> */}
                           </Tabs>
                           <div className="my-4 px-4">
                             {
