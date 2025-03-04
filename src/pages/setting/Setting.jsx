@@ -59,12 +59,12 @@ function Setting() {
 
   const listMenu = {
     SetCommission: { display: "ตั้งค่า Commission", component: <SetCommission /> },
-    SetReturnFine: { display: "ตั้งค่า ค่าปรับ", component: <ReturnFineSetting /> },
+    // SetReturnFine: { display: "ตั้งค่า ค่าปรับ", component: <ReturnFineSetting /> },
     SetCodCutoff: { display: "ตั้งค่า วันตัดยอดเงินเข้า", component: <CodCutoffSettings /> },
-    SetHopefulAward: { display: "ตั้งค่า Hopeful Award", component: <MasterSettingAward /> },
-    SetOverview: { display: "ตั้งค่า แดชบอร์ดยอดสั่งซื้อ", component: <DashboardOverviewSettings /> },
-    SetAgentAward: { display: "ตั้งค่า Award ทีม Ads", component: <AgentSettingAward /> },
-    SetOKR: { display: "ตั้งค่า OKR", component: <MasterSettingOKR /> },
+    // SetHopefulAward: { display: "ตั้งค่า Hopeful Award", component: <MasterSettingAward /> },
+    // SetOverview: { display: "ตั้งค่า แดชบอร์ดยอดสั่งซื้อ", component: <DashboardOverviewSettings /> },
+    // SetAgentAward: { display: "ตั้งค่า Award ทีม Ads", component: <AgentSettingAward /> },
+    // SetOKR: { display: "ตั้งค่า OKR", component: <MasterSettingOKR /> },
   };
 
   const getComponentTitle = () => {

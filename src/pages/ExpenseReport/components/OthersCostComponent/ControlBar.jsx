@@ -1,4 +1,4 @@
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Tabs, Tab, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem, Input } from '@nextui-org/react';
+import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Tabs, Tab, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem, Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
 import React, { useContext, useEffect, useState } from 'react';
 import { Colors } from '../../Constrants/Colors';
 import { useAppContext } from '../../../../contexts/AppContext';
@@ -57,7 +57,7 @@ function ControlBar() {
     useEffect(() => {
         getData()
     }, [selectedAgent])
-    
+
     useEffect(() => {
         if (isManageType) {
             getData()
@@ -132,7 +132,7 @@ function ControlBar() {
 
     const handleConfirmAdd = async () => {
         const urlOtherExpenses = `${URLS.OTHEREXPENSES}/addOtherExpenses`;
-        
+
         try {
             const response = await fetchProtectedData.post(urlOtherExpenses, {
                 data: selectedData,
@@ -278,7 +278,7 @@ function ControlBar() {
                                                         disabled={isEnable}
                                                         value={selectedData.date}
                                                         onChange={(e) => setSelectedData((prev) => ({ ...prev, date: e.target.value }))}
-                                                        className='input input-sm w-full h-9 input-bordered focus:outline-none text-slate-400' />
+                                                        className='input-sm w-full h-9 focus:outline-none text-slate-400 border-2 border-slate-200 rounded-md px-4' />
                                                 </div>
 
                                                 <div className='relative'>
@@ -298,33 +298,31 @@ function ControlBar() {
                                                             ))}
                                                         </Select>
                                                     </div>
-                                                    <table className='table w-full overflow-hidden'>
-                                                        <thead className='bg-[#F3F3F3] rounded-xl border-b-2 border-slate-200'>
-                                                            <tr className='text-sm text-slate-500'>
-                                                                <th className='font-medium'>รายการ</th>
-                                                                <th className='font-medium'>จำนวน(ถ้ามี)</th>
-                                                                <th className='font-medium'>ราคา</th>
-                                                                <th className='font-medium'>ยอดรวม</th>
-                                                                <th className='font-medium'></th>
-                                                            </tr>
-                                                        </thead>
+                                                    <Table className=''>
+                                                        <TableHeader className=''>
+                                                            <TableColumn className='font-medium'>รายการ</TableColumn>
+                                                            <TableColumn className='font-medium'>จำนวน(ถ้ามี)</TableColumn>
+                                                            <TableColumn className='font-medium'>ราคา</TableColumn>
+                                                            <TableColumn className='font-medium'>ยอดรวม</TableColumn>
+                                                            <TableColumn className='font-medium'></TableColumn>
+                                                        </TableHeader>
 
-                                                        <tbody className='bg-slate-100'>
+                                                        <TableBody className=''>
                                                             {selectedData.list.map((item, index) => (
                                                                 <>
-                                                                    <tr key={index}>
-                                                                        <td className='w-4/12'>
+                                                                    <TableRow key={index}>
+                                                                        <TableCell >
                                                                             <input
                                                                                 type="text"
                                                                                 maxLength={50}
                                                                                 value={item.list}
                                                                                 disabled={isEnable}
                                                                                 onChange={(e) => handleExpenseChange(index, 'list', e.target.value)}
-                                                                                className='input input-sm input-bordered focus:outline-none w-full text-sm h-9'
+                                                                                className='input input-sm input-bordered focus:outline-none text-sm h-9 px-2'
                                                                                 placeholder="รายการ"
                                                                             />
-                                                                        </td>
-                                                                        <td className='w-2/12'>
+                                                                        </TableCell>
+                                                                        <TableCell>
                                                                             <input
                                                                                 type="text"
                                                                                 maxLength={50}
@@ -345,8 +343,8 @@ function ControlBar() {
                                                                                 }}
                                                                                 pattern="[0-9]*"
                                                                             />
-                                                                        </td>
-                                                                        <td className='w-2/12'>
+                                                                        </TableCell>
+                                                                        <TableCell className=''>
                                                                             <input
                                                                                 type="text"
                                                                                 maxLength={10}
@@ -359,7 +357,7 @@ function ControlBar() {
                                                                                     }
                                                                                 }}
                                                                                 placeholder='0.00'
-                                                                                className='w-full input input-sm input-bordered h-9 focus:outline-none text-sm ps-3'
+                                                                                className='input input-sm input-bordered h-9 focus:outline-none text-sm w-full ps-3'
                                                                                 onKeyDown={(e) => {
                                                                                     if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                                                                                         e.preventDefault();
@@ -367,32 +365,39 @@ function ControlBar() {
                                                                                 }}
                                                                                 pattern="[0-9]*"
                                                                             />
-                                                                        </td>
-                                                                        <td className=''>
-                                                                            {item.totalAmount || '0.00'}
-                                                                        </td>
-                                                                        <td className='text-center'>
+                                                                        </TableCell>
+                                                                        <TableCell className=''>
+                                                                            <div className='w-full'>
+                                                                                {item.totalAmount || '0.00'}
+
+                                                                            </div>
+                                                                        </TableCell>
+                                                                        <TableCell>
                                                                             {index > 0 && (
-                                                                                <FaTrash size={18} onPress={() => handleDeleteList(index)} className='hover:scale-150 cursor-pointer transition duration-150 ease-in text-red-500' />
+                                                                                <FaTrash size={18} onClick={() => handleDeleteList(index)} className='hover:scale-150 cursor-pointer transition duration-150 ease-in text-red-500' />
                                                                             )}
-                                                                        </td>
-                                                                    </tr>
+                                                                        </TableCell>
+                                                                    </TableRow>
                                                                 </>
                                                             ))}
-                                                            <tr>
-                                                                <td colSpan={5}>
-                                                                    <div className='flex flex-row items-center space-x-1 justify-start mr-1'>
+                                                            <TableRow className=''>
+                                                                <TableCell>
+                                                                    <div className='w-full'>
                                                                         {selectedData.list.length !== 5 && (
-                                                                            <div className='cursor-pointer flex flex-row items-center space-x-1' onPress={addExpenseItem}>
+                                                                            <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={addExpenseItem}>
                                                                                 <span><FaPlusCircle className='text-blue-500' /></span>
                                                                                 <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
                                                                             </div>
                                                                         )}
                                                                     </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                                </TableCell>
+                                                                <TableCell></TableCell>
+                                                                <TableCell></TableCell>
+                                                                <TableCell></TableCell>
+                                                                <TableCell></TableCell>
+                                                            </TableRow>
+                                                        </TableBody>
+                                                    </Table>
                                                 </div>
 
                                                 <div className="other w-full">

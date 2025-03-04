@@ -17,19 +17,19 @@ function ExpenseReport() {
     <section title={"ค่าใช้จ่าย"}>
       <Card className="flex p-4 h-full shadow-none">
         <Tabs
-          aria-label="Options"
-          color="primary"
-          variant="underlined"
-          classNames={{
-            tabList:
-              "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-            cursor: "w-full bg-[#22d3ee]",
-            tab: "max-w-fit px-0 h-12",
-            tabContent: "group-data-[selected=true]:text-[#06b6d4]",
-          }}
+          // aria-label="Options"
+          // color="primary"
+          // // variant="underlined"
+          // classNames={{
+          //   tabList:
+          //     "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+          //   cursor: "w-full bg-[#22d3ee]",
+          //   tab: "max-w-fit px-0 h-12",
+          //   tabContent: "group-data-[selected=true]:text-[#06b6d4]",
+          // }}
         >
           {/* TabsConst */}
-          {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_summary]) && (
+          {/* {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_summary]) && (
             <Tab
               key="cost"
               title={
@@ -42,10 +42,11 @@ function ExpenseReport() {
                 <TabsCostSummary />
               </CommissionContextProvider>
             </Tab>
-          )}
+          )} */}
           {/* ADS */}
 
-          {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_ads]) && (
+          {/* <TabsAds /> */}
+          {/* {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_ads]) && (
             <Tab
               key="ads"
               title={
@@ -54,14 +55,13 @@ function ExpenseReport() {
                 </div>
               }
             >
-              {/* <TabsAds /> */}
-              <TabsAdsNextGen/>
+              <TabsAdsNextGen />
             </Tab>
-          )}
+          )} */}
 
           {/* FixCost */}
 
-          {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_other]) && (
+          {/* {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_other]) && (
             <Tab
               key="fixCost"
               title={
@@ -72,8 +72,11 @@ function ExpenseReport() {
             >
               <TabsOthersCost />
             </Tab>
-          )}
+          )} */}
         </Tabs>
+        {currentData.accessCheck.haveAny([ACCESS.expenses.expenses_other]) && (
+          <TabsOthersCost />
+        )}
       </Card>
     </section>
   );
