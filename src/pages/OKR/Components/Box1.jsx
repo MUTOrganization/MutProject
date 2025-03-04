@@ -31,6 +31,7 @@ function Box1({ thisYear, firstYear, selectYear, setSelectYear, isSwitch }) {
             <div className='profile flex flex-row items-start space-x-4'>
                 <div className='image lg:w-4/12 lg:h-32 md:w-2/12 md:h-32 w-2/12 h-24 rounded-md bg-slate-300 flex items-center justify-center'>Imagse</div>
                 <div className=''>
+                    asasas
                     <div className='mt-4 space-x-3'>
                         <span className='text-lg text-slate-500'>HF000_TEST</span>
                         <span className='px-4 py-0.5 bg-blue-100 text-blue-500 rounded-md text-sm'>CRM</span>
