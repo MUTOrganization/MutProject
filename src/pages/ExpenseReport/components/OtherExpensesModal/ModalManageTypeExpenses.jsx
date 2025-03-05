@@ -69,8 +69,8 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, setIsOpenMa
                                     <TableCell className='text-center'>{data.update_By || '-'}</TableCell>
                                     <TableCell className='text-center'>
                                         <div className='flex justify-center space-x-4'>
-                                            <span onPress={() => handleOpenModal('edit', data.typeExpenses, data.id)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaEdit size={16} className='text-yellow-500' /></span>
-                                            <span onPress={() => handleOpenModal('delete', data.typeExpenses, data.id)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaTrash size={16} className='text-red-400' /></span>
+                                            <span onClick={() => handleOpenModal('edit', data.typeExpenses, data.id)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaEdit size={16} className='text-yellow-500' /></span>
+                                            <span onClick={() => handleOpenModal('delete', data.typeExpenses, data.id)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaTrash size={16} className='text-red-400' /></span>
                                         </div>
                                     </TableCell>
                                 </TableRow>

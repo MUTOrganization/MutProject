@@ -47,7 +47,7 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, setIsManageT
     <Modal isOpen={isOpen} onOpenChange={onClose}>
       <ModalContent>
         <ModalHeader>
-          {action === 'edit' ? 'แก้ไขประเภท' : 'ลบข้อมูล'}
+          {action === 'edit' ? 'แก้ไขประเภท' : 'ปิดการใช้งาน'}
         </ModalHeader>
         <ModalBody>
           {action === 'edit' ?
@@ -76,7 +76,7 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, setIsManageT
                 Close
               </Button>
               <Button size='sm' color="danger" onPress={() => { onClose(); handleDelete(); }}>
-                ยืนยันการลบ
+                ยืนยันการปิดการใช้งาน
               </Button>
             </>)}
         </ModalFooter>
