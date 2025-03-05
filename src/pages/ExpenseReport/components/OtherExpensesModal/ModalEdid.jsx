@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea } from '@nextui-org/react';
+import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, SelectItem , TableColumn, Select ,TableBody, TableRow, TableCell } from '@nextui-org/react';
 import { defaultDate } from '../../../../component/DateUtiils';
 import { FaPlus, FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { URLS } from '../../../../config';
@@ -9,13 +9,15 @@ import { Data } from '../../TabsExpense/TabsOthersCost';
 import { toast, Toaster } from 'sonner';
 
 
-function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
+
+function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
     const { currentUser } = useAppContext();
     const [list, setList] = useState(data.lists)
     const [date, setdate] = useState(new Date(data.create_Date).toISOString().split('T')[0])
     const [department, setDepartment] = useState(data.department)
     const [description, setDescription] = useState(data.descriptions)
     const [remark, setRemark] = useState(data.remark)
+    const [selectType, setSelectType] = useState('')
 
     const handleAddWithDraw = () => {
         setList(prev => [...prev, { list: null, qty: null, price: null, totalAmount: null }])
@@ -53,6 +55,12 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
         !e.price || e.price.trim() === ''
     );
 
+    const handleChange = (selectedKey) => {
+        let getKey = selectedKey.target.value
+        const findValueById = typeData.find(e => String(e?.id) === String(getKey));
+        setSelectType(findValueById?.id)
+    };
+
     return (
         <div>
             <Modal isOpen={isOpen} onOpenChange={onClose} isDismissable={false} isKeyboardDismissDisabled={true}>
@@ -80,27 +88,42 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
                             <div className='flex flex-row'>
                                 <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
                                     <label className="text-sm text-slate-500">วันที่กรอก</label>
-                                    <input value={date} onChange={(e) => setdate(e.target.value)} type="date" className='input input-sm input-bordered focus:outline-none w-full text-sm h-9' />
+                                    <input value={date} onChange={(e) => setdate(e.target.value)} type="date" className='input input-sm focus:outline-none w-full border-1 border-slate-200 px-2 rounded-md text-sm h-9' />
                                 </div>
                             </div>
 
-                            <div className='row-3'>
-                                <div className='rounded-xl' style={{ overflow: 'hidden' }}>
-                                    <table className='table w-full'>
-                                        <thead className='bg-[#F3F3F3] border-b-2 border-slate-200'>
-                                            <tr className='text-sm'>
-                                                <th>รายการ</th>
-                                                <th>จำนวน</th>
-                                                <th>ราคา</th>
-                                                <th>ยอดรวม</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
+                            <div className='flex justify-end mb-3'>
+                                <Select
+                                    label='เลือกประเภท'
+                                    // placeholder="ประเภท"
+                                    color="primary"
+                                    className="w-48"
+                                    size="sm"
+                                    onChange={handleChange}
+                                >
+                                    {typeData.map((item) => (
+                                        <SelectItem key={item.id} value={item.typeExpenses}>
+                                            {item.typeExpenses}
+                                        </SelectItem>
+                                    ))}
+                                </Select>
+                            </div>
 
-                                        <tbody className='text-sm bg-slate-100 '>
+                            <div className='row-3'>
+                                <div className='rounded-xl'>
+                                    <Table className='w-full'>
+                                        <TableHeader className='bg-[#F3F3F3] border-b-2 border-slate-200'>
+                                            <TableColumn className='font-medium'>รายการ</TableColumn>
+                                            <TableColumn className='font-medium'>จำนวน(ถ้ามี)</TableColumn>
+                                            <TableColumn className='font-medium'>ราคา</TableColumn>
+                                            <TableColumn className='font-medium'>ยอดรวม</TableColumn>
+                                            <TableColumn className='font-medium'></TableColumn>
+                                        </TableHeader>
+
+                                        <TableBody className='text-sm bg-slate-100 '>
                                             {list.map((item, index) => (
-                                                <tr key={index} className=''>
-                                                    <td className='w-4/12'>
+                                                <TableRow key={index} className=''>
+                                                    <TableCell className='w-4/12'>
                                                         <input
                                                             value={item.list}
                                                             onChange={(e) => {
@@ -112,8 +135,8 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
                                                             className='input input-sm input-bordered focus:outline-none w-full'
                                                             maxLength={45}
                                                         />
-                                                    </td>
-                                                    <td className='w-2/12'>
+                                                    </TableCell>
+                                                    <TableCell className='w-2/12'>
                                                         <input
                                                             value={item.qty}
                                                             onChange={(e) => {
@@ -135,8 +158,8 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
                                                             }}
                                                             pattern="[0-9]*"
                                                         />
-                                                    </td>
-                                                    <td className='w-3/12'>
+                                                    </TableCell>
+                                                    <TableCell className='w-3/12'>
                                                         <input
                                                             value={item.price}
                                                             onChange={(e) => {
@@ -159,31 +182,35 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit }) {
                                                             }}
                                                             pattern="[0-9]*"
                                                         />
-                                                    </td>
-                                                    <td>
+                                                    </TableCell>
+                                                    <TableCell>
                                                         <span>{item.totalAmount || '0.00'}</span>
-                                                    </td>
-                                                    <td>
+                                                    </TableCell>
+                                                    <TableCell>
                                                         <FaTrash
                                                             size={16}
                                                             className='text-red-500 cursor-pointer hover:scale-150 transition duration-150 ease-in'
-                                                            onPress={() => handleDeleteWithDraw(index)}
+                                                            onClick={() => handleDeleteWithDraw(index)}
                                                         />
-                                                    </td>
-                                                </tr>
+                                                    </TableCell>
+                                                </TableRow>
                                             ))}
-                                            <tr>
-                                                <td colSpan={5}>
+                                            <TableRow>
+                                                <TableCell>
                                                     <div className='flex flex-row items-center space-x-1 justify-start mr-1'>
-                                                        <div className='cursor-pointer flex flex-row items-center space-x-1' onPress={handleAddWithDraw}>
+                                                        <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={handleAddWithDraw}>
                                                             <span><FaPlusCircle className='text-blue-500' /></span>
                                                             <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                </TableCell>
+                                                <TableCell></TableCell>
+                                                <TableCell></TableCell>
+                                                <TableCell></TableCell>
+                                                <TableCell></TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
                                 </div>
                                 <div className='text-end text-sm py-2 text-slate-500'>
                                     <span>ยอดรวม {new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(

@@ -278,6 +278,7 @@ export default function Contents() {
                     onClose={handleCloseModalEdit}
                     data={selectData}
                     setIsEdit={setIsEdit}
+                    typeData={typeData}
                 />
             )}
 

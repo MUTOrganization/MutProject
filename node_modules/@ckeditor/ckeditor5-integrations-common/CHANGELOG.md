@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## [2.2.3](https://github.com/ckeditor/ckeditor5-integrations-common/compare/v2.2.2...v2.2.3) (2025-02-12)
+
+### Features
+
+* Added support for loading more testing versions in CDN loader. ([commit](https://github.com/ckeditor/ckeditor5-integrations-common/commit/af0384bdd76b49c91852cf98174a2ed76e6fd06a))
+
+
 ## [2.2.2](https://github.com/ckeditor/ckeditor5-integrations-common/compare/v2.2.1...v2.2.2) (2024-11-19)
 
 ### Features
