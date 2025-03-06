@@ -69,13 +69,9 @@ function Login() {
             style={{ width: "300px", height: "100px" }}
           />
           <div className="flex justify-start w-full">
-            <div className="text-left font-semibold text-xl">เข้าสู่ระบบ</div>
+            <div className="text-center font-semibold text-xl">เข้าสู่ระบบ</div>
           </div>
-          {isValid && (
-            <div className="text-danger text-center font-bold">
-              ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
-            </div>
-          )}
+          
           <form onSubmit={handleSubmit}>
             <Input
               placeholder="กรอกชื่อผู้ใช้"
@@ -119,6 +115,11 @@ function Login() {
               type={isVisible ? "text" : "password"}
               className="mb-4 mt-1 w-full"
             />
+            {isValid && (
+            <div className="text-danger text-center font-bold mb-4">
+              ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
+            </div>
+          )}
             <Button
               className="w-64 mb-4 bg-custom-redlogin border-custom-redlogin text-white shadow-lg shadow-custom-redlogin-effect"
               onPress={handleSubmit}
@@ -128,18 +129,6 @@ function Login() {
               เข้าสู่ระบบ
             </Button>
           </form>
-
-          <div className="flex justify-between space-x-2">
-            <p className="text-xs text-slate-600">ยังไม่มีแอคเคาท์?</p>
-            <a
-              href="https://lin.ee/gbzqmGgq"
-              className="text-xs text-red-500"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              โปรดติดต่อทีมซัพพอร์ต
-            </a>
-          </div>
         </div>
 
         {/* Right Side - Welcome Message */}
