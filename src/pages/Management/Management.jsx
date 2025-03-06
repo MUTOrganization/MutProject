@@ -49,7 +49,7 @@ function Management({ title }) {
 
   const list = {
     การจัดการ: {
-      Home: { display: "จัดการหน้าแรก", component: <ManageHome />, access: [ACCESS.home.manage_home] },
+      // Home: { display: "จัดการหน้าแรก", component: <ManageHome />, access: [ACCESS.home.manage_home] },
       accessManage: { display: "จัดการสิทธิ์", component: <Permission />, access: [ACCESS.access_manage.access_view] },
       agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [ACCESS.agentManage.view] },
       depAndRole: {
@@ -62,10 +62,10 @@ function Management({ title }) {
       },
       depPersonelManagement: { display: 'จัดการบุคลากรภายในแผนก', component: <DepPersonelManagement />, access: [ACCESS.department_members_manage] },
       usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [ACCESS.userManage.view, ACCESS.role_manage.userRole_view] },
-      topUpManage: { display: 'จัดการเติมเงิน', component: <TopupManagements />, access: [ACCESS.topup_manage.topup_view] },
-      team: { display: "จัดการทีม", component: <TeamPage />, access: [ACCESS.team.manager, ACCESS.team.leader, ACCESS.team.team_view_all] },
-      Pancake: { display: "จัดการเชื่อมต่อ Pancake", component: <SetConnect />, access: [ACCESS.pancake.manage_pancake] },
-      Account: { display: "จัดการข้อมูล Pancake", component: <SetUserConnect />, access: [ACCESS.pancake.manage_pancake] },
+      // topUpManage: { display: 'จัดการเติมเงิน', component: <TopupManagements />, access: [ACCESS.topup_manage.topup_view] },
+      // team: { display: "จัดการทีม", component: <TeamPage />, access: [ACCESS.team.manager, ACCESS.team.leader, ACCESS.team.team_view_all] },
+      // Pancake: { display: "จัดการเชื่อมต่อ Pancake", component: <SetConnect />, access: [ACCESS.pancake.manage_pancake] },
+      // Account: { display: "จัดการข้อมูล Pancake", component: <SetUserConnect />, access: [ACCESS.pancake.manage_pancake] },
       // roleManage: { display: "จัดการตำแหน่ง" , component: <RoleManage />, access: [ACCESS.role_manage.roleManage_view, ACCESS.role_manage.userRole_view]}
     },
   };
@@ -90,7 +90,7 @@ function Management({ title }) {
               <DotIcon />
             </span>
             <span className="flex items-center text-sm font-normal ml-2">
-              {items[activeComponent]?.display ?? items["Home"].display}
+              {items[activeComponent]?.display ?? items["depAndRole"].display}
             </span>
           </div>
         </>
@@ -170,7 +170,7 @@ function Management({ title }) {
           </Accordion>
         </div>
         <div className="sm:px-4 flex-1">
-          {items[activeComponent]?.component ?? items["Home"].component}
+          {items[activeComponent]?.component ?? items["depAndRole"].component}
         </div>
       </div>
 
