@@ -1,0 +1,27 @@
+export const columns = [
+    { name: "วันที่", uid: "orderDate", sortable: true },
+    { name: "ยอดขายทั้งหมด", uid: "totalAmount", sortable: true },
+    { name: "ยอดลูกค้าใหม่", uid: "newSale", sortable: true },
+    { name: "ยอดลูกขายค้าเก่า", uid: "oldSale", sortable: true },
+    { name: "ยอดขายทีม Sales", uid: "totalAmountAdmin", sortable: true },
+    { name: "ยอดขายรวมทีม CRM", uid: "totalAmountCRM", sortable: true },
+    { name: "ค่าแอด", uid: "totalAds", sortable: true },
+    { name: "%ads ลูกค้าใหม่", uid: "percentageNewSale", sortable: true },
+    { name: "%ads ลูกค้าเก่า", uid: "percentageOldSale", sortable: true },
+    { name: "%ads รวมทั้งหมด", uid: "percentageTotalAmount", sortable: true },
+    { name: "ยอดอัพเซล", uid: "totalUpSale", sortable: true },
+    { name: "ออเดอร์อัพเซล", uid: "orderUpSale", sortable: true },
+    { name: "% อัพเซล", uid: "percentageOrderUpSale", sortable: true },
+    { name: "ออเดอร์ลูกค้าใหม่", uid: "newOrder", sortable: true },
+    { name: "ออเดอร์ลูกค้าเก่า", uid: "oldOrder", sortable: true },
+    { name: "ออเดอร์รวม", uid: "totalOrder", sortable: true },
+    { name: "ออเดอร์แอดมิน", uid: "totalOrderAdmin", sortable: true },
+    { name: "ยอดทักใหม่", uid: "newInbox", sortable: true },
+    { name: "ยอดทักเก่า", uid: "oldInbox", sortable: true },
+    { name: "ยอดทักรวม", uid: "totalInbox", sortable: true },
+    { name: "%ปิดการขายลูกค้าใหม่", uid: "percentageNewCustomerClose", sortable: true },
+    { name: "%ปิดการขายลูกค้ารวมเซลล์", uid: "percentageTotalOrderAdminClose", sortable: true },
+    { name: "%ปิดการขายรวมทั้งหมด", uid: "percentageTotalAmountClose", sortable: true },
+];
+
+export default columns

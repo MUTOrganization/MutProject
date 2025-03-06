@@ -1,0 +1,65 @@
+body {
+  background-color: rgb(238, 238, 238);
+}
+
+@keyframes spin-ccw {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+* {
+  font-family: "Noto Sans Thai", sans-serif;
+}
+
+.animate-spin-ccw {
+  animation: spin-ccw 1s linear infinite;
+}
+
+/* Webkit Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 20px; /* Increase track radius for more rounding */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 20px; /* Increase thumb radius for more rounding */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.prose table th,
+.prose table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.prose table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}

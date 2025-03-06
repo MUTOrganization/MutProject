@@ -1,0 +1,230 @@
+import { useMemo, useState } from "react";
+import { CommissionData } from "./CommissionData";
+import ReactApexChart from "react-apexcharts";
+import { Checkbox, Spinner, Switch } from "@nextui-org/react";
+import { cFormatter, nFormatter } from "../../../../../utils/numberFormatter";
+
+/**
+ * 
+ * @param {{
+*    data: [CommissionData],
+*    isLoading: Boolean,
+*    selectedYear: Number
+* }} param0 
+* @returns 
+*/
+export default function IncomeChart({data, isLoading, selectedYear}){
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isDelivery, setIsDelivery] = useState(false);
+    
+    const gcolors = ['#2ECC71','#186A3B','#F1C40F','#A04000']
+    const gcolorsDeli = ['#E74C3C','#7B241C','#8E44AD','#4A235A']
+
+    const months = ['ม.ค', 'ก.พ', 'มี.ค', 'เม.ษ', 'พ.ค', 'มิ.ย', 'ก.ค', 'ส.ค', 'ก.ย','ต.ค','พ.ย','ธ.ค']
+
+    const [adminIncomes, upsaleIncomes, adminLiftIncomes, upsaleLiftIncomes,
+        adminDelivery, upsaleDelivery, adminLiftDelivery, upsaleLiftDelivery,
+        totalIncomes, totalLiftIncome,
+        totalDelivery, totalLiftDelivery 
+    ] = useMemo(() => {
+        return data.reduce((prev, curr) => {
+            prev[0].push(curr.adminPaidIncome);
+            prev[1].push(curr.upsalePaidIncome);
+            prev[2].push(curr.adminLiftIncome);
+            prev[3].push(curr.upsaleLiftIncome);
+            prev[4].push(curr.adminDelivery);
+            prev[5].push(curr.upsaleDelivery);
+            prev[6].push(curr.adminLiftDelivery);
+            prev[7].push(curr.upsaleLiftDelivery);
+            prev[8].push(curr.adminPaidIncome + curr.upsalePaidIncome);
+            prev[9].push(curr.adminLiftIncome + curr.upsaleLiftIncome);
+            prev[10].push(curr.adminDelivery + curr.upsaleDelivery);
+            prev[11].push(curr.adminLiftDelivery + curr.upsaleLiftDelivery);
+            return prev;
+        },Array(12).fill().map(() => []))
+    },[data])
+    const incomeSeries = isExpanded ? [
+        {
+            name: 'ยอดเงินเข้าแอดมิน',
+            data: adminIncomes,
+            color: gcolors[0]
+        }, {
+            name: 'ยอดเงินเข้าอัพเซล',
+            data: upsaleIncomes,
+            color: gcolors[1]
+        }, {
+            name: 'ยอดยกแอดมิน',
+            data: adminLiftIncomes,
+            color: gcolors[2]
+        }, {
+            name: 'ยอดยกอัพเซล',
+            data: upsaleLiftIncomes,
+            color: gcolors[3]
+        },
+    ] : [
+        {
+            name: 'ยอดเงินเข้า',
+            data: totalIncomes,
+            color: gcolors[0]
+        }, {
+            name: 'ยอดยก',
+            data: totalLiftIncome,
+            color: gcolors[2]
+        }
+    ]
+
+    const deliverySeries = isExpanded ? [
+        {
+            name: 'ค่าส่งแอดมิน',
+            data: adminDelivery,
+            color: gcolorsDeli[0]
+        }, {
+            name: 'ค่าส่งอัพเซล',
+            data: upsaleDelivery,
+            color: gcolorsDeli[1]
+        }, {
+            name: 'ยอดยกค่าส่งแอดมิน',
+            data: adminLiftDelivery,
+            color: gcolorsDeli[2]
+        }, {
+            name: 'ยอดยกค่าส่งอัพเซล',
+            data: upsaleLiftDelivery,
+            color: gcolorsDeli[3]
+        },
+    ] : [
+        {
+            name: 'ค่าส่ง',
+            data: totalDelivery,
+            color: gcolorsDeli[0]
+        }, {
+            name: 'ยอดยกค่าส่ง',
+            data: totalLiftDelivery,
+            color: gcolorsDeli[2]
+        }
+    ]
+
+    /**
+     * @type {import("apexcharts").ApexOptions}
+     */
+    const options = {
+        chart: {
+            type: 'bar',
+            stacked: true,  
+            zoom: {
+                enabled: false,
+            }
+        },
+        title: {
+            text: isDelivery ? 'ค่าส่ง' : 'ยอดเงินเข้า',
+            align: 'left',
+            offsetX: 30,
+            offsetY: 0,
+            floating: false,
+            style: {
+                fontSize:  '20px',
+                fontWeight:  'bold',
+                fontFamily:  'font-family: "Noto Sans Thai", sans-serif',
+                color:  '#263238'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            categories: months.filter((e,i) => !(selectedYear === new Date().getFullYear() && i > data.length - 1)),
+            type: 'category',
+            // labels: {
+            //     formatter: (value) => (selectedYear == new Date().getFullYear() && value === months[data.length - 1]) ? `${value} (ปัจจุบัน)` : value
+            // }
+        },
+        yaxis: {
+            labels: {
+                formatter: (value) => typeof value !== 'undefined' ? cFormatter(value) : value
+            },
+            tickAmount: 7
+        },
+        plotOptions: {
+            bar: {
+                columnWidth: '50%',
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 600,
+                        },
+                        
+                        formatter: (value) => value === 0 ? '' : typeof value !== 'undefined' ? nFormatter(value,1) : value
+                    }
+                }
+            }
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            y:[{
+                formatter: (value) => typeof value !== 'undefined' ? cFormatter(value,2) + ' บาท' : value
+            },{
+                formatter: (value) => typeof value !== 'undefined' ? cFormatter(value,2) + ' บาท' : value
+            },{
+                formatter: (value) => typeof value !== 'undefined' ? cFormatter(value,2) + ' บาท' : value
+            },{
+                formatter: (value) => typeof value !== 'undefined' ? cFormatter(value,2) + ' บาท' : value
+            }],
+        }, 
+        responsive: [
+            {
+                breakpoint: 600,
+                options: {
+                    plotOptions: {
+                        bar: {
+                            dataLabels: {
+                                total: {
+                                    enabled: false,
+                                    style: {
+                                        fontSize: '5px',
+                                        fontWeight: 600
+                                    },
+                                    formatter: (value) => value === 0 ? '' : typeof value !== 'undefined' ? nFormatter(value,1) : value
+                                }
+                            }
+                        }
+                    },
+
+                }
+            },
+            
+        ]
+    };
+    return(
+        <div className="relative">
+          {
+            isLoading &&
+            <div className="absolute size-full top-0 left-0  flex justify-center items-center"><Spinner /></div>
+          }
+          <div className="absolute top-1 left-48">
+            <Switch
+              aria-label='switch to order chart'
+              className="z-10"
+              size="sm"
+              isSelected={isDelivery}
+              onChange={() => setIsDelivery(p => !p)}
+              >
+              </Switch>
+          </div>
+          <div className="absolute top-1 left-80">
+            <Checkbox
+              aria-label='check to expand order description'
+              className="z-10"
+              isSelected={isExpanded}
+              onChange={() => setIsExpanded(p => !p)}
+              >
+                รายละเอียด
+              </Checkbox>
+          </div>
+          <ReactApexChart key={'Income and delivery chart'} 
+            options={options} 
+            series={isDelivery ? deliverySeries : incomeSeries} type="bar" />
+        </div>
+    )
+}
