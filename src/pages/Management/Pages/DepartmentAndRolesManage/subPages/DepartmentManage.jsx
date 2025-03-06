@@ -201,11 +201,11 @@ function DeleteDep({ open, close, dep, isDeleted, currentUser }) {
         <Modal isOpen={open} onClose={() => close(false)} size="sm">
             <ModalContent>
                 <ModalHeader className="w-full flex flex-col gap-1 text-center bg-custom-redlogin text-white">
-                    <p>ลบข้อมูลแผนก</p>
+                    <p>ปิดการใช้งานแผนก</p>
                 </ModalHeader>
                 <ModalBody>
                     <div className="w-full p-2 text-center">
-                        <p>ท่านต้องการลบ แผนก</p>
+                        <p>ท่านต้องการปิดการใช้งาน แผนก</p>
                         <p className="text-lg text-wrap text-red-500"> {dep && dep.departmentName} นี้หรือไม่</p>
                     </div>
                 </ModalBody>
