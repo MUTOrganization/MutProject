@@ -95,11 +95,11 @@ export default function CodCutoffSettings() {
                         </div>
                         <div className="border-b border-divider mb-8"></div>
                         <div className="mb-8">
-                            <div className="flex justify-end">
+                            {/* <div className="flex justify-end">
                                 <Button variant="bordered" color="primary"
                                     onPress={() => setIsAdvancedSetting(!isAdvancedSetting)}>{isAdvancedSetting ? 'ย้อนกลับ' : 'ตั้งค่าย้อนหลัง'}
                                 </Button>
-                            </div>
+                            </div> */}
                             {
                                 isAdvancedSetting ? 
                                     <div className="mt-4 mx-4">

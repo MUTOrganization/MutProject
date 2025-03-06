@@ -64,11 +64,10 @@ export default function SetCommissionTab({ type, selectedData, forms, setForm, f
                 {
                     type === 'commission' ?
                     <div className="text-start text-sm">
-                        <p>เป็นการให้ค่าตอบแทนพนักงานแบบรายเดือนโดยใช้นโยบายคอมมิชชั่น โดยมีตัวชี้วัด 2 รูปแบบ คือ</p>
-                        <p className="ml-4">1. ยอดเงินเข้า คือ ยอดเงินเข้าของตนเอง</p>
-                        <p className="ml-4">2. ยอดเงินเข้าของทีม คือ ยอดเงินเข้ารวมของทีมที่ดูแล</p>
+                        <p>เป็นการให้ค่าตอบแทนพนักงานแบบรายเดือนโดยใช้นโยบายคอมมิชชั่น โดยใช้ตัวชี้วัด คือ ยอดเงินเข้าในเดือนนั้นๆ</p>
                         <p className="mt-2">ตัวอย่าง</p>
                         <p className="">ยอดเงินเข้าตั้งแต่ 0 - 100,000 บาท จะได้รับค่าคอมมิชชั่น 5 %</p>
+                        <p className="">ยอดเงินเข้าตั้งแต่ 100,001 ขึ้นไป จะได้รับค่าคอมมิชชั่น 10 %</p>
                     </div>
                     :
                     <div className="text-start text-sm">
@@ -80,13 +79,13 @@ export default function SetCommissionTab({ type, selectedData, forms, setForm, f
                     </div>
                 }
             </div>
-            <div className="my-4 flex">
+            {/* <div className="my-4 flex">
                 <div className="me-4 font-bold">ตัวชี้วัด คำนวณจาก : </div>
                 <RadioGroup orientation="horizontal" value={selectedSource} onValueChange={setSelectedSource}>
                     <Radio value="SALE">ยอดเงินเข้า</Radio>
                     <Radio value="TEAMSALE">ยอดเงินเข้าของทีมที่ดูแล</Radio>
                 </RadioGroup>
-            </div>
+            </div> */}
             <div className="flex flex-col gap-2">
                 <div className="text-md mb-2 flex items-center">
                     ระดับคอมมิชชั่นของแผนก <span className="mx-2 font-bold">{selectedData?.department?.name}</span>
