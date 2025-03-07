@@ -48,7 +48,6 @@ function NavMenu() {
   return (
     <div>
       <MainMenu isShow={true} isNavMenu={true} />
-
       <div className="sticky bottom-0">
         <Divider className="my-4" />
         <div className="flex justify-center items-center text-small">

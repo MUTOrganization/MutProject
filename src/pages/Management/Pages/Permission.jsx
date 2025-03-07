@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Tooltip } from "@nextui-org/react";
+import { Button, Card, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Tooltip } from "@nextui-org/react";
 import {
   AddStreamlineUltimateIcon,
   AddStreamlineUltimateWhiteIcon,
@@ -434,11 +434,10 @@ function Permission() {
     fetchAccessData();
   }, [selectedAgent])
 
-  console.log(roleByAccessCode);
   //#endregion
 
   return (
-    <div className="bg-white w-full h-full max-h-full rounded-lg p-4">
+    <div className="bg-white w-full h-[calc(100vh-130px)] max-h-full rounded-lg p-4 overflow-auto scrollbar-hide">
 
       <AddGroup open={openModalAddGroup} close={e => setOpenModalAddGroup(e)} listGroupAccess={listGroupAccess} isSave={e => setIsSave(e)} />
       <DeleteAccessModal open={openModalConfirmDelete} close={() => setOpenModalConfirmDelete(false)} isDelete={e => setIsDelete(e)} id={selectedRowAccessId} accessName={selectedRowAccessName} />
@@ -508,132 +507,150 @@ function Permission() {
 
 
       <p className="text-lg">จัดการสิทธิ์การเข้าถึง</p>
-      <div className="w-full  my-4">
-        <Input
-          onChange={(v) => handleSearch(v.target.value)}
-          size="sm"
-          placeholder="ค้นหา"
-          className="bg-white max-w-xs"
-          isClearable={false}
-          variant="faded"
-          startContent={<SearchIcon className="text-black/50" />}
-        />
-      </div>
-      <div className="flex gap-5 h-full  w-full max-lg:flex-col  py-4  min-h-[800px]">
-        <div className="flex-1 overflow-auto shadow-lg max-h-[700px] min-h-[700px] rounded-lg scrollbar-hide">
-          <table className="table table-md  w-full">
-            <thead className="sticky top-0 z-20 bg-primary-400 text-lg">
-              <tr className="border-b-0 text-white  text-center font-semibold">
-                <th className="py-3">ชื่อสิทธิ์</th>
-                <th className="py-3">รหัสสิทธิ์</th>
-                <th className="w-20">
-                  {currentUser.businessId === 1 && (
-                    <Button 
-                    isIconOnly 
-                    variant="bordered"
-                    className="border-none text-white hover:bg-primary-300"
-                    onPress={() => {
-                      setOpenModal(true);
-                      setIsEdit(false);
-                    }}
-                      startContent={<AddStreamlineUltimateWhiteIcon />}
-                    />
-                  )}
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredData && filteredData.length > 0 ? (
-                filteredData.map((group) => (
-                  <React.Fragment key={group.groupName}>
-                    <tr
-                      className="border-b-0 sticky top-10 z-10 bg-primary-50 text-primary-600">
-                      <td colSpan={3} className="font-bold text-center py-2">
-                        {group.groupName}
-                      </td>
-                    </tr>
-                    {group.items.length > 0 && group.items.map((item) => (
-                      <tr
-                        key={item.id}
-                        onClick={() => setSelectedGroupAccessCode([item.accessCode])}
-                        className={`border-b-0 py-2 text-center hover:bg-gray-100 cursor-pointer ${selectedGroupAccessCode.includes(item.accessCode) ? 'bg-primary-100 text-primary-600' : ''}`}>
-                        <td className="py-2">{item.accessName}</td>
-                        <td className="py-2">{item.accessCode}</td>
-                        <td className="py-2">
-                          <span className="flex justify-center space-x-3">
-                            <EditIcon
-                              className={'cursor-pointer text-lg hover:text-blue-700 '}
-                              onClick={() => { handleOpenEdit(item) }} />
-                            <Tooltip
-                              showArrow
-                              color="default"
-                              placement="right"
-                              content={item.description}
-                              size="lg">
-                              <span>
-                                <InfomationIcon size={18} />
-                              </span>
-                            </Tooltip>
-
-                            {/* {currentUser.businessId === 1 && (
-                              <DeleteIcon
-                                onPress={() => { setSelectedRowAccessId(item.id); setOpenModalConfirmDelete(true); setSelectedAccessName(item.accessName) }}
-                                className={'cursor-pointer text-lg hover:text-custom-redlogin'}
-                              />
-                            )} */}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))
-              ) : (
-                <tr className="border-b-0">
-                  <td colSpan={3} className="text-center text-primary-600 text-lg font-bold border-b-none">
-                    ไม่พบสิทธิ์ตัวแทน
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      <div className="w-full flex justify-between items-center py-4">
+        <div>
+          <Input
+            onChange={(v) => handleSearch(v.target.value)}
+            size="sm"
+            label="ค้นหาสิทธิ์"
+            labelPlacement="outside"
+            placeholder="จัดการ..."
+            className="bg-white max-w-xs"
+            isClearable={true}
+            variant="bordered"
+            startContent={<SearchIcon className="text-black/50" />}
+          />
         </div>
+        <div className=" w-48">
+          <AgentSelector />
+        </div>
+      </div>
+      <div className="flex gap-5  w-full max-lg:flex-col">
+        <Card shadow="sm" className="p-4 flex-1  h-[630px] ">
+          <div className="size-full ">
+            {/* table */}
+            <div className="size-full flex flex-col"> 
+              {/* table header */}
+              <div className="z-20 bg-gray-200 rounded-lg shadow-md">
+                {/* table row */}
+                <div className="text-gray-700 font-semibold text-center flex items-center px-2">
+                  {/* table cells */}
+                  <div className="py-3 flex-1">ชื่อสิทธิ์</div>
+                  <div className="py-3 flex-1">รหัสสิทธิ์</div>
+                  <div className="w-20 text-center">
+                    {currentUser.businessId === 1 && (
+                      <Button 
+                      isIconOnly 
+                      size="sm"
+                      color="success"
+                      variant="light"
+                      className=""
+                      onPress={() => {
+                        setOpenModal(true);
+                        setIsEdit(false);
+                      }}
+                      ><AddStreamlineUltimateWhiteIcon /></Button>
+                    )}
+                  </div>
+                  {/* end table cells */}
+                </div>
+                {/* end table row */}
+              </div>
+              {/* end table header */}
 
-        <div className="flex-1 h-[700px] flex flex-col">
-          <div className="flex justify-end items-center">
-            <div className="mb-4 w-48">
-              <AgentSelector />
+              {/* table body */}
+              <div className="overflow-auto scrollbar-hide px-2">
+                {filteredData && filteredData.length > 0 ? (
+                  filteredData.map((group) => (
+                    <React.Fragment key={group.groupName}>
+                      {/* table row */}
+                      <div
+                        className="border-b-0 sticky top-0 z-10 bg-gray-100 text-gray-700 rounded-lg">
+                        <div colSpan={3} className="font-semibold text-center text-sm py-2">
+                          {group.groupName}
+                        </div>
+                      </div>
+                      {group.items.length > 0 && group.items.map((item) => (
+                        <div
+                          key={item.id}
+                          onClick={() => setSelectedGroupAccessCode([item.accessCode])}
+                          className={`flex transition-all duration-200 rounded-lg  py-1 px-2 text-center cursor-pointer text-sm ${selectedGroupAccessCode.includes(item.accessCode) ? 'bg-primary-100 text-primary-600' : 'hover:bg-gray-200'}`}>
+                          <div className="py-2 flex-1">{item.accessName}</div>
+                          <div className="py-2 flex-1">{item.accessCode}</div>  
+                          <div className="py-2 w-20">
+                            <span className="flex justify-center space-x-3">
+                              <EditIcon
+                                className={'cursor-pointer text-lg hover:text-warning-700 text-warning-500'}
+                                onClick={() => { handleOpenEdit(item) }} />
+                              <Tooltip
+                                showArrow
+                                color="default"
+                                placement="right"
+                                content={item.description}
+                                size="lg">
+                                <span>
+                                  <InfomationIcon size={18} className="text-primary-500 hover:text-primary-800" />
+                                </span>
+                              </Tooltip>
+
+                              {/* {currentUser.businessId === 1 && (
+                                <DeleteIcon
+                                  onPress={() => { setSelectedRowAccessId(item.id); setOpenModalConfirmDelete(true); setSelectedAccessName(item.accessName) }}
+                                  className={'cursor-pointer text-lg hover:text-custom-redlogin'}
+                                />
+                              )} */}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      {/* end table row */}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  <tr className="border-b-0">
+                    <td colSpan={3} className="text-center text-primary-600 text-lg font-bold border-b-none">
+                      ไม่พบสิทธิ์ตัวแทน
+                    </td>
+                  </tr>
+                )}
+              </div>
             </div>
           </div>
-          <div className="overflow-auto shadow-lg rounded-lg scrollbar-hide  flex-1">
-            <table className="table table-sm w-full rounded-lg">
-              <thead className="sticky top-0 z-10 bg-primary-400 text-lg">
-                <tr className="text-white text-center border-none rounded-t-lg">
-                  <th colSpan={2} className="font-mono text-lg p-3">
-                    ตำแหน่งที่ใช้สิทธิ์อยู่
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+        </Card>
+
+        <Card shadow="sm" className="flex-1 p-4 h-[630px]">
+          <div className="rounded-lg size-full">
+            {/* table */}
+            <div className="size-full rounded-lg flex flex-col">
+              {/* table header */}
+              <div className="z-10 bg-gray-200 rounded-lg text-center shadow-md font-semibold">
+                <div className="p-3">
+                  ตำแหน่งที่ใช้สิทธิ์อยู่
+                </div>
+              </div>
+              {/* end table header */}
+
+              {/* table body */}
+              <div className="flex-1 overflow-auto scrollbar-hide px-2">
                 {Object.entries(lodash.groupBy(roleByAccessCode, 'depName')).map(([depName, roles]) => {
                   return (
                     <React.Fragment key={depName}>
-                      <tr className="border-0 bg-primary-50">
-                        <td colSpan={2} className="font-bold text-center text-primary-600 py-2">แผนก {depName}</td>
-                      </tr>
+                      <div className="border-0 bg-gray-100 text-sm rounded-lg">
+                        <div className="font-bold text-center text-gray-700 py-2">แผนก {depName}</div>
+                      </div>
 
                       {roles.map((role) => (
-                        <tr key={role.roleName} className="border-none text-center">
-                          <td colSpan={2} className="py-2">{role.roleName}</td>
-                        </tr>
+                        <div key={role.roleName} className="border-none text-center">
+                          <div className="py-2">{role.roleName}</div>
+                        </div>
                       ))}
                     </React.Fragment>
                   );
                 })}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

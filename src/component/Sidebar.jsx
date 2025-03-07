@@ -47,21 +47,21 @@ export const mainMenuItems = {
     icon: <HomeIcon />,
     access: [],
   },
-  DashBoardNightcore: {
-    path: "/DashBoardNicecall",
-    text: "Nice Call",
-    icon: <DashBoardNightcoreIcon />,
-    access: [ACCESS.dashboard.dashboardNiceCall],
-  },
-  DocumentProduct: {
-    path: "/DocumentProduct",
-    text: "ข้อมูลสินค้า",
-    icon: <DocumentProductIcon />,
-    access: [ACCESS.document_product.view_document_product],
-  },
+  // DashBoardNightcore: {
+  //   path: "/DashBoardNicecall",
+  //   text: "Nice Call",
+  //   icon: <DashBoardNightcoreIcon />,
+  //   access: [ACCESS.dashboard.dashboardNiceCall],
+  // },
+  // DocumentProduct: {
+  //   path: "/DocumentProduct",
+  //   text: "ข้อมูลสินค้า",
+  //   icon: <DocumentProductIcon />,
+  //   access: [ACCESS.document_product.view_document_product],
+  // },
   Commission: {
     path: "/Commission",
-    text: "คอมมิชชัน",
+    text: "แดชบอร์ด Sales",
     icon: <DashboardCEOIcon />,
     access: [
       ACCESS.commisson.commissionOwnVeiw,

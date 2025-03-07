@@ -241,6 +241,23 @@ export default function UserRolePage(){
         saveUserRoles();
     }
     //#endregion handler function
+
+    const dummyUsers = [
+        {
+            id: 1,
+            username: 'username1',
+            name: 'name1',
+            depName: 'CRM',
+            roleName: 'Manager',
+        },
+        {
+            id: 2,
+            username: 'username2',
+            name: 'name2',
+            depName: 'CRM',
+            roleName: 'Manager',
+        }
+    ]
     return (
         <div>
             <div className="md:flex items-center justify-between">
@@ -303,7 +320,7 @@ export default function UserRolePage(){
                                     removeWrapper
                                     selectionMode="multiple" 
                                     color="primary"
-                                    selectedKeys={selectedUserList.map(e => e.username)}
+                                    selectedKeys={selectedUserList.map(e => e.username)} //DUMMY
                                     onSelectionChange={(key) => handleSelectUser(Array.from(key))}
                                     // onRowAction={(key) => handleClickUser(key)} 
                                 >

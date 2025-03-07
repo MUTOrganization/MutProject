@@ -126,10 +126,19 @@ function Navbar({ title }) {
                           <p>{currentUser.name || currentUser.nickname}</p>
                         </div>
                       );
+                    }else {
+                      return (
+                        <div className="flex justify-start items-center text-xs">
+                          <p>{currentUser.userName}</p>
+                        </div>
+                      );
                     }
                   })()}
 
                 </div>
+              </DropdownItem>
+              <DropdownItem key="change profileImage" color="primary">
+                เปลี่ยนรูปโปรไฟล์
               </DropdownItem>
               {/* <DropdownItem key="settings" color="primary">
                 KPI ของฉัน

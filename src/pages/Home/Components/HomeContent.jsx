@@ -159,7 +159,7 @@ function HomeContent() {
   return (
     <Card className="flex flex-col w-full mx-auto bg-custom-gradient shadow-none border border-separate p-3 lg:p-7 max-h-[calc(94vh-4rem)]">
       <div className="flex flex-col flex-grow overflow-y-auto scrollbar-hide">
-        <section className="flex justify-center sticky top-0 z-20">
+        {/* <section className="flex justify-center sticky top-0 z-20">
           <Tabs
             aria-label="Tabs colors"
             color="primary"
@@ -229,7 +229,7 @@ function HomeContent() {
               />
             )}
           </Tabs>
-        </section>
+        </section> */}
 
         {/* Content Section with Flex Grow */}
         <div

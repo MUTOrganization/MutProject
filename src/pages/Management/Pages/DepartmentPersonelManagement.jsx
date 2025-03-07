@@ -194,12 +194,10 @@ function DepPersonelManagement() {
     //Field state List Data Source
     const [listUsersOutDep, setListUsersOutDep] = useState([]);
     const [listUsersInDep, setListUsersInDep] = useState([]);
-    const [listItemsDepartments, setListItemsDepartments] = useState([]);
     const [listItemsRoles, setListItemRoles] = useState([]);
 
     //Field state Loading 
     const [loadingListOutDep, setLoadingListOutDep] = useState(false);
-    const [loadingListDep, setLoadingListDep] = useState(false);
     const [loadingListRoles, setLoadingListRoles] = useState(false);
 
     //Field state Filter Data Source
@@ -241,27 +239,6 @@ function DepPersonelManagement() {
             toastError('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง')
         } finally {
             setLoadingListOutDep(false);
-        }
-    }
-
-    async function fetchAllDeps() {
-        //API Fetch List All Departments
-        setLoadingListDep(true);
-        //API Call
-        try {
-            const res = await fetchProtectedData.get(URLS.departments.getall, {
-                params: {
-                    businessId: agent.selectedAgent.id,
-                }
-            })
-            if (res.status == 200) {
-                setListItemsDepartments(res.data);
-                setLoadingListDep(false);
-            }
-        } catch (e) {
-            toastError('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง')
-        } finally {
-            setLoadingListDep(false);
         }
     }
 
@@ -332,13 +309,11 @@ function DepPersonelManagement() {
     //#region useEffect
     useEffect(() => {
         fetchUsersOutDep();
-        fetchAllDeps();
         fetchAllRoles();
     }, [])
 
     useEffect(() => {
         fetchUsersOutDep();
-        fetchAllDeps();
     }, [agent.selectedAgent])
 
     useEffect(() => {
@@ -353,6 +328,8 @@ function DepPersonelManagement() {
 
     //#endregion useEffect
 
+    const dummyuser = [];
+
     return (
         <section className="w-full">
 
@@ -361,18 +338,18 @@ function DepPersonelManagement() {
             <RemovePersonelInDepartment open={openModalDelete} close={e => setOpenModalDelete(e)} listUsers={selectedUsersInDep} isSave={e => setFetchIsRemove(e)} />
 
             <Card className="flex p-4 h-full min-h-[700px] w-full shadow-none">
-                <p>จัดการบุคลากรภายในแผนก</p>
+                <p>จัดการบุคลากรภายในแผนก <span className="font-semibold">{currentUser.department}</span></p>
                 <Divider className="my-2" />
                 <div className="w-full flex space-x-4 my-4 max-lg:flex-wrap">
                     <div className="flex-1">
                         {/*Tools Content */}
                         <div className="w-full mb-4">
                             <div className="flex justify-between space-x-6">
-                                <p className="font-semibold text-md">พนักงานทั้งหมด ({searchListUserOutDep.length}) คน</p>
+                                <p className="font-semibold text-md">พนักงานที่ยังไม่มีแผนก ({searchListUserOutDep.length}) คน</p>
                             </div>
                             <div className="flex-wrap justify-start  space-y-0 items-center h-fit w-full">
                                 <div className="flex space-x-4">
-                                    <Select
+                                    {/* <Select
                                         aria-label="select-dep"
                                         className="max-w-xs mb-5"
                                         size="sm"
@@ -391,10 +368,10 @@ function DepPersonelManagement() {
                                                 </SelectItem>
                                             )
                                         }}
-                                    </Select>
+                                    </Select> */}
 
 
-                                    <Select
+                                    {/* <Select
                                         aria-label="select-dep"
                                         className="max-w-xs mb-5"
                                         size="sm"
@@ -413,13 +390,13 @@ function DepPersonelManagement() {
                                                 </SelectItem>
                                             )
                                         }}
-                                    </Select>
+                                    </Select> */}
                                 </div>
                             </div>
 
-                            <div className="flex justify-between items-center">
+                            <div className="justify-between items-center space-y-4">
 
-                                <div>
+                                <div className="w-72 mt-8">
                                     <SearchBox
                                         className={'max-w-xs'}
                                         data={listUsersOutDep}
@@ -430,8 +407,9 @@ function DepPersonelManagement() {
                                         onBeforeSearch={handleBeforeSearch}
                                     />
                                 </div>
-
-                                <Button variant="flat" color="success" size="sm" radius="full" onPress={() => setOpenModalAdd(true)}>เพิ่มเข้าแผนก</Button>
+                                <div className="w-full text-end">
+                                    <Button variant="flat" color="success" size="sm" radius="full" onPress={() => setOpenModalAdd(true)}>เพิ่มเข้าแผนก</Button>
+                                </div>
 
 
                             </div>

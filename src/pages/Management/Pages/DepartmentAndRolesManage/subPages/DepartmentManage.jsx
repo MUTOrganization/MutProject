@@ -1,5 +1,5 @@
 import { Button, Card, Checkbox, Chip, input, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
-import { AddStreamlineUltimateWhiteIcon, CheckIcon, ChecklistIcon, DeleteIcon, EditIcon, SearchIcon } from "../../../../../component/Icons";
+import { AddStreamlineUltimateWhiteIcon, CheckIcon, ChecklistIcon, DeleteIcon, DisableIcon, EditIcon, SearchIcon } from "../../../../../component/Icons";
 import SearchBox from "../../../../../component/SearchBox";
 import { useEffect, useState } from "react";
 import fetchProtectedData from "../../../../../../utils/fetchData";
@@ -14,16 +14,13 @@ import AgentSelector from "../../../../../component/AgentSelector";
 function AddDepartments({ open, close, isAdded = false, businessId, currentUser, listDep = [], isEditing, depEdit }) {
 
     const [errName, setErrName] = useState({ state: false, message: '' });
-    const [errCode, setErrCode] = useState({ state: false, message: '' });
 
     const [inputName, setInputName] = useState('');
-    const [inputCode, setInputCode] = useState('');
     const [isAddedAllAgent, setIsAddedAllAgent] = useState(false);
 
     useEffect(() => {
         if (isEditing) {
             setInputName(depEdit && depEdit.departmentName);
-            setInputCode(depEdit && depEdit.departmentCode);
             setIsAddedAllAgent(depEdit && depEdit.isHq === '1' ? true : false);
         }
     }, [isEditing])
@@ -46,7 +43,6 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
         await fetchProtectedData.post(URLS.departments.add, {
             businessId: businessId,
             departmentName: inputName,
-            departmentCode: inputCode,
             createBy: currentUser.userName,
             isHq: isHqAdded,
         }).then(res => {
@@ -64,7 +60,6 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
         await fetchProtectedData.put(`${URLS.departments.edit}/${depEdit && depEdit.id}`, {
             businessId: businessId,
             departmentName: inputName,
-            departmentCode: inputCode,
             updateBy: currentUser.userName,
             isHq: currentUser.businessId === 1 ? CompareStatus(isAddedAllAgent, { true: '1', false: '0' }) : '0',
         }).then(res => {
@@ -81,11 +76,6 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
         // return true if valid
         if (!inputName || inputName.trim() === '') {
             setErrName({ state: true, message: '** กรุณากรอกชื่อแผนก' });
-            return false;
-        }
-
-        if (!inputCode || inputCode.trim() === '') {
-            setErrCode({ state: true, message: '** กรุณากรอกตัวย่อแผนก' });
             return false;
         }
 
@@ -112,7 +102,6 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
 
     function handleClose() {
         setErrName({ state: false, message: '' })
-        setErrCode({ state: false, message: '' })
         setIsAddedAllAgent(false);
         close(false);
     }
@@ -135,19 +124,6 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
                             onFocus={() => setErrName({ state: false, message: '' })}
                             isInvalid={errName.state}
                             errorMessage={errName.message}
-                            className="max-w-xs"
-                            size="sm" />
-
-                        <Input
-                            aria-label="depCode"
-                            label='ตัวย่อ'
-                            placeholder={CompareStatus(isEditing, { true: depEdit && depEdit.departmentCode, false: "กรอกตัวย่อแผนก" })}
-                            labelPlacement="outside"
-                            variant="bordered"
-                            onChange={(e) => setInputCode(e.target.value)}
-                            onFocus={() => setErrCode({ state: false, message: '' })}
-                            isInvalid={errCode.state}
-                            errorMessage={errCode.message}
                             className="max-w-xs"
                             size="sm" />
                     </div>
@@ -310,12 +286,75 @@ function ManageDepartments() {
         });
         setSearchListDep(sorted);
     };
+    const dummyDeps = [
+        {
+            id: 1,
+            departmentName: 'Accounting',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 2,
+            departmentName: 'Sales',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 3,
+            departmentName: 'Marketing',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 4,
+            departmentName: 'CRM',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 5,
+            departmentName: 'HR',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+
+        },
+        {
+            id: 6,
+            departmentName: 'IT',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+    ]
     //#endregion
     return (
         <section className="w-full">
             <AddDepartments open={openModalAddDep} close={e => { setOpenModalDep(e); setIsEditing(false); }} isAdded={e => e && fetchDepartments()} businessId={selectedAgent.id} currentUser={currentUser} listDep={searchListDep} isEditing={isEditing} depEdit={depRowSelected} />
             <DeleteDep dep={depRowSelected} open={openModalDeleteDep} close={e => setOpenModalDeleteDep(e)} isDeleted={e => e && fetchDepartments()} currentUser={currentUser} />
-            <Card className="flex p-4 h-full min-h-[700px] shadow-none scrollbar-hide overflow-auto">
+            <Card className="flex p-4 h-full min-h-[650px] shadow-none scrollbar-hide overflow-auto">
                 <div className="w-full  flex justify-between items-end mb-3">
                     <div>
                         {currentUser.businessId === 1 &&
@@ -337,7 +376,7 @@ function ManageDepartments() {
                         />
                     </div>
                 </div>
-                <div className="w-full h-full min-h-[590px] rounded-lg">
+                <div className="w-full h-full min-h-[580px] rounded-lg">
                     <Card className="w-full h-[580px] overflow-auto scrollbar-hide  p-2" shadow="sm">
                         <Table
                             isHeaderSticky
@@ -349,19 +388,18 @@ function ManageDepartments() {
                             onSortChange={() => handleSort}>
                             <TableHeader>
                                 <TableColumn allowsSorting onClick={() => handleSort('departmentName')} key={'departmentName'}>ชื่อแผนก</TableColumn>
-                                <TableColumn key={'isHq'} className="text-center">{currentUser.businessId === 1 ? 'สร้างให้ตัวแทน' : 'สร้างโดย'}</TableColumn>
-                                <TableColumn allowsSorting onClick={() => handleSort('status')} key={'status'}>สถานะ</TableColumn>
+                                <TableColumn key={'isHq'} className="text-center">{currentUser.businessId === 1 ? 'สร้างให้ตัวแทน' : 'สร้างโดยสำนักงานใหญ่'}</TableColumn>
                                 <TableColumn allowsSorting onClick={() => handleSort('createDate')} key={'createBy'}>สร้างโดย</TableColumn>
                                 <TableColumn allowsSorting onClick={() => handleSort('updateDate')} key={'updateBy'}>อัพเดตล่าสุด</TableColumn>
-                                <TableColumn key={'actions'} width={10}>
+                                <TableColumn key={'actions'} width={10} className="text-center">
                                     <Tooltip showArrow={true} content='เพิ่มแผนก' placement="right">
-                                        <span onClick={() => setOpenModalDep(true)} className="w-full flex justify-center items-center cursor-pointer hover:text-primary">
+                                        <Button isIconOnly variant="light" color="success" onPress={() => setOpenModalDep(true)}>
                                             <AddStreamlineUltimateWhiteIcon />
-                                        </span>
+                                        </Button>
                                     </Tooltip>
                                 </TableColumn>
                             </TableHeader>
-                            <TableBody items={searchListDep} isLoading={isLoadingDep} loadingContent={<Spinner label="" color="primary" labelColor="primary" />} emptyContent="ไม่พบข้อมูลแผนก">
+                            <TableBody items={dummyDeps ?? searchListDep} isLoading={isLoadingDep} loadingContent={<Spinner label="" color="primary" labelColor="primary" />} emptyContent="ไม่พบข้อมูลแผนก">
                                 {(item) => {
                                     return (
                                         <TableRow key={item.id}>
@@ -386,14 +424,13 @@ function ManageDepartments() {
                                                             <>
                                                                 {CompareStatus(item.isHq,
                                                                     {
-                                                                        '0': <span className="badge bg-blue-100 badge-sm text-primary border-none font-semibold">{item.name}</span>,
-                                                                        '1': <span className="badge bg-blue-100  text-primary font-semibold border-none">{'สำนักงานใหญ่'}</span>
+                                                                        '0': null,
+                                                                        '1': <Chip size="sm" variant="flat" color="success" className={`font-semibold px-2`}><CheckIcon /></Chip>
                                                                     })}
                                                             </>
                                                         )
                                                 }
                                             </TableCell>
-                                            <TableCell>{CompareStatus(item.status, { 1: 'ใช้งาน', 0: 'ไม่ใช้งาน' })}</TableCell>
                                             <TableCell>
                                                 <div>
                                                     <p>{item.createBy}</p>
@@ -409,9 +446,13 @@ function ManageDepartments() {
                                             <TableCell>
                                                 {selectedAgent.id === 1 || (selectedAgent.id !== 1 && item.isHq !== 1) ?
                                                     (
-                                                        <div className="w-full flex justify-center items-center space-x-4">
-                                                            <EditIcon onClick={() => handleModalEdit(item)} className='text-lg   cursor-pointer hover:text-primary' />
-                                                            <DeleteIcon onClick={() => { setOpenModalDeleteDep(true); setDepRowSelected(item) }} className='text-lg cursor-pointer hover:text-red-600' />
+                                                        <div className="w-full flex justify-center items-center space-x-1">
+                                                            <Button isIconOnly variant="light" color="warning" onPress={() => handleModalEdit(item)}>
+                                                                <EditIcon className='text-lg' />
+                                                            </Button>
+                                                            <Button isIconOnly variant="light" color="danger" onPress={() => { setOpenModalDeleteDep(true); setDepRowSelected(item) }}>
+                                                                <DeleteIcon className='text-lg' />
+                                                            </Button>
                                                         </div>
                                                     ) :
                                                     (

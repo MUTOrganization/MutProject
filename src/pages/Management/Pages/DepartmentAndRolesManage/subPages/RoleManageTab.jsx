@@ -4,7 +4,7 @@ import fetchProtectedData from "../../../../../../utils/fetchData";
 import { AlertQuestion, toastError, toastSuccess, toastWarning } from "../../../../../component/Alert";
 import { URLS } from "../../../../../config";
 import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@nextui-org/react";
-import { DeleteIcon, HFCheck, HFPlus, MenuIcon, SortIcon } from "../../../../../component/Icons";
+import { CheckIcon, DeleteIcon, HFCheck, HFPlus, MenuIcon, SortIcon } from "../../../../../component/Icons";
 import { toast } from "sonner";
 import RoleAccesBox from "../components/RoleAccessBox";
 import { ACCESS } from "../../../../../configs/access";
@@ -244,7 +244,184 @@ export default function RoleManageTab() {
         setIsSortRoleModalShow(false)
     }
     //#endregion hander function
+    const dummyDeps = [
+        {
+            id: 1,
+            departmentName: 'Accounting',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 2,
+            departmentName: 'Sales',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 3,
+            departmentName: 'Marketing',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 4,
+            departmentName: 'CRM',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+        {
+            id: 5,
+            departmentName: 'HR',
+            isHq: 0,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
 
+        },
+        {
+            id: 6,
+            departmentName: 'IT',
+            isHq: 1,
+            status: 1,
+            createDate: '2021-01-01',
+            createBy: 'hq000_o',
+            updateDate: '2021-01-01',
+            updateBy: 'hq000_o',
+        },
+    ]
+    const dummpyRoles = [
+        {
+            id: 1,
+            roleName: 'Manager',
+            depId: 1,
+            departmentName: 'Accounting',
+            isHq: '0',
+            createBy: 'admin',
+            
+        },
+        {
+            id: 2,
+            roleName: 'Staff',
+            depId: 1,
+            departmentName: 'Accounting',
+            isHq: '0',
+            createBy: 'admin',
+        },
+        {
+            id: 4,
+            roleName: 'Manager',
+            depId: 2,
+            departmentName: 'Sales',
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 5,
+            roleName: 'Senior',
+            depId: 2,
+            departmentName: 'Sales',
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 6,
+            roleName: 'Supervisor',
+            depId: 2,
+            departmentName: 'Sales',
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 7,
+            roleName: 'Junior',
+            depId: 2,
+            departmentName: 'Sales',
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 8,
+            roleName: 'Manager',
+            depId: 3,
+            departmentName: 'Marketing',
+            isHq: '0',
+            createBy: 'admin',
+        },
+        {
+            id: 9,
+            roleName: 'Senior',
+            depId: 3,
+            departmentName: 'Marketing',
+            isHq: '0',
+            createBy: 'admin',
+        },
+        {
+            id: 10,
+            roleName: 'Junior',
+            depId: 3,
+            departmentName: 'Marketing',
+            isHq: '0',
+            createBy: 'admin',
+        },
+        {
+            id: 11,
+            roleName: 'Manager',
+            depId: 4,
+            departmentName: 'CRM',
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 12,
+            roleName: 'Senior',
+            depId: 4,   
+            departmentName: 'CRM',  
+            isHq: '1',
+            createBy: 'admin',
+        },
+        {
+            id: 13,
+            roleName: 'Junior', 
+            depId: 4,
+            departmentName: 'CRM',
+            isHq: '1',
+            createBy: 'admin',
+        },  
+        {
+            id: 14,
+            roleName: 'Manager',
+            depId: 5,
+            departmentName: 'HR',
+            isHq: '0',
+            createBy: 'admin',
+        },
+        {
+            id: 15,
+            roleName: 'Staff',
+            depId: 5,
+            departmentName: 'HR',
+            isHq: '0',
+            createBy: 'admin',
+        },
+    ]
     
     return (
         <div>
@@ -272,7 +449,7 @@ export default function RoleManageTab() {
                             removeWrapper
                             selectionMode="single"
                             color="primary"
-                            selectedKeys={[selectedRole?.id + ""]}
+                            selectedKeys={["1" ?? selectedRole?.id + ""]}
                             onSelectionChange={(key) => handleSelectRole(Array.from(key)[0])}
                         >
                             <TableHeader>
@@ -282,7 +459,7 @@ export default function RoleManageTab() {
                                         selectedAgent.id == '1' ?
                                             <div>สร้างให้ตัวแทน</div>
                                             :
-                                            <div>สร้างโดย</div>
+                                            <div>สร้างโดยสำนักงานใหญ่</div>
                                     }
                                 </TableColumn>
                                 <TableColumn>
@@ -301,7 +478,7 @@ export default function RoleManageTab() {
                                     </div>
                                 </TableColumn>
                             </TableHeader>
-                            <TableBody items={roleList}
+                            <TableBody items={dummpyRoles ?? roleList}
                                 isLoading={loadingRoles}
                                 emptyContent={"ไม่มีตำแหน่ง"}
                             >
@@ -323,9 +500,9 @@ export default function RoleManageTab() {
                                                         selectedAgent.id == '1' && role.isHq == '0' ?
                                                         <div className="text-xs font-semibold"></div> :
                                                         selectedAgent.id != '1' && role.isHq == '1' ?
-                                                        <Chip className="text-[10px]" color="warning" variant="flat">สำนักงานใหญ่</Chip>
+                                                        <Chip className="text-[10px]" color="success" variant="flat"><CheckIcon/></Chip>
                                                         :
-                                                        <Chip className="text-[10px]" color="success" variant="flat">{`${selectedAgent.name ?? currentUser.businessName ?? 'ตัวแทน'}`}</Chip>
+                                                        null
                                                 }
                                             </div>
                                         </TableCell>
@@ -346,7 +523,10 @@ export default function RoleManageTab() {
                     </Card>
                     <AlertQuestion
                         title={'ยืนยันการลบตำแหน่ง'}
-                        content={`ต้องการลบตำแหน่ง ${selectedDeleteRole?.departmentName} - ${selectedDeleteRole?.roleName} หรือไม่`}
+                        content={<div className="w-full p-2 text-center">
+                        <p>ต้องการลบตำแหน่ง</p>
+                        <p className=""> <span className="text-lg text-wrap text-red-500">{selectedDeleteRole?.departmentName} - {selectedDeleteRole?.roleName}</span> หรือไม่</p>
+                    </div>}
                         isOpen={isShowAlert} onClose={() => setIsShowAlert(false)}
                         isLoading={loadSubmit}
                         onConfirm={handleDeleteRole}

@@ -41,7 +41,6 @@ export function AlertQuestion({
     isLoading,
     confirmText,
     cancelText,
-    isShowIcon = true,
     showConfirmButton = true,
     size = 'lg',
     classNames = {
@@ -66,30 +65,21 @@ export function AlertQuestion({
             break;
     }
     return (
-        <Modal isOpen={isOpen} isDismissable={isDismissable} onClose={onClose} size={size}>
+        <Modal isOpen={isOpen} onClose={onClose} size={size}>
             <ModalContent>
-                <ModalHeader>
-                    <div className="w-full flex flex-col justify-center items-center text-xl">
-                        {isShowIcon && (
-                            <div
-                                className={`text-${color} text-3xl mb-4 border-4 border-${color} rounded-full p-2` +
-                                    ' ' +
-                                    classNames.icon}
-                            >
-                                {selectIcon}
-                            </div>
-                        )}
-                        <div className={'' + ' ' + classNames.title}>{title}</div>
-                    </div>
+                <ModalHeader className="w-full flex flex-col gap-1 text-center bg-custom-redlogin text-white">
+                    <p>{title}</p>
                 </ModalHeader>
                 <ModalBody>
-                    <div className="mb-8 w-full">
-                        {children}
+                    <div className="w-full p-2 text-center">
+                        <div className="mb-8 w-full">
+                            {children}
                         <div className={'text-center text-wrap' + ' ' + classNames.content}>{content}</div>
+                    </div>
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button
+                <Button
                         variant="light"
                         onPress={onClose}
                         className={'' + ' ' + classNames.cancelButton}

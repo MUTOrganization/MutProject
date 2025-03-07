@@ -8,7 +8,7 @@ import { SearchIcon } from "./Icons";
 export default function SearchBox({
     className = null, label, placeholder = '', data,
     searchRules, onChange, removeZeroScore = true, onBeforeSearch,
-    valueState, onTextChange = () => {}, variant = 'faded'
+    valueState, onTextChange = () => {}, variant = 'faded', labelPlacement = 'inside'
 }) {
 
     if (!data) throw new Error("data is undefined");
@@ -63,6 +63,7 @@ export default function SearchBox({
             type="search"
             size="sm"
             label={label}
+            labelPlacement={labelPlacement}
             value={isControlled ? valueState : searchText}
             variant={variant}
             placeholder={placeholder}
