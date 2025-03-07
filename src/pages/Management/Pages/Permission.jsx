@@ -148,6 +148,7 @@ function Permission() {
   //Field contextData
   const contextData = useAppContext();
   const currentUser = contextData.currentUser;
+  const selectedAgent = contextData.agent.selectedAgent;
 
   //Field textSearch
   const [filteredData, setFilteredData] = useState([]);
@@ -174,7 +175,6 @@ function Permission() {
   const [selectedRowAccessId, setSelectedRowAccessId] = useState();
   const [selectedRowAccessName, setSelectedAccessName] = useState('');
   const [selectedRowItem, setSelectedRowItem] = useState(null);
-  const [selectAgentFromModal, setSelectAgentFromModal] = useState(currentUser.businessId);
 
   //Field modal
   const [openModal, setOpenModal] = useState(false);
@@ -301,7 +301,7 @@ function Permission() {
   //#region FetchAccess
   const fetchAccessData = async () => {
     await fetchProtectedData
-      .get(URLS.access.getAll, { params: { businessId: selectAgentFromModal, safe: 'false' } })
+      .get(URLS.access.getAll, { params: { businessId: 1, safe: 'false' } })
       .then((res) => {
         if (res.data.length <= 0) {
           setAccessData([])
@@ -324,13 +324,9 @@ function Permission() {
   //#region Fetch Roles
   const fetchRoleByAccessCode = async () => {
     try {
-      const res = await fetchProtectedData.post(URLS.roles.getByAccess, { access: selectedGroupAccessCode, businessId: selectAgentFromModal })
+      const res = await fetchProtectedData.post(URLS.roles.getByAccess, { access: selectedGroupAccessCode, businessId: selectedAgent?.id })
       if (res.status === 200) {
-        const groupDep = lodash.groupBy(res.data, 'depName');
-        setRoleByAccessCode(Object.entries(groupDep).map(([depName, items]) => ({
-          depName,
-          items,
-        })));
+        setRoleByAccessCode(res.data);
       }
     }
     catch (err) {
@@ -398,12 +394,6 @@ function Permission() {
 
   //#region useEfftect
   useEffect(() => {
-    if (contextData.agent && contextData.agent.selectedAgent && contextData.agent.selectedAgent.id) {
-      setSelectAgentFromModal(contextData.agent.selectedAgent.id)
-    }
-    else {
-      setSelectAgentFromModal(currentUser.businessId === 1 ? '0' : currentUser.businessId)
-    }
     fetchAccessData();
     fetchAllGroups();
   }, []);
@@ -411,7 +401,7 @@ function Permission() {
 
   useEffect(() => {
     fetchRoleByAccessCode();
-  }, [selectedGroupAccessCode]);
+  }, [selectedGroupAccessCode, selectedAgent]);
 
   useEffect(() => {
     if (isSave) {
@@ -442,9 +432,9 @@ function Permission() {
 
   useEffect(() => {
     fetchAccessData();
-  }, [selectAgentFromModal])
+  }, [selectedAgent])
 
-
+  console.log(roleByAccessCode);
   //#endregion
 
   return (
@@ -529,20 +519,13 @@ function Permission() {
           startContent={<SearchIcon className="text-black/50" />}
         />
       </div>
-
-      {currentUser.businessId == 1 && (
-        <div className="mt-10 w-full">
-          <AgentSelector agentSelected={e => { setSelectAgentFromModal(e.id); }} />
-        </div>
-      )}
-
-      <div className="flex gap-5 h-full  w-full max-lg:flex-col  py-10  min-h-[800px]">
+      <div className="flex gap-5 h-full  w-full max-lg:flex-col  py-4  min-h-[800px]">
         <div className="flex-1 overflow-auto shadow-lg max-h-[700px] min-h-[700px] rounded-lg scrollbar-hide">
           <table className="table table-md  w-full">
             <thead className="sticky top-0 z-20 bg-primary-400 text-lg">
               <tr className="border-b-0 text-white  text-center font-semibold">
-                <th>ชื่อสิทธิ์</th>
-                <th>รหัสสิทธิ์</th>
+                <th className="py-3">ชื่อสิทธิ์</th>
+                <th className="py-3">รหัสสิทธิ์</th>
                 <th className="w-20">
                   {currentUser.businessId === 1 && (
                     <Button 
@@ -565,9 +548,8 @@ function Permission() {
                 filteredData.map((group) => (
                   <React.Fragment key={group.groupName}>
                     <tr
-                      onClick={() => handleSelectGroupAccess(group.items)}
-                      className="cursor-pointer border-b-0 sticky top-10 z-10 bg-primary-50 text-primary-600">
-                      <td colSpan={3} className="font-bold text-center">
+                      className="border-b-0 sticky top-10 z-10 bg-primary-50 text-primary-600">
+                      <td colSpan={3} className="font-bold text-center py-2">
                         {group.groupName}
                       </td>
                     </tr>
@@ -575,10 +557,10 @@ function Permission() {
                       <tr
                         key={item.id}
                         onClick={() => setSelectedGroupAccessCode([item.accessCode])}
-                        className={`border-b-0 text-center hover:bg-primary-100 hover:text-primary-600 cursor-pointer ${selectedGroupAccessCode.includes(item.accessCode) ? 'bg-primary-100 text-primary-600' : ''}`}>
-                        <td>{item.accessName}</td>
-                        <td>{item.accessCode}</td>
-                        <td>
+                        className={`border-b-0 py-2 text-center hover:bg-gray-100 cursor-pointer ${selectedGroupAccessCode.includes(item.accessCode) ? 'bg-primary-100 text-primary-600' : ''}`}>
+                        <td className="py-2">{item.accessName}</td>
+                        <td className="py-2">{item.accessCode}</td>
+                        <td className="py-2">
                           <span className="flex justify-center space-x-3">
                             <EditIcon
                               className={'cursor-pointer text-lg hover:text-blue-700 '}
@@ -617,34 +599,40 @@ function Permission() {
           </table>
         </div>
 
-        <div className="flex-1 overflow-auto shadow-lg rounded-lg scrollbar-hide  max-h-[700px] min-h-[700px] ">
-          <table className="table table-sm w-full shadow-lg rounded-lg">
-            <thead className="sticky top-0 z-10 bg-primary-400 text-lg">
-              <tr className="text-white text-center border-none rounded-t-lg">
-                <th colSpan={2} className="font-mono text-lg p-3 ">
-                  แผนกที่ใช้สิทธิ์อยู่ ({roleByAccessCode.length}) แผนก
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {roleByAccessCode.map(group => {
-                const groupedRoles = lodash.groupBy(group.items, 'roleName');
-                return (
-                  <React.Fragment key={group.depName}>
-                    <tr className="border-0 bg-primary-50">
-                      <td colSpan={2} className="font-bold text-center text-primary-600">แผนก {group.depName}</td>
-                    </tr>
-
-                    {Object.entries(groupedRoles).map(([roleName, items]) => (
-                      <tr key={roleName} className="border-none text-center">
-                        <td colSpan={2}>{roleName}</td>
+        <div className="flex-1 h-[700px] flex flex-col">
+          <div className="flex justify-end items-center">
+            <div className="mb-4 w-48">
+              <AgentSelector />
+            </div>
+          </div>
+          <div className="overflow-auto shadow-lg rounded-lg scrollbar-hide  flex-1">
+            <table className="table table-sm w-full rounded-lg">
+              <thead className="sticky top-0 z-10 bg-primary-400 text-lg">
+                <tr className="text-white text-center border-none rounded-t-lg">
+                  <th colSpan={2} className="font-mono text-lg p-3">
+                    ตำแหน่งที่ใช้สิทธิ์อยู่
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(lodash.groupBy(roleByAccessCode, 'depName')).map(([depName, roles]) => {
+                  return (
+                    <React.Fragment key={depName}>
+                      <tr className="border-0 bg-primary-50">
+                        <td colSpan={2} className="font-bold text-center text-primary-600 py-2">แผนก {depName}</td>
                       </tr>
-                    ))}
-                  </React.Fragment>
-                );
-              })}
-            </tbody>
-          </table>
+
+                      {roles.map((role) => (
+                        <tr key={role.roleName} className="border-none text-center">
+                          <td colSpan={2} className="py-2">{role.roleName}</td>
+                        </tr>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>

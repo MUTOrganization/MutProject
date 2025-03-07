@@ -43,63 +43,15 @@ export default function IncomeChart({data, isLoading, selectedYear}){
             return prev;
         },Array(12).fill().map(() => []))
     },[data])
-    const incomeSeries = isExpanded ? [
-        {
-            name: 'ยอดเงินเข้าแอดมิน',
-            data: adminIncomes,
-            color: gcolors[0]
-        }, {
-            name: 'ยอดเงินเข้าอัพเซล',
-            data: upsaleIncomes,
-            color: gcolors[1]
-        }, {
-            name: 'ยอดยกแอดมิน',
-            data: adminLiftIncomes,
-            color: gcolors[2]
-        }, {
-            name: 'ยอดยกอัพเซล',
-            data: upsaleLiftIncomes,
-            color: gcolors[3]
-        },
-    ] : [
+    const incomeSeries = [
         {
             name: 'ยอดเงินเข้า',
-            data: totalIncomes,
+            data: [5000000, 2000000, 6000000, 1000000, 4000000, 2000000, 5000000, 6000000, 2000000, 5000000, 5000000, 6000000] ?? totalIncomes,
             color: gcolors[0]
         }, {
             name: 'ยอดยก',
-            data: totalLiftIncome,
+            data: [100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000, 900000, 1000000, 1100000, 1200000] ?? totalLiftIncome,
             color: gcolors[2]
-        }
-    ]
-
-    const deliverySeries = isExpanded ? [
-        {
-            name: 'ค่าส่งแอดมิน',
-            data: adminDelivery,
-            color: gcolorsDeli[0]
-        }, {
-            name: 'ค่าส่งอัพเซล',
-            data: upsaleDelivery,
-            color: gcolorsDeli[1]
-        }, {
-            name: 'ยอดยกค่าส่งแอดมิน',
-            data: adminLiftDelivery,
-            color: gcolorsDeli[2]
-        }, {
-            name: 'ยอดยกค่าส่งอัพเซล',
-            data: upsaleLiftDelivery,
-            color: gcolorsDeli[3]
-        },
-    ] : [
-        {
-            name: 'ค่าส่ง',
-            data: totalDelivery,
-            color: gcolorsDeli[0]
-        }, {
-            name: 'ยอดยกค่าส่ง',
-            data: totalLiftDelivery,
-            color: gcolorsDeli[2]
         }
     ]
 
@@ -115,7 +67,7 @@ export default function IncomeChart({data, isLoading, selectedYear}){
             }
         },
         title: {
-            text: isDelivery ? 'ค่าส่ง' : 'ยอดเงินเข้า',
+            text: 'ยอดเงินเข้า',
             align: 'left',
             offsetX: 30,
             offsetY: 0,
@@ -202,29 +154,10 @@ export default function IncomeChart({data, isLoading, selectedYear}){
             isLoading &&
             <div className="absolute size-full top-0 left-0  flex justify-center items-center"><Spinner /></div>
           }
-          <div className="absolute top-1 left-48">
-            <Switch
-              aria-label='switch to order chart'
-              className="z-10"
-              size="sm"
-              isSelected={isDelivery}
-              onChange={() => setIsDelivery(p => !p)}
-              >
-              </Switch>
-          </div>
-          <div className="absolute top-1 left-80">
-            <Checkbox
-              aria-label='check to expand order description'
-              className="z-10"
-              isSelected={isExpanded}
-              onChange={() => setIsExpanded(p => !p)}
-              >
-                รายละเอียด
-              </Checkbox>
-          </div>
-          <ReactApexChart key={'Income and delivery chart'} 
+          
+          <ReactApexChart key={'Income chart'} 
             options={options} 
-            series={isDelivery ? deliverySeries : incomeSeries} type="bar" />
+            series={incomeSeries} type="bar" />
         </div>
     )
 }

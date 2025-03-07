@@ -21,56 +21,6 @@ function Box2({ isLoading }) {
                     ) : (
                         <>
                             <div className="relative">
-                                <div className="absolute top-0 right-1">
-                                    <Popover placement="left-start"
-                                        offset={10}
-                                        motionProps={{
-                                            variants: {
-                                                enter: {
-                                                    y: 0,
-                                                    opacity: 1,
-                                                    duration: 0.1,
-                                                    transition: {
-                                                        opacity: {
-                                                            duration: 0.15,
-                                                        },
-                                                    },
-                                                },
-                                                exit: {
-                                                    y: "10%",
-                                                    opacity: 0,
-                                                    duration: 0,
-                                                    transition: {
-                                                        opacity: {
-                                                            duration: 0.1,
-                                                        },
-                                                    },
-                                                },
-                                            },
-                                        }}
-                                    >
-                                        <PopoverTrigger>
-                                            <Button isIconOnly size="sm" variant='light' color='primary'><InfomationIcon size={24} /></Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            <div>
-                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                    <span className='text-start text-nowrap'>ออเดอร์อัพเซล</span>
-                                                    <span className='text-end '>{cFormatter(commData.upsaleOrderCount)}</span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                    <span className='text-start text-nowrap'>ลูกค้าใหม่</span>
-                                                    <span className='text-end'>{cFormatter(commData.newCustomerOrderCount)}</span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                    <span className='text-start text-nowrap'>ลูกค้าเก่า</span>
-                                                    <span className='text-end'>{cFormatter(commData.oldCustomerOrderCount)}</span>
-                                                </div>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-
                                 <div className="flex justify-center items-center">
                                     <div className="font-bold p-2 text-2xl text-center">ออเดอร์</div>
                                 </div>
@@ -81,7 +31,7 @@ function Box2({ isLoading }) {
                                     <div className="text-center">
                                         <span className="text-4xl font-bold text-green-600">
                                             {/* <CountUp end={152} duration={2} formattingFn={formatCurrencyNoDollars} /> */}
-                                            {cFormatter(commData.orderCount)}
+                                            {cFormatter(24 ?? commData.orderCount)}
                                         </span>
                                     </div>
                                 </div>

@@ -154,7 +154,7 @@ const primaryRoutes = {
       component: <DashboardTalkTime />,
       title: "แดชบอร์ด Talk Time",
     },
-    { path: "/Commission", component: <Commission />, title: "คอมมิชชัน" },
+    { path: "/Commission", component: <Commission />, title: "Dashboard Sales" },
     {
       path: "/Return-Order",
       component: <ReturnOrder />,

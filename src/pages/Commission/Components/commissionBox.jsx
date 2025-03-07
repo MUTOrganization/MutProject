@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardBody, Spinner, Popover, PopoverTrigger, PopoverContent, Button, Switch } from '@nextui-org/react';
 import { InfomationIcon } from '../../../component/Icons'
 import { useCommissionContext } from '../CommissionContext';
-import { cFormatter } from '../../../../utils/numberFormatter';
+import { cFormatter } from '@/utils/numberFormatter';
 
 
 function commissionBox({ isLoading, onOpenModalClick }) {
@@ -20,7 +20,7 @@ function commissionBox({ isLoading, onOpenModalClick }) {
                     ) : (
                         <>
                             <div className="relative">
-                                <div className='absolute top-0 left-0'>
+                                {/* <div className='absolute top-0 left-0'>
                                     <Button className='' size='sm' radius='full' color='primary' variant='flat'
                                         onPress={() => {
                                             onOpenModalClick()
@@ -28,12 +28,8 @@ function commissionBox({ isLoading, onOpenModalClick }) {
                                     >
                                         <span>ดูข้อมูลเพิ่มเติม</span>
                                     </Button>
-                                </div>
+                                </div> */}
                                 <div className="absolute top-0 right-1 flex items-center gap-3">
-                                    <Switch size='sm' isSelected={isShowIncentive} onValueChange={() => {
-                                        setIsShowIncentive(!isShowIncentive)
-                                    }}>
-                                    </Switch>
                                     <Popover placement="left-start"
                                         offset={10}
                                     >
@@ -44,23 +40,19 @@ function commissionBox({ isLoading, onOpenModalClick }) {
                                             <div>
                                                 <div className="grid grid-cols-2 gap-4 text-lg">
                                                     <span className="text-start text-nowrap">ยอดเงินเข้า</span>
-                                                    <span className="text-end">{cFormatter(commData?.adminPaidIncome + commData?.upsalePaidIncome, 2)}</span>
+                                                    <span className="text-end">{ cFormatter(40000 ||commData?.adminPaidIncome + commData?.upsalePaidIncome, 2)}</span>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4 text-lg">
                                                     <span className="text-start text-nowrap">ยอดยก</span>
-                                                    <span className="text-end">{cFormatter(commData?.adminLiftIncome + commData?.upsaleLiftIncome, 2)}</span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                    <span className="text-start text-nowrap">ค่าส่งสุทธิ</span>
-                                                    <span className="text-end">{cFormatter(commData?.totalDelivery, 2)}</span>
-                                                </div>
-                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                    <span className="text-start text-nowrap">ค่าปรับ</span>
-                                                    <span className="text-end">{cFormatter(commData?.finedAmount, 2)}</span>
+                                                    <span className="text-end">{cFormatter(3000 || commData?.adminLiftIncome + commData?.upsaleLiftIncome, 2)}</span>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4 text-lg">
                                                     <span className="text-start text-nowrap">ยอดเงินสุทธิ</span>
-                                                    <span className="text-end">{cFormatter(commData?.netIncome, 2)}</span>
+                                                    <span className="text-end">{cFormatter(43000 ||commData?.netIncome, 2)}</span>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4 text-lg">
+                                                    <span className="text-start text-nowrap">อัตราคอมมิชชัน</span>
+                                                    <span className="text-end">{cFormatter(5 ||commData?.netIncome, 2, 0)}%</span>
                                                 </div>
                                             </div>
                                         </PopoverContent>
@@ -75,7 +67,7 @@ function commissionBox({ isLoading, onOpenModalClick }) {
                                 <div className="flex justify-center items-center w-full h-full overflow-hidden">
                                     <div className="text-center">
                                         <span className="text-4xl font-bold text-green-600">
-                                            <sup style={{ fontSize: '0.6em' }}>฿</sup>{cFormatter(isShowIncentive ? commData.incentive : commData.commission,2)}
+                                            <sup style={{ fontSize: '0.6em' }}>฿</sup>{cFormatter((43000 * 0.05) || commData.commission,2)}
                                         </span>
                                     </div>
                                 </div>

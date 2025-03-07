@@ -355,31 +355,11 @@ function CommissionBody() {
         }
     }, [selectedYear, isYearlyContentOpened, selectedEmployee, settingData, selectedOwnAgent])
     return (
-        <section title="คอมมิชชัน">
+        <section title="Dashboard Sales">
             <section>
                 <Card className="shadow-none" radius="sm">
                     <CardBody>
                         <div className="flex flex-col sm:flex-row sm:flex-wrap sm:space-x-4 space-y-4 sm:space-y-0 sm:gap-y-4 sm:items-center items-start w-full">
-                            {currentUser.businessId === 1 && isAllViewUser && (
-                                <div className='me-2'>
-                                    <AgentSelector />
-                                </div>
-                                // <Select
-                                //     label="ตัวแทนขาย"
-                                //     className="max-w-full sm:max-w-[250px] w-full"
-                                //     variant="bordered"
-                                //     isLoading={loadAgent}
-                                //     disallowEmptySelection
-                                //     selectedKeys={[String(selectedAgent.id)]}
-                                //     onSelectionChange={(keys) => handleAgentSelect(keys)}
-                                // >
-                                //     {agentList.map(item => (
-                                //         <SelectItem key={item.id} value={item.id}>
-                                //             {item.name}
-                                //         </SelectItem>
-                                //     ))}
-                                // </Select>
-                            )}
                             {isYearlyView ?
                                 <div className='w-48'>
                                     <Select aria-label='year selector' label='เลือกปี'
@@ -396,70 +376,16 @@ function CommissionBody() {
                                 :
                                 <DateSelector value={dateRange} onChange={(value) => setDateRange(value)} modeState={dateMode} onModeChange={setDateMode} isShowDateRange={false}/>
                             }
-
-                            {(isAllOwnerViewUser) && (
-                                <Select
-                                    label="ตัวแทนที่ขายให้เรา"
-                                    className="max-w-full sm:max-w-[250px] w-full"
-                                    variant="bordered"
-                                    isLoading={isLoading}
-                                    disallowEmptySelection
-                                    selectedKeys={[String(selectedOwnAgent)]}
-                                    onSelectionChange={(keys) => setSelectOwnAgent(Array.from(keys)[0])}
-                                >
-                                    <SelectItem key={'all'} value={'all'}>ทั้งหมด</SelectItem>
-                                    {ownAgentList.map(item => (
-                                        <SelectItem key={item.id} value={item.id}>
-                                            {item.name}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
-                            )}
-                            {(!isSelfOnly) && (
-                                // <Select
-                                //     label="เลือกพนักงานขาย"
-                                //     className="max-w-full sm:max-w-[250px] w-full"
-                                //     variant="bordered"
-                                //     isLoading={isLoading}
-                                //     disallowEmptySelection
-                                //     selectedKeys={[selectedEmployee]}
-                                //     onSelectionChange={handleEmployeeSelection}
-                                //     scrollShadowProps={{
-                                //         isEnabled: false
-                                //     }}
-                                // >
-                                //     <SelectItem key="all" textValue="ทั้งหมด">
-                                //         ทั้งหมด
-                                //     </SelectItem>
-                                //     {sortArray(userData, 'username').map((user) => (
-                                //         <SelectItem key={user.username} textValue={user.username}>{user.username}</SelectItem>
-                                //     ))}
-                                // </Select>
-                                
-                                <div
-                                    className='max-w-full sm:max-w-[250px] w-full'
-                                >
-                                    <EmployeeSelector 
-                                        employeeList={userData} 
-                                        selectedEmployee={selectedEmployee} 
-                                        onSelected={handleEmployeeSelection}  
-                                        label="เลือกพนักงานขาย"
-                                    />
-                                </div>
-                                
-
-                            )}
-                            {!isYearlyView && (
+                            {/* {!isYearlyView && (
                                 <Button
                                     color="primary"
-
                                     variant="flat"
                                     onPress={() => setIsCommission(!isCommission)}
                                     endContent={isCommission ? '' : <MoneyBeggingIcon />}
                                 >
                                     {isCommission ? 'กลับ' : 'ดูค่าคอมมิชชัน'}
                                 </Button>
-                            )}
+                            )} */}
 
                             {isCommission &&
                                 <Button size='sm' color='primary' variant='solid' onPress={exportExcelFunc}>Export Excel</Button>
@@ -500,78 +426,6 @@ function CommissionBody() {
                 <>
                     {!isYearlyView ?
                         <div>
-                            {isSupervisorView && 
-                            <div className='mt-4'>
-                                <p className='text-lg font-bold ms-4'>ข้อมูลของคุณ</p>
-                                <div className='mt-4'>
-                                    <div className='flex gap-4'>
-                                        <div className='flex-1'>
-                                            <div className='flex gap-4'>
-                                                <Card shadow='none' className='w-full relative'>
-                                                    <div className='absolute top-4 right-4'>
-                                                    {/* <Popover placement="left-start">
-                                                        <PopoverTrigger>
-                                                            <Button isIconOnly size="sm" variant='light' color='primary'><InfomationIcon size={24} /></Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent>
-                                                            <div>
-                                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                                    <span className="text-start text-nowrap">ยอดเงินเข้า</span>
-                                                                    <span className="text-end">{cFormatter(supervisorCommission?.teamCommissionData?.teamPaidIncome, 2)}</span>
-                                                                </div>
-                                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                                    <span className="text-start text-nowrap">ยอดยก</span>
-                                                                    <span className="text-end">{cFormatter(supervisorCommission?.teamCommissionData?.teamLiftIncome, 2)}</span>
-                                                                </div>
-                                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                                    <span className="text-start text-nowrap">ค่าส่งสุทธิ</span>
-                                                                    <span className="text-end">{cFormatter(supervisorCommission?.teamCommissionData?.teamDelivery, 2)}</span>
-                                                                </div>
-                                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                                    <span className="text-start text-nowrap">ค่าปรับ</span>
-                                                                    <span className="text-end">{cFormatter(supervisorCommission?.teamCommissionData?.teamFined, 2)}</span>
-                                                                </div>
-                                                                <div className="grid grid-cols-2 gap-4 text-lg">
-                                                                    <span className="text-start text-nowrap">ยอดเงินสุทธิ</span>
-                                                                    <span className="text-end">{cFormatter(supervisorCommission?.teamCommissionData?.teamNetIncome, 2)}</span>
-                                                                </div>
-                                                            </div>
-                                                        </PopoverContent>
-                                                    </Popover> */}
-                                                    </div>
-                                                    <CardBody>
-                                                        <div className="text-center">
-                                                            <p className='text-2xl p-2 font-bold'>ค่าคอมมิชชัน</p>
-                                                            <span className="text-4xl font-bold text-green-600">
-                                                                <sup style={{ fontSize: '0.6em' }}>฿</sup>{cFormatter(supervisorCommission.commission,2)}
-                                                            </span>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
-                                            </div>
-                                        </div>
-                                        <div className='flex-1'>
-                                            <div className='flex gap-4'>
-                                                <Card shadow='none' className='w-full relative'>
-                                                    <CardBody>
-                                                        <div className="text-center">
-                                                            <p className='text-2xl p-2 font-bold'>ค่าอินเซนทีฟ</p>
-                                                            <span className="text-4xl font-bold text-green-600">
-                                                                <sup style={{ fontSize: '0.6em' }}>฿</sup>{cFormatter(supervisorCommission.incentive,2)}
-                                                            </span>
-                                                        </div>
-                                                    </CardBody>
-                                                </Card>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                <div className='ms-4 mt-8 text-lg font-bold'>
-                                    <p>ข้อมูลรวมของทีม</p>
-                                </div>
-                            </div>
-                            }
                             <section className="py-4">
                                 <CommissionContent
                                     isLoading={isCommLoading}

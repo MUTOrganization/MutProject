@@ -23,12 +23,12 @@ export default function CommissionChart({data, isLoading, selectedYear}){
   const summSeries = [{
       name: 'คอมมิชชั่น',
       type: 'column',
-      data: data.map(e => e.commission),
+      data: [4400, 2200, 6300, 1400, 4500, 2600, 5700, 6800, 2900, 5100, 5110, 6120] ?? data.map(e => e.commission),
       color: gcolors[0]
     }, {
       name: 'ยอดเงินเข้าสุทธิ',
       type: 'column',
-      data: data.map(e => e.netIncome),
+      data: [840000, 420000, 1230000, 240000, 850000, 460000, 1170000, 1280000, 490000, 1010000, 1011000, 1212000] ?? data.map(e => e.netIncome),
       color: gcolors[1]
   }]
   /**

@@ -19,9 +19,9 @@ export function nFormatter(num, digits) {
     return item ? (num / item.value).toFixed(digits).replace(regexp, "").concat(item.symbol) : "0";
   }
 
-export function cFormatter(num, digits) {
+export function cFormatter(num, digits, minimumFractionDigits) {
     return Intl.NumberFormat('th-TH',{
         maximumFractionDigits: digits, 
-        minimumFractionDigits: digits
+        minimumFractionDigits: minimumFractionDigits ?? digits
     }).format(num)
 }

@@ -8,6 +8,7 @@ import Box4 from './Box4';
 import CommissionBox from '../Components/commissionBox';
 import { useAppContext } from '../../../contexts/AppContext';
 import { ACCESS } from '../../../configs/access';
+import SalesBox from './SalesBox';
 
 function comissionContent({ isLoading, dateRange, selectedEmployee, selectedDepartment, onOpenModalClick }) {
 
@@ -27,7 +28,7 @@ function comissionContent({ isLoading, dateRange, selectedEmployee, selectedDepa
                     <Box2 isLoading={isLoading} />
                 </div>
                 <div>
-                    <Box3 isLoading={isLoading} />
+                    <SalesBox isLoading={isLoading} />
                 </div>
                 {/* <div>
                     <Box4 dateRange={dateRange} selectedEmployee={selectedEmployee} selectedDepartment={selectedDepartment} />

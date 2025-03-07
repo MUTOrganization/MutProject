@@ -97,7 +97,7 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
           points: []
         },
         dataLabels: {
-          enabled: true,
+          enabled: false,
           distributed: false,
           offsetY: -5,
           style: {
@@ -136,9 +136,9 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
       data: orderCount,
       color: '#F1C40F'
     },{
-      name: 'ออเดอร์อัพเซล',
+      name: 'ออเดอร์ที่ยังไม่ชำระเงิน',
       type: 'column',
-      data: upsaleOrderCount,
+      data: adminUnpaidOrderCounts.map((e,i) => e + upsaleUnpaidOrderCounts[i]),
       color: '#35ca5a'
     }];
   
@@ -176,7 +176,7 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
      */
     const orderCountOptions = {
       chart: {
-        stacked: isOrderExpandedChecked,
+        stacked: true,
         zoom: {
           enabled: false,
         }
@@ -198,7 +198,7 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
           width: [0,0,0,0]
       },
       dataLabels: {
-        enabled: true,
+        enabled: false,
         style: {
           colors: !isOrderExpandedChecked ? ['#e69d02', '#008a2e'] : ['#e69d02', '#912400', '#008a2e','#003308']
         },
@@ -209,7 +209,7 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
         bar: {
             dataLabels: {
                 total: {
-                    enabled: false
+                    enabled: true
                 },
             }
         }
@@ -218,7 +218,7 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
           labels:{
               formatter: (value) => typeof value !== 'undefined' ? cFormatter(value) : value
           },
-          tickAmount: 10
+          tickAmount: 10,
       },
       xaxis: {
           type: 'category',
@@ -259,22 +259,9 @@ export default function SaleOrderChart({data, isLoading, selectedYear}){
                 >
                 </Switch>
             </div>
-            <div className="absolute top-1 left-80">
-              {
-              isOrderchecked &&
-              <Checkbox
-                aria-label='check to expand order description'
-                className="z-10"
-                isSelected={isOrderExpandedChecked}
-                onChange={() => setIsOrderExpandedChecked(p => !p)}
-                >
-                  รายละเอียด
-                </Checkbox>
-              }
-            </div>
             <ReactApexChart key={'commChart'} 
             options={isOrderchecked ? orderCountOptions : salesOptions} 
-            series={isOrderchecked ? !isOrderExpandedChecked ? orderCountSeries : orderCountExpandedSeries : salesSeries} />
+            series={isOrderchecked ? orderCountSeries : salesSeries} />
           </div>
     )
 }

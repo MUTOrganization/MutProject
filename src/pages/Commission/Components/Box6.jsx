@@ -24,20 +24,10 @@ function Box6({ isLoading }) {
                         <div className='flex flex-row items-center gap-4'>
                             <span>ยอดขาย</span>
                             <Switch
+                                size='sm'
                                 isSelected={isOrderChecked}
                                 onChange={(e) => {
                                     setIsOrderChecked(e.target.checked);
-                                }}
-                                classNames={{
-                                    wrapper: "p-0 h-4 overflow-visible",
-                                    thumb: cn("w-6 h-6 border-2 shadow-lg",
-                                        "group-data-[hover=true]:border-primary",
-                                        // selected
-                                        "group-data-[selected=true]:ml-6",
-                                        // pressed
-                                        "group-data-[pressed=true]:w-7",
-                                        "group-data-[selected]:group-data-[pressed]:ml-4",
-                                    ),
                                 }}
                             />
                             <span>ออเดอร์</span>
@@ -55,7 +45,7 @@ function Box6({ isLoading }) {
                                     <div className='flex justify-between'>
                                         <span>รอจัดส่ง</span>
                                         <span>
-                                            {isOrderChecked ? cFormatter(orderStatus.wait.count) : cFormatter(orderStatus.wait.amount)}
+                                            {isOrderChecked ? cFormatter(8000 ?? orderStatus.wait.count) : cFormatter(4 ??orderStatus.wait.amount)}
                                         </span>
                                     </div>
                                 </div>
@@ -63,7 +53,7 @@ function Box6({ isLoading }) {
                                     <div className='flex justify-between'>
                                         <span>กำลังจัดส่ง</span>
                                         <span>
-                                            {isOrderChecked ? cFormatter(orderStatus.onDelivery.count) : cFormatter(orderStatus.onDelivery.amount)}
+                                            {isOrderChecked ? cFormatter(4000 ?? orderStatus.onDelivery.count) : cFormatter(2 ?? orderStatus.onDelivery.amount)}
                                         </span>
                                     </div>
                                 </div>
@@ -71,54 +61,27 @@ function Box6({ isLoading }) {
                                     <div className='flex justify-between'>
                                         <span>รับสินค้าแล้ว</span>
                                         <span>
-                                            {isOrderChecked ? cFormatter(orderStatus.finished.count) : cFormatter(orderStatus.finished.amount)}
+                                            {isOrderChecked ? cFormatter(33000 ?? orderStatus.finished.count) : cFormatter(18 ?? orderStatus.finished.amount)}
                                         </span>
                                     </div>
                                 </div>
                                 <div className='space-y-2 mt-2'>
                                     <div className='flex justify-between items-center'>
-                                        <Tooltip
+                                        {/* <Tooltip
                                             content={`รายละเอียดตีกลับ`}
                                             color='primary'
                                             className='text-white text-md'
                                             showArrow
-                                            delay={0}
-                                            closeDelay={0}
-                                            motionProps={{
-                                                variants: {
-                                                    exit: {
-                                                        opacity: 0,
-                                                        transition: {
-                                                            duration: 0.1,
-                                                            ease: "easeIn",
-                                                        }
-                                                    },
-                                                    enter: {
-                                                        opacity: 1,
-                                                        transition: {
-                                                            duration: 0.15,
-                                                            ease: "easeOut",
-                                                        }
-                                                    },
-                                                },
-                                            }}
                                         >
                                             <Link to='/Return-Order'>
                                                 <Chip color='primary' variant='flat' size='lg' radius='md'>
                                                     ตีกลับ
                                                 </Chip>
                                             </Link>
-                                        </Tooltip>
+                                        </Tooltip> */}
+                                        <span>ตีกลับ</span>
                                         <span>
                                             {isOrderChecked ? cFormatter(orderStatus.returned.count) : cFormatter(orderStatus.returned.amount)}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className='space-y-2 mt-2'>
-                                    <div className='flex justify-between'>
-                                        <span>ตีกลับอัพเซล</span>
-                                        <span>
-                                            {isOrderChecked ? cFormatter(orderStatus.upsaleReturned.count) : cFormatter(orderStatus.upsaleReturned.amount)}
                                         </span>
                                     </div>
                                 </div>

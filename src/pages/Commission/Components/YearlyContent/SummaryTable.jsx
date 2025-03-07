@@ -52,20 +52,20 @@ export default function SummaryTable({ data, isLoading, selectedYear}){
             >
                 <TableHeader>
                     <TableColumn key={'monthIndex'} align="center" allowsSorting >เดือน</TableColumn>
+                    <TableColumn key={'orderCount'} align="end" allowsSorting >จำนวนออเดอร์</TableColumn>
                     <TableColumn key={'totalIncome'} align="end" allowsSorting >ยอดเงินเข้ารวม</TableColumn>
-                    <TableColumn key={'totalDelivery'} align="end" allowsSorting >ยอดค่าส่งรวม</TableColumn>
                     <TableColumn key={'netIncome'} align="end" allowsSorting >ยอดเงินสุทธิ</TableColumn>
                     <TableColumn key={'commission'} align="end" allowsSorting >คอมมิชชั่น</TableColumn>
                 </TableHeader>
                 <TableBody items={sortedRows} loadingContent={<Spinner />}  isLoading={isLoading}>
                     {sortedRows.map(item => {
-                        const fields = ['totalIncome','totalDelivery','netIncome','commission'];
+                        const fields = ['orderCount','totalIncome','netIncome','commission'];
                         return(
                             <TableRow key={item.monthIndex}>
                                 <TableCell className="text-center">{item.monthIndex + 1} {/*currentDate.year === selectedYear && currentDate.month === item.monthIndex + 1 && '(ปัจจุบัน)'*/}</TableCell>
                                 {
                                     fields.map(field => {
-                                        const value = cFormatter(item[field], 2)
+                                        const value = field === 'orderCount' ? cFormatter(item[field], 0) : cFormatter(item[field], 2)
                                         return(
                                             <TableCell key={field} className="text-end px-6">{value}</TableCell>
                                         )
@@ -76,8 +76,8 @@ export default function SummaryTable({ data, isLoading, selectedYear}){
                     } )}
                     <TableRow className="sticky bottom-0 bg-slate-200 border-0 z-10 rounded-lg">
                         <TableCell className="font-bold">รวม</TableCell>
+                        <TableCell className="font-bold px-6">{cFormatter(lodash.sumBy(data,'orderCount'),0)}</TableCell>
                         <TableCell className="font-bold px-6">{cFormatter(lodash.sumBy(data,'totalIncome'),2)}</TableCell>
-                        <TableCell className="font-bold px-6">{cFormatter(lodash.sumBy(data,'totalDelivery'),2)}</TableCell>
                         <TableCell className="font-bold px-6">{cFormatter(lodash.sumBy(data,'netIncome'),2)}</TableCell>
                         <TableCell className="font-bold px-6">{cFormatter(lodash.sumBy(data,'commission'),2)}</TableCell>
                     </TableRow>

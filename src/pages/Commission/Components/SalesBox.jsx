@@ -3,7 +3,7 @@ import { Card, CardBody, Spinner } from '@nextui-org/react';
 import { useCommissionContext } from '../CommissionContext';
 import { cFormatter } from '../../../../utils/numberFormatter';
 
-function Box1({ isLoading }) {
+function SalesBox({ isLoading }) {
     const {commData} = useCommissionContext()
     return (
         <div>
@@ -17,7 +17,7 @@ function Box1({ isLoading }) {
                         <>
                             <div className="relative">
                                 <div className="flex justify-center items-center">
-                                    <div className="font-bold p-2 text-2xl text-center">ยอดเงินเข้า</div>
+                                    <div className="font-bold p-2 text-2xl text-center">ยอดขาย</div>
                                 </div>
                             </div>
                             <CardBody className="flex sm:flex-col md:grid md:grid-row gap-4 p-1">
@@ -25,7 +25,7 @@ function Box1({ isLoading }) {
                                     <div className="text-center">
                                         <span className="text-4xl font-bold text-green-600">
                                             <sup style={{ fontSize: '0.6em' }}>฿</sup>
-                                            {cFormatter(40000 || commData?.adminPaidIncome + commData?.upsalePaidIncome, 2)}
+                                            {cFormatter(45000 || commData?.adminIncome + commData?.upsaleIncome, 2)}
                                         </span>
                                     </div>
                                 </div>
@@ -38,4 +38,4 @@ function Box1({ isLoading }) {
     )
 }
 
-export default Box1
+export default SalesBox

@@ -30,17 +30,7 @@ function Box5({ isLoading, dateRange, selectedEmployee }) {
                             <Switch
                                 isSelected={isOrderMoneyChecked}
                                 onChange={(e) => setIsOrderMoneyChecked(e.target.checked)}
-                                classNames={{
-                                    wrapper: "p-0 h-4 overflow-visible",
-                                    thumb: cn("w-6 h-6 border-2 shadow-lg",
-                                        "group-data-[hover=true]:border-primary",
-                                        // selected
-                                        "group-data-[selected=true]:ml-6",
-                                        // pressed
-                                        "group-data-[pressed=true]:w-7",
-                                        "group-data-[selected]:group-data-[pressed]:ml-4",
-                                    ),
-                                }}
+                                size='sm'
                             />
                             <span>ออเดอร์</span>
                         </div>
@@ -54,12 +44,12 @@ function Box5({ isLoading, dateRange, selectedEmployee }) {
                         ) : (
                             <div className='space-y-2'>
                                 <ProgressBar title={'ยอดรวม'} 
-                                    value={!isOrderMoneyChecked ? sumOrderTypes.paidIncome : sumOrderTypes.paidOrderCount} 
-                                    maxValue={!isOrderMoneyChecked ? sumOrderTypes.income : sumOrderTypes.orderCount} 
+                                    value={!isOrderMoneyChecked ? (40000 ?? sumOrderTypes.paidIncome) : (24 ?? sumOrderTypes.paidOrderCount)} 
+                                    maxValue={!isOrderMoneyChecked ? (45000 ?? sumOrderTypes.income) : (24 ?? sumOrderTypes.orderCount)} 
                                     isCurrency={!isOrderMoneyChecked}
                                     color={progressbarColors[0]}
                                 />
-                                {commData.paymentTypes.map((type, index) => {
+                                {([{type: 'COD', paidIncome: 30000, income: 35000, paidOrderCount: 15, orderCount: 19}, {type: 'TRANSFER', paidIncome: 10000, income: 10000, paidOrderCount: 5, orderCount: 5}] ?? commData.paymentTypes).map((type, index) => {
                                     return(
                                         <ProgressBar key={type.type} title={type.type}
                                             value={!isOrderMoneyChecked ? type.paidIncome : type.paidOrderCount}
