@@ -19,10 +19,8 @@ import { Chip, Card } from "@nextui-org/react";
 import { useAppContext } from "../contexts/AppContext";
 import NavMenu from "./NavMenu";
 import UserProfileAvatar from "./UserProfileAvatar";
-import TopupModal from "./TopupModal";
 import { LogoutIcon } from './Icons'
 import { useNavigate } from "react-router-dom";
-import { ACCESS } from "../configs/access";
 
 function Navbar({ title }) {
   const { currentUser, logout } = useAppContext();
@@ -60,8 +58,6 @@ function Navbar({ title }) {
 
   return (
     <>
-      <TopupModal open={openModalTopup} onClose={e => setOpenModalTopup(e)} />
-
       <NextUINavbar
         maxWidth="2xl"
         isMenuOpen={isMenuOpen}
@@ -131,19 +127,6 @@ function Navbar({ title }) {
 
                 </div>
               </DropdownItem>
-              {/* <DropdownItem key="settings" color="primary">
-                KPI ของฉัน
-              </DropdownItem> */}
-              {/* {currentData.accessCheck.haveAny([ACCESS.topup.topup_own_view]) && (
-                <DropdownItem key="topUp" color="primary" onPress={() => setOpenModalTopup(true)}>
-                  เติมเงิน
-                </DropdownItem>
-              )} */}
-              {/* {currentData.accessCheck.haveAny([ACCESS.TransactionHistory.viewOwner]) && (
-                <DropdownItem key="analytics" color="primary" onPress={() => navigate('/HistoryTopUp')}>
-                  ประวัติการทำธุรกรรม
-                </DropdownItem>
-              )} */}
               <DropdownItem key="settings" color="danger" startContent={<LogoutIcon />} onPress={handleLogout}>
                 ออกจากระบบ
               </DropdownItem>
