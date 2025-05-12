@@ -40,15 +40,6 @@ function TabsOthersCost() {
   const [searchDateWithDraw, setSearchDateWithDraw] = useState('')
   const [searchDepartment, setSearchDepartment] = useState('ทั้งหมด')
 
-  // useEffect(() => {
-  //   if (contextData.agent && contextData.agent.selectedAgent && contextData.agent.selectedAgent.id) {
-  //     setSelectAgentFromModal(contextData.agent.selectedAgent.id)
-  //   }
-  //   else {
-  //     setSelectAgentFromModal(currentUser.businessId === 1 ? '0' : currentUser.businessId)
-  //   }
-  // }, []);
-
   return (
     <div className='body-container'>
       <Data.Provider value={{
@@ -63,10 +54,6 @@ function TabsOthersCost() {
         {isSwap === 'otherExpenses' && (
           <Contents />
         )}
-        {/* {isSwap === 'withDraw' && (
-          <WithDraw />
-        )} */}
-
       </Data.Provider>
     </div>
   )

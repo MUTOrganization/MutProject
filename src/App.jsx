@@ -18,6 +18,7 @@ import { CircularProgress } from "@nextui-org/react";
 import { Toaster } from "sonner";
 import ConfirmCommissionBody from "./pages/ConfirmCommssion/ConfirmCommissionBody";
 import DashboardOverView from "./pages/DashboardOverView/DashboardOverView";
+import DashboardCEO from "./pages/DashboardCEO/DashboardCEO";
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
@@ -65,6 +66,11 @@ const primaryRoutes = {
       path: "/Dashboard-Overview",
       component: <DashboardOverView />,
       title: "แดชบอร์ดยอดสั่งซื้อ",
+    },
+    {
+      path: "/Dashboard-CEO",
+      component: <DashboardCEO />,
+      title: "แดชบอร์ดผู้บริหาร",
     },
   ],
 };

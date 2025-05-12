@@ -69,6 +69,12 @@ export const mainMenuItems = {
       ACCESS.commisson.commissionOwnerAgentView,
     ],
   },
+  DashboardCEO: {
+    path: "/Dashboard-CEO",
+    text: "แดชบอร์ดผู้บริหาร",
+    icon: <DashboardCEOIcon />,
+    access: [ACCESS.dashboardCEO.ceo_view],
+  },
   // DashBoardInsights: {
   //   path: "/Dashboard-Insights",
   //   text: "แดชบอร์ด RFM",
@@ -239,9 +245,8 @@ function Sidebar() {
   return (
     <Card className="rounded-none shadow-lg">
       <div
-        className={`hidden xl:flex h-screen justify-center ${
-          isFixed ? "sidebar-fixed" : ""
-        }`}
+        className={`hidden xl:flex h-screen justify-center ${isFixed ? "sidebar-fixed" : ""
+          }`}
         onMouseEnter={() => !isFixed && setIsHovered(true)}
         onMouseLeave={() => !isFixed && setIsHovered(false)}
       >
@@ -258,9 +263,8 @@ function Sidebar() {
                 <img
                   src="/img/logosidebar.png"
                   alt="Decorative Icon"
-                  className={`transition-transform duration-300 ${
-                    isHovered || isFixed ? "w-96" : "w-12 mt-2"
-                  }`}
+                  className={`transition-transform duration-300 ${isHovered || isFixed ? "w-96" : "w-12 mt-2"
+                    }`}
                 />
               </div>
               <div>
@@ -389,13 +393,12 @@ export function MainMenu({ isShow, isNavMenu }) {
                               <Link
                                 to={subValue.path}
                                 className={`rounded-none py-3 flex items-center hover:bg-custom-menu-hover transition-colors duration-200 
-                                ${
-                                  location.pathname === subValue.path
+                                ${location.pathname === subValue.path
                                     ? isNavMenu
                                       ? "text-primary"
                                       : " bg-custom-menu-hover border-r-4 border-custom-menu text-black "
                                     : ""
-                                }`}
+                                  }`}
                               >
                                 <span className="flex items-center justify-center w-12 ml-2">
                                   {subValue.icon}
@@ -420,12 +423,11 @@ export function MainMenu({ isShow, isNavMenu }) {
                 <Link
                   to={value.path}
                   className={`rounded-none py-3 flex items-center hover:bg-custom-menu-hover transition-colors duration-200 
-                    ${
-                      location.pathname === value.path
-                        ? isNavMenu
-                          ? "text-primary"
-                          : " bg-custom-menu-hover border-r-4 border-custom-menu text-black "
-                        : ""
+                    ${location.pathname === value.path
+                      ? isNavMenu
+                        ? "text-primary"
+                        : " bg-custom-menu-hover border-r-4 border-custom-menu text-black "
+                      : ""
                     }`}
                 >
                   <span className="flex items-center justify-center w-12 ml-2">
