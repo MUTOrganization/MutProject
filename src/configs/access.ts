@@ -193,6 +193,4 @@ export const ACCESS = {
         okr_personalprofile: 'okr_profile',
         okr_dashboard: 'okr_dashboard',
     }
-
-
 }
