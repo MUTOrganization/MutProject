@@ -128,9 +128,9 @@ function AddDepartments({ open, close, isAdded = false, businessId, currentUser,
                             size="sm" />
                     </div>
 
-                    {businessId === 1 &&
+                    {(businessId === 1 && !isEditing) &&
                         <div>
-                            <Checkbox aria-label="checkAddDepToAgent" onChange={e => setIsAddedAllAgent(e.target.checked)} className="text-sm" size="md" color="primary">{CompareStatus(isEditing, { true: 'แก้ไขให้ตัวแทนทั้งหมด', false: 'สร้างให้ตัวแทนทั้งหมด' })}</Checkbox>
+                            <Checkbox aria-label="checkAddDepToAgent" onChange={e => setIsAddedAllAgent(e.target.checked)} className="text-sm" size="md" color="primary">สร้างให้ตัวแทนทั้งหมด</Checkbox>
                         </div>
                     }
                 </ModalBody>
@@ -293,9 +293,9 @@ function ManageDepartments() {
             isHq: 0,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
         },
         {
             id: 2,
@@ -303,9 +303,9 @@ function ManageDepartments() {
             isHq: 1,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
         },
         {
             id: 3,
@@ -313,9 +313,9 @@ function ManageDepartments() {
             isHq: 0,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
         },
         {
             id: 4,
@@ -323,9 +323,9 @@ function ManageDepartments() {
             isHq: 1,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
         },
         {
             id: 5,
@@ -333,9 +333,9 @@ function ManageDepartments() {
             isHq: 0,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
 
         },
         {
@@ -344,9 +344,9 @@ function ManageDepartments() {
             isHq: 1,
             status: 1,
             createDate: '2021-01-01',
-            createBy: 'hq000_o',
+            createBy: 'hq000_ore',
             updateDate: '2021-01-01',
-            updateBy: 'hq000_o',
+            updateBy: 'hq000_ore',
         },
     ]
     //#endregion

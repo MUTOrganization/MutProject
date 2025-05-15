@@ -309,10 +309,57 @@ function Permission() {
         }
         const setData = lodash.groupBy(res.data, "groupName");
         setAccessData(
-          Object.entries(setData).map(([groupName, items]) => ({
-            groupName,
-            items,
-          }))
+          [
+            {
+            groupName: 'ทั่วไป',
+            items: [
+              {
+                accessName: 'เป็นผู้บริหาร',
+                accessCode: 'general_executive',
+                description: 'เป็นผู้บริหารของตัวแทนโดยจะสามารถเข้าถึงทุก User ในตัวแทนนั้นได้'
+              },
+              {
+                accessName: 'เป็นผู้จัดการ',
+                accessCode: 'general_manager',
+                description: 'เป็นผู้จัดการของแผนกโดยจะสามารถเข้าถึงทุก User ในแผนกนั้นได้'
+              },
+              {
+                accessName: 'เป็นพนักงานทั่วไป',
+                accessCode: 'general_employee',
+                description: 'เป็นพนักงานทั่วไปโดยจะสามารถเข้าถึงได้แค่ตัวเองเท่านั้น'
+              }
+            ],
+          },
+          {
+            groupName: 'การจัดการสิทธิ์',
+            items: [
+              {
+                accessName: 'เข้าถึง',
+                accessCode: 'access_manage_view',
+                description: 'สามารถเข้าถึงหน้าจัดการสิทธิ์การเข้าถึงได้'
+              },
+              {
+                accessName: 'เพิ่ม',
+                accessCode: 'access_manage_add',
+                description: 'สามารถเพิ่มสิทธิ์การเข้าถึงได้'
+              },
+              {
+                accessName: 'แก้ไข',
+                accessCode: 'access_manage_edit',
+                description: 'สามารถแก้ไขสิทธิ์การเข้าถึงได้'
+              },
+              {
+                accessName: 'ลบ',
+                accessCode: 'access_manage_delete',
+                description: 'สามารถลบสิทธิ์การเข้าถึงได้'
+              }
+            ]
+          }
+        ]
+          // Object.entries(setData).map(([groupName, items]) => ({
+          //   groupName,
+          //   items,
+          // }))
         );
       })
       .catch((err) => {

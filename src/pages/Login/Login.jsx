@@ -68,8 +68,8 @@ function Login() {
             className="mb-5 p-0"
             style={{ width: "300px", height: "100px" }}
           />
-          <div className="flex justify-start w-full">
-            <div className="text-center font-semibold text-xl">เข้าสู่ระบบ</div>
+          <div className="flex justify-start w-64">
+            <div className="text-center font-semibold text-lg">เข้าสู่ระบบ</div>
           </div>
           
           <form onSubmit={handleSubmit}>
@@ -139,7 +139,7 @@ function Login() {
             src="/img/infoLogin.png"
             alt="Logo Title"
             className="mb-5 p-0"
-            style={{ width: "300px", height: "100px" }}
+            style={{ width: "300px", height: "300px" }}
           />
         </Card>
       </div>

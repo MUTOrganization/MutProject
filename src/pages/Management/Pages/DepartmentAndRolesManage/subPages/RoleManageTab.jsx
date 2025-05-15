@@ -525,11 +525,12 @@ export default function RoleManageTab() {
                         title={'ยืนยันการลบตำแหน่ง'}
                         content={<div className="w-full p-2 text-center">
                         <p>ต้องการลบตำแหน่ง</p>
-                        <p className=""> <span className="text-lg text-wrap text-red-500">{selectedDeleteRole?.departmentName} - {selectedDeleteRole?.roleName}</span> หรือไม่</p>
+                        <p className=""> <span className="text-lg text-wrap text-red-500">{'Accounting' ?? selectedDeleteRole?.departmentName} - {'Manager' ?? selectedDeleteRole?.roleName}</span> หรือไม่</p>
                     </div>}
                         isOpen={isShowAlert} onClose={() => setIsShowAlert(false)}
                         isLoading={loadSubmit}
                         onConfirm={handleDeleteRole}
+                        color="danger"
                     >
 
                     </AlertQuestion>
@@ -548,12 +549,12 @@ export default function RoleManageTab() {
                                     <div className=" mx-8 mb-4 p-3">
                                         <div className="mb-6">
                                             <Select aria-label="department select" label="เลือกแผนก" variant="bordered"
-                                                selectedKeys={selectedDep ? [selectedDep?.id + ""] : []}
-                                                onSelectionChange={(key) => handleSelectDep(Array.from(key)[0])}
+                                                // selectedKeys={selectedDep ? [selectedDep?.id + ""] : []}
+                                                // onSelectionChange={(key) => handleSelectDep(Array.from(key)[0])}
                                                 isInvalid={showValidate && selectedDep.id === null}
                                             >
-                                                {depList.filter(e => selectedAgent.id == '1' || e.isHq == '0')?.map(dep => (
-                                                    <SelectItem key={String(dep.id)}  endContent={dep.isHq == '1' ? <Chip color="success" size="sm" variant="flat">สำนักงานใหญ่</Chip> : null} >
+                                                {(dummyDeps ?? depList).filter(e => selectedAgent.id == '1' || e.isHq == '0')?.map(dep => (
+                                                    <SelectItem key={String(dep.id)}  endContent={dep.isHq == '1' ? <Chip color="success" size="sm" variant="flat">HQ</Chip> : null} >
                                                         {dep.departmentName}
                                                     </SelectItem>
                                                 ))}
@@ -624,8 +625,8 @@ export default function RoleManageTab() {
                                         selectedKeys={selectedSortDep?.id ? [selectedSortDep.id + ""] : []}
                                         onSelectionChange={(key) => handleSortDepSelect(Array.from(key)[0])}
                                     >
-                                        {depList.filter(e => selectedAgent.id == '1' || e.isHq == '0')?.map(dep => (
-                                            <SelectItem key={String(dep.id)}  endContent={dep.isHq == '1' ? <Chip color="success" size="sm" variant="flat">สำนักงานใหญ่</Chip> : null} >
+                                        { (dummyDeps??  depList).filter(e => selectedAgent.id == '1' || e.isHq == '0')?.map(dep => (
+                                            <SelectItem key={String(dep.id)}  endContent={dep.isHq == '1' ? <Chip color="success" size="sm" variant="flat">HQ</Chip> : null} >
                                                 {dep.departmentName}
                                             </SelectItem>
                                         ))}
