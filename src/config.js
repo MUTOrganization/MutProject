@@ -1,7 +1,7 @@
 const BASE_URL_LOCAL = "http://localhost:3001/api/v1";
 const BASE_URL_PROD = "https://one-server.hopeful.co.th/api/v1";
 
-const BASE_URL = BASE_URL_PROD;
+const BASE_URL = BASE_URL_LOCAL;
 
 export const URLS = {
   STATSPLATFORM: `${BASE_URL}/statPlatform`,

@@ -195,6 +195,7 @@ export default function Contents() {
                     className="w-48"
                     size="sm"
                     label='ประเภท'
+                    aria-label='ประเภท'
                     onChange={handleChange}
                     placeholder='ทั้งหมด'
                 >

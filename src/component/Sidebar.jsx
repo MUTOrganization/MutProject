@@ -64,9 +64,7 @@ export const mainMenuItems = {
     text: "แดชบอร์ด Sales",
     icon: <DashboardCEOIcon />,
     access: [
-      ACCESS.commisson.commissionOwnVeiw,
-      ACCESS.commisson.commissionAllVeiw,
-      ACCESS.commisson.commissionOwnerAgentView,
+      ACCESS.commisson.commissionView,
     ],
   },
   DashboardCEO: {

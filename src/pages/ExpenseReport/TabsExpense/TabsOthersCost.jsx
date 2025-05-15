@@ -43,17 +43,12 @@ function TabsOthersCost() {
   return (
     <div className='body-container'>
       <Data.Provider value={{
-        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange,
-        setDateRange, isSwap, setIsSwap, data, setData, isAddWithDraw, setIsAddWithDraw,
-        searchWithDraw, setSearchWithDraw, searchDateWithDraw, setSearchDateWithDraw, searchDepartment,
-        setSearchDepartment, currentUser, selectedAgent,
-        typeData, setTypeData, isManageType, setIsManageType
+        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, isSwap, setIsSwap, data, setData, isAddWithDraw, setIsAddWithDraw, searchWithDraw, setSearchWithDraw,
+        searchDateWithDraw, setSearchDateWithDraw, searchDepartment, setSearchDepartment, currentUser, selectedAgent, typeData, setTypeData, isManageType, setIsManageType
       }}>
 
         <ControlBar />
-        {isSwap === 'otherExpenses' && (
-          <Contents />
-        )}
+        <Contents />
       </Data.Provider>
     </div>
   )
