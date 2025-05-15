@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { URLS } from '../src/config';
+import { BASE_URL } from '@/config';
 
 
 const fetchProtectedData = {
@@ -85,7 +85,7 @@ async function fetchData(url, method = 'GET', data = {}, config = {}, count = 0)
 async function refreshAccessToken() {
   
   try {
-    const response = await axios.post(URLS.REFRESHTOKEN, {}, {
+    const response = await axios.post(BASE_URL + '/auth/refreshToken', {}, {
         withCredentials: true
     });
 
