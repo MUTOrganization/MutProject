@@ -258,6 +258,58 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
         const selectedIds = new Set(_selectedAccess.map(se => se.id));
         return allAccess.every(e => selectedIds.has(e.id));
     },[])
+
+
+    const dummyRightAccess = [
+          {
+            accessName: 'เป็นผู้บริหาร',
+            accessCode: 'general_executive',
+            description: 'เป็นผู้บริหารของตัวแทนโดยจะสามารถเข้าถึงทุก User ในตัวแทนนั้นได้',
+            groupName: 'ทั่วไป',
+          },
+          
+          {
+            accessName: 'เป็นพนักงานทั่วไป',
+            accessCode: 'general_employee',
+            description: 'เป็นพนักงานทั่วไปโดยจะสามารถเข้าถึงได้แค่ตัวเองเท่านั้น',
+            groupName: 'ทั่วไป',
+          },
+          {
+            accessName: 'เพิ่ม',
+            accessCode: 'access_manage_add',
+            description: 'สามารถเพิ่มสิทธิ์การเข้าถึงได้',
+            groupName: 'การจัดการสิทธิ์',
+          },
+          {
+            accessName: 'แก้ไข',
+            accessCode: 'access_manage_edit',
+            description: 'สามารถแก้ไขสิทธิ์การเข้าถึงได้',
+            groupName: 'การจัดการสิทธิ์',
+          },
+          {
+            accessName: 'ลบ',
+            accessCode: 'access_manage_delete',
+            description: 'สามารถลบสิทธิ์การเข้าถึงได้',
+            groupName: 'การจัดการสิทธิ์',
+          }
+    ]
+
+    const dummyRoleAccess = [
+          {
+            accessName: 'เข้าถึง',
+            accessCode: 'access_manage_view',
+            description: 'สามารถเข้าถึงหน้าจัดการสิทธิ์การเข้าถึงได้',
+            groupName: 'การจัดการสิทธิ์',
+          },
+          {
+            accessName: 'เป็นผู้จัดการ',
+            accessCode: 'general_manager',
+            description: 'เป็นผู้จัดการของแผนกโดยจะสามารถเข้าถึงทุก User ในแผนกนั้นได้',
+            groupName: 'ทั่วไป',
+          },
+         
+    ]
+
     return(
         <>
             <div className="mx-6 mb-3 text-start flex justify-between h-8">
@@ -283,9 +335,9 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                         {/* <div className="bg-base-100 rounded-lg shadow-md w-full"> */}
                             <CardHeader className="sticky flex font-semibold shadow-md z-10 bg-white">
                                 <div className="w-1/2 text-center text-sm text-green-600 flex justify-between">
-                                    <div>{!isDisable &&
+                                    <div>{isDisable &&
                                         <Checkbox size="sm"
-                                            isSelected={checkAllAccessChecked(selectedAccess.list, displayRoleAccess)} 
+                                            //isSelected={checkAllAccessChecked(selectedAccess.list, displayRoleAccess)} 
                                             onValueChange={() => hanldeSelectAll('l')}
                                         ></Checkbox>}
                                     </div>
@@ -299,9 +351,9 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                                 </div>
                                 <div className="w-12"></div>
                                 <div className="w-1/2 text-center text-sm text-red-600 flex justify-between ms-4">
-                                    <div>{!isDisable &&
+                                    <div>{isDisable &&
                                         <Checkbox size="sm"
-                                            isSelected={checkAllAccessChecked(selectedAccess.list, displayRightAccess)} 
+                                            //isSelected={checkAllAccessChecked(selectedAccess.list, displayRightAccess)} 
                                             onValueChange={() => hanldeSelectAll('r')}
                                         ></Checkbox>}
                                     </div>
@@ -321,20 +373,20 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                                             (loadingRolesAccess || loadAccessList) ?
                                             <div className="flex justify-center mt-4"><CircularProgress aria-label="loading" /></div>
                                             :
-                                            !selectedRole ?
+                                            selectedRole ?
                                             <div className="font-semibold mt-4 text-center">กรุณาเลือกตำแหน่ง</div> 
                                             :
-                                            (roleAccess.length === 0) ?
+                                            (dummyRoleAccess.length === 0) ?
                                             <div className="font-semibold mt-4 text-center">ตำแหน่งนี้ไม่มีสิทธิ์อยู่</div>
                                             :
-                                            Object.keys(groupArray(displayRoleAccess,'groupName')).map((groupKey,groupKey_index) => {
-                                                const accGroups = groupArray(displayRoleAccess,'groupName');
+                                            Object.keys(groupArray((dummyRoleAccess ?? displayRoleAccess),'groupName')).map((groupKey,groupKey_index) => {
+                                                const accGroups = groupArray((dummyRoleAccess ?? displayRoleAccess),'groupName');
                                                 return(
                                                     <div key={groupKey_index} className="">
                                                         <div className="sticky top-0 z-10 py-1 font-semibold bg-primary-50 text-primary-700 text-center flex justify-between px-2">
-                                                            <div>{!isDisable &&
+                                                            <div>{isDisable &&
                                                                 <Checkbox size="sm"
-                                                                    isSelected={checkAllAccessInGroupChecked(groupKey, selectedAccess.list, displayRoleAccess)} 
+                                                                    //isSelected={checkAllAccessInGroupChecked(groupKey, selectedAccess.list, displayRoleAccess)} 
                                                                     onValueChange={() => handleSelectGroup(groupKey, 'l')}
                                                                 ></Checkbox>}
                                                             </div>
@@ -356,7 +408,7 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                                                                                 >
                                                                                     <div className="w-10">
                                                                                     {
-                                                                                        !isDisable &&
+                                                                                        isDisable &&
                                                                                         <Checkbox size="sm"
                                                                                             isSelected={selectedAccess.list.some(e => e.id == acc.id)} 
                                                                                             onValueChange={() => handleSelectAccess(null,'l', acc)}
@@ -424,17 +476,17 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                                             (loadingRolesAccess || loadAccessList) ?
                                             <div className="flex justify-center mt-4"><CircularProgress aria-label="loading" /></div>
                                             :
-                                            !selectedRole ?
+                                            selectedRole ?
                                             <div className="mt-4 font-semibold text-center">กรุณาเลือกตำแหน่ง</div> 
                                             :
-                                            Object.keys(groupArray(displayRightAccess,'groupName')).map((groupKey,groupKey_index) => {
-                                                const accGroups = groupArray(displayRightAccess,'groupName');
+                                            Object.keys(groupArray((dummyRightAccess ?? displayRightAccess),'groupName')).map((groupKey,groupKey_index) => {
+                                                const accGroups = groupArray((dummyRightAccess ?? displayRightAccess),'groupName');
                                                 return(
                                                     <div key={groupKey_index}>
                                                         <div className="sticky top-0 z-10 py-1 font-semibold bg-primary-50 text-primary-700 text-center shadow-md flex justify-between px-2">
-                                                            <div>{!isDisable &&
+                                                            <div>{isDisable &&
                                                                 <Checkbox size="sm"
-                                                                    isSelected={checkAllAccessInGroupChecked(groupKey, selectedAccess.list, displayRightAccess)} 
+                                                                    // isSelected={checkAllAccessInGroupChecked(groupKey, selectedAccess.list, displayRightAccess)} 
                                                                     onValueChange={() => handleSelectGroup(groupKey, 'r')}
                                                                 ></Checkbox>}
                                                             </div>
@@ -452,7 +504,7 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
                                                                                 onClick={(event) => handleSelectAccess(event,'r', acc)}>
                                                                                     <div className="w-10">
                                                                                     {
-                                                                                        !isDisable &&
+                                                                                        isDisable &&
                                                                                         <Checkbox size="sm"
                                                                                             isSelected={selectedAccess.list.some(e => e.id == acc.id)} 
                                                                                             onValueChange={() => handleSelectAccess(null,'r', acc)}

@@ -51,7 +51,7 @@ export default function DepartmentAndRoleManage(){
                             }
                         />
                     }
-                    {
+                    {/* {
                         (accessCheck.haveAll([ACCESS.role_manage.roleManage_view, ACCESS.department.manage]) && currentUser.businessId == 1) &&
                         <Tab
                             key="defaultDepRole"
@@ -61,7 +61,7 @@ export default function DepartmentAndRoleManage(){
                                 </div>
                             }
                         />
-                    }
+                    } */}
 
 
                 </Tabs>
