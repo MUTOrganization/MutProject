@@ -1,7 +1,7 @@
-const BASE_URL_LOCAL = "http://localhost:3001/api/v1";
-const BASE_URL_PROD = "https://one-server.hopeful.co.th/api/v1";
+const BASE_URL_LOCAL = "http://localhost:3001/api/v1/";
+const BASE_URL_PROD = "https://one-server.hopeful.co.th/api/v1/";
 
-const BASE_URL = BASE_URL_LOCAL;
+export const BASE_URL = BASE_URL_LOCAL;
 
 export const URLS = {
   STATSPLATFORM: `${BASE_URL}/statPlatform`,
@@ -279,10 +279,10 @@ export const URLS = {
     getAllYears: `${BASE_URL}/awards/getAllYears`, // GET query {businessId}
   },
 
-  okr : {
-    getGradeSetting : `${BASE_URL}/okr/getGradeSettings`, // GET query {businessId,year}
+  okr: {
+    getGradeSetting: `${BASE_URL}/okr/getGradeSettings`, // GET query {businessId,year}
 
-    updateGradeSetting : `${BASE_URL}/okr/updateGradeSetting`, // POST body {businessId , year ,grades}
+    updateGradeSetting: `${BASE_URL}/okr/updateGradeSetting`, // POST body {businessId , year ,grades}
   },
 
   googleCloud: {
