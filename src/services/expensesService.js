@@ -1,9 +1,11 @@
 import api from "@/configs/api";
 
-async function addExpenses() {
-    const url = 'expenses/addExpenses';
+async function addExpensesType(action, agentId, typeName) {
+    const url = 'otherExpenses/manageExpenses';
     const res = await api.post(url, {
-        expenses
+        action,
+        agentId,
+        typeName
     })
     return res.data
 }
@@ -18,4 +20,4 @@ async function getExpensesType(agentId) {
     return res.data
 }
 
-export default { addExpenses, getExpensesType }
+export default { addExpensesType, getExpensesType }

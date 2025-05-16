@@ -4,18 +4,13 @@ import React, { useEffect, useState } from 'react'
 import fetchProtectedData from '../../../../../utils/fetchData'
 import { URLS } from '../../../../config'
 import { toast } from 'sonner'
+import expensesService from '@/services/expensesService'
 
 function ModalTypeExpenses({ isOpen, onClose, selectedAgent, currentUser, setTypeData, setTypeName, typeName, setIsManageType }) {
 
     const InsertData = async () => {
-        const url = `${URLS.OTHEREXPENSES}/manageExpenses`
         try {
-            const res = await fetchProtectedData.post(url, {
-                action: 'insert',
-                businessId: selectedAgent,
-                typeExpenses: typeName,
-                create_By: currentUser.userName
-            })
+            await expensesService.addExpensesType('insert', currentUser.agent.id, typeName)
             toast.success('เพิ่มข้อมูลสำเร็จ', { position: 'top-right' })
             setIsManageType(true)
         } catch (error) {

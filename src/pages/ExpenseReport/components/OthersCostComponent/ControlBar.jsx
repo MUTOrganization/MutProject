@@ -46,7 +46,7 @@ function ControlBar() {
 
     const getData = async () => {
         try {
-            const res = await getExpensesType.getExpensesType(2)
+            const res = await getExpensesType.getExpensesType(currentUser.agent.id)
             setTypeData(res)
         } catch (err) {
             console.log('Error', err)
