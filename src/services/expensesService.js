@@ -20,4 +20,8 @@ async function getExpensesType(agentId) {
     return res.data
 }
 
+async function addExpenses() {
+
+}
+
 export default { addExpensesType, getExpensesType }

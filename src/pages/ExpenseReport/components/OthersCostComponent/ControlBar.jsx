@@ -17,6 +17,7 @@ import AgentSelector from '../../../../component/AgentSelector';
 import ModalTypeExpenses from '../OtherExpensesModal/ModalTypeExpenses';
 import ModalManageTypeExpenses from '../OtherExpensesModal/ModalManageTypeExpenses';
 import getExpensesType from '@/services/expensesService'
+import ModalAddExpensesDetails from '../OtherExpensesModal/ModalAddExpensesDetails';
 
 function ControlBar() {
 
@@ -29,7 +30,7 @@ function ControlBar() {
     const currentMonthStart = startOfMonth(today());
     const currentMonthEnd = endOfMonth(today());
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [isOpen, setIsOpen] = useState(false)
     const [isEdit, setIsEdit] = useState(false)
     const [isEnable, setIsEnable] = useState(false)
     const [showBtnEdit, setShowBtnEdit] = useState(false)
@@ -71,27 +72,26 @@ function ControlBar() {
     const departments = ["ทั้งหมด", "CRM", "SALE", "ADS", "Data & MARKETING", "ACC", "IT", "HR", "GM"];
     const [selectedData, setSelectedData] = useState({
         date: new Date().toISOString().split('T')[0],
-        list: [{ list: '', qty: '', price: '', totalAmount: '' }],
+        list: [{ name: '', qty: '', price: '', totalAmount: '' }],
         remark: null
     });
 
     const [editData, setEditData] = useState({
         date: null,
-        list: [{ list: '', qty: '', price: '', totalAmount: '' }],
+        list: [{ name: '', qty: '', price: '', totalAmount: '' }],
         remark: null
     })
-
 
     const addExpenseItem = () => {
         if (oldData) {
             setEditData((prev) => ({
                 ...prev,
-                list: [...prev.list, { list: '', qty: '', price: '', totalAmount: '' }]
+                list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
             }));
         } else {
             setSelectedData((prev) => ({
                 ...prev,
-                list: [...prev.list, { list: '', qty: '', price: '', totalAmount: '' }]
+                list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
             }));
         }
     };
@@ -157,53 +157,20 @@ function ControlBar() {
 
     const handleChange = (selectedKey) => {
         let getKey = selectedKey.target.value
-        const findValueById = typeData.find(e => String(e?.id) === String(getKey));
-        setSelectType(findValueById?.id)
+        const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
+        setSelectType(findValueById?.typeName)
     };
+    
     // #region Return
     return (
         <>
             <div className='flex flex-col lg:flex-row lg:justify-between items-center'>
-
                 <div className='header p-3 flex flex-col lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
+                    <DateSelector value={dateRange} onChange={setDateRange} />
+                    <div className="flex flex-col gap-2">
+                        <Input type='text' label='รายการ' onChange={(e) => setSearch(e.target.value)} variant="bordered" size='sm'></Input>
+                    </div>
 
-                    {/* <div className='flex flex-col gap-2'>
-                        <label className="text-xs ps-2">ประเภท</label>
-                        <Tabs color='primary' onSelectionChange={(k => setIsSwap(k))} size='sm' aria-label="Options">
-                            <Tab key="otherExpenses" title="ทั่วไป" ></Tab>
-                            <Tab key="withDraw" title="ขอเบิก" ></Tab>
-                        </Tabs>
-                    </div> */}
-
-                    {isSwap === 'withDraw' ? (
-                        <>
-                            <DateSelector value={searchDateWithDraw} onChange={setSearchDateWithDraw} />
-                            <div className="flex flex-col gap-2">
-                                <label className="text-xs">ค้นหารายการ</label>
-                                <input value={searchWithDraw} onChange={(e) => setSearchWithDraw(e.target.value)} type="text" className='input input-sm input-bordered focus:outline-none h-9' placeholder='ค้นหารายการ' />
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <DateSelector value={dateRange} onChange={setDateRange} />
-                            <div className="flex flex-col gap-2">
-                                <Input type='text' label='รายการ' onChange={(e) => setSearch(e.target.value)} variant="bordered" size='sm'></Input>
-                            </div>
-                        </>
-                    )}
-
-                    {isSwap === 'withDraw' && (
-                        <>
-                            <div className='flex flex-col gap-2'>
-                                <div className='text-xs'>ค้นหาตามแผนก</div>
-                                <select onChange={(e) => setSearchDepartment(e.target.value)} name="" id="" className='select select-sm h-9 select-bordered'>
-                                    {departments.map((item, index) => (
-                                        <option key={index} value={item}>{item}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </>
-                    )}
 
                     {currentUser.businessId === 1 && (
                         <>
@@ -222,218 +189,43 @@ function ControlBar() {
                 </div>
 
                 <div className='btn-container-add'>
-                    {isSwap === 'otherExpenses' && (
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <button className='bg-green-500 text-white px-8 py-1.5 rounded-md text-sm hover:bg-green-600'
-                                >
-                                    เพิ่มข้อมูล
-                                </button>
-                            </DropdownTrigger>
-                            <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem onPress={onOpen} key="new">เพิ่มค่าใช้จ่าย</DropdownItem>
-                                <DropdownItem onPress={() => setIsOpenTypeExpenses(true)} key="copy">เพิ่มประเภทค่าใช้จ่าย</DropdownItem>
-                                <DropdownItem onPress={() => setIsOpenManageTypeModal(true)} key="type">จัดการประเภทค่าใช้จ้่ย</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    )}
-                    {isSwap === 'withDraw' && (
-                        <button onPress={() => setIsOpenWithDraw(true)} className='bg-green-500 text-white px-6 py-1.5 rounded-md text-sm hover:bg-green-600'>เพิ่มค่าใช้จ่าย + </button>
-                    )}
-
+                    <Dropdown>
+                        <DropdownTrigger>
+                            <button className='bg-green-500 text-white px-8 py-1.5 rounded-md text-sm hover:bg-green-600'
+                            >
+                                เพิ่มข้อมูล
+                            </button>
+                        </DropdownTrigger>
+                        <DropdownMenu aria-label="Static Actions">
+                            <DropdownItem onPress={() => setIsOpen(true)} key="new">เพิ่มค่าใช้จ่าย</DropdownItem>
+                            <DropdownItem onPress={() => setIsOpenTypeExpenses(true)} key="copy">เพิ่มประเภทค่าใช้จ่าย</DropdownItem>
+                            <DropdownItem onPress={() => setIsOpenManageTypeModal(true)} key="type">จัดการประเภทค่าใช้จ้่ย</DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
                 </div>
             </div>
 
-
-            {/* Modal */}
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
-                <ModalContent className='max-w-3xl'>
-                    {(onClose) => (
-                        <>
-                            <ModalHeader className="flex flex-col gap-1">เพิ่มค่าใช้จ่าย</ModalHeader>
-                            <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
-                                <div className='side1 w-full'>
-                                    <div className='form space-y-8'>
-                                        <div className='flex lg:flex-row space-x-0 lg:space-x-5'>
-                                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                                <label className="text-sm text-slate-500">ชื่อผู้อกรอก</label>
-                                                <input value={currentUser.userName} disabled type="text" className='input input-sm input-bordered focus:outline-none w-full text-sm h-9' />
-                                            </div>
-                                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                                <label className="text-sm text-slate-500">แผนก</label>
-                                                <input type="text" value={currentUser.department} disabled className='input input-sm input-bordered focus:outline-none w-full text-sm h-9' />
-                                            </div>
-                                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                                <label className="text-sm text-slate-500">ตำแหน่ง</label>
-                                                <input type="text" value={currentUser.userRole} disabled className='input input-sm input-bordered focus:outline-none w-full text-sm h-9' />
-                                            </div>
-                                        </div>
-
-                                        <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                            <label className="text-sm text-slate-500">ระบุวันที่</label>
-                                            <input type="date"
-                                                disabled={isEnable}
-                                                value={selectedData.date}
-                                                onChange={(e) => setSelectedData((prev) => ({ ...prev, date: e.target.value }))}
-                                                className='input-sm w-full h-9 focus:outline-none text-slate-400 border-2 border-slate-200 rounded-md px-4' />
-                                        </div>
-
-                                        <div className='relative'>
-                                            <div className='flex justify-end mb-3'>
-                                                <Select
-                                                    label='เลือกประเภท'
-                                                    // placeholder="ประเภท"
-                                                    color="primary"
-                                                    className="w-48"
-                                                    size="sm"
-                                                    onChange={handleChange}
-                                                >
-                                                    {typeData.map((item) => (
-                                                        <SelectItem key={item.id} value={item.typeExpenses}>
-                                                            {item.typeExpenses}
-                                                        </SelectItem>
-                                                    ))}
-                                                </Select>
-                                            </div>
-                                            <Table className=''>
-                                                <TableHeader className=''>
-                                                    <TableColumn className='font-medium'>รายการ</TableColumn>
-                                                    <TableColumn className='font-medium'>จำนวน(ถ้ามี)</TableColumn>
-                                                    <TableColumn className='font-medium'>ราคา</TableColumn>
-                                                    <TableColumn className='font-medium'>ยอดรวม</TableColumn>
-                                                    <TableColumn className='font-medium'></TableColumn>
-                                                </TableHeader>
-
-                                                <TableBody className=''>
-                                                    {selectedData.list.map((item, index) => (
-                                                        <>
-                                                            <TableRow key={index}>
-                                                                <TableCell >
-                                                                    <input
-                                                                        type="text"
-                                                                        maxLength={50}
-                                                                        value={item.list}
-                                                                        disabled={isEnable}
-                                                                        onChange={(e) => handleExpenseChange(index, 'list', e.target.value)}
-                                                                        className='input input-sm input-bordered focus:outline-none text-sm h-9 px-2'
-                                                                        placeholder="รายการ"
-                                                                    />
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    <input
-                                                                        type="text"
-                                                                        maxLength={50}
-                                                                        value={item.qty}
-                                                                        disabled={isEnable}
-                                                                        onChange={(e) => {
-                                                                            const value = e.target.value;
-                                                                            if (/^\d*\.?\d*$/.test(value)) {
-                                                                                handleExpenseChange(index, 'qty', value);
-                                                                            }
-                                                                        }}
-                                                                        className='input input-sm input-bordered focus:outline-none w-full text-sm h-9'
-                                                                        placeholder="0"
-                                                                        onKeyDown={(e) => {
-                                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                                e.preventDefault();
-                                                                            }
-                                                                        }}
-                                                                        pattern="[0-9]*"
-                                                                    />
-                                                                </TableCell>
-                                                                <TableCell className=''>
-                                                                    <input
-                                                                        type="text"
-                                                                        maxLength={10}
-                                                                        value={item.price}
-                                                                        disabled={isEnable}
-                                                                        onChange={(e) => {
-                                                                            const value = e.target.value;
-                                                                            if (/^\d*\.?\d*$/.test(value)) {
-                                                                                handleExpenseChange(index, 'price', value);
-                                                                            }
-                                                                        }}
-                                                                        placeholder='0.00'
-                                                                        className='input input-sm input-bordered h-9 focus:outline-none text-sm w-full ps-3'
-                                                                        onKeyDown={(e) => {
-                                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                                e.preventDefault();
-                                                                            }
-                                                                        }}
-                                                                        pattern="[0-9]*"
-                                                                    />
-                                                                </TableCell>
-                                                                <TableCell className=''>
-                                                                    <div className='w-full'>
-                                                                        {item.totalAmount || '0.00'}
-
-                                                                    </div>
-                                                                </TableCell>
-                                                                <TableCell>
-                                                                    {index > 0 && (
-                                                                        <FaTrash size={18} onClick={() => handleDeleteList(index)} className='hover:scale-150 cursor-pointer transition duration-150 ease-in text-red-500' />
-                                                                    )}
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        </>
-                                                    ))}
-                                                    <TableRow className=''>
-                                                        <TableCell>
-                                                            <div className='w-full'>
-                                                                {selectedData.list.length !== 5 && (
-                                                                    <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={addExpenseItem}>
-                                                                        <span><FaPlusCircle className='text-blue-500' /></span>
-                                                                        <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </TableCell>
-                                                        <TableCell></TableCell>
-                                                        <TableCell></TableCell>
-                                                        <TableCell></TableCell>
-                                                        <TableCell></TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </div>
-
-                                        <div className="other w-full">
-                                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                                <label className="text-sm text-slate-500">หมายเหตุ (ถ้ามี)</label>
-                                                <Textarea
-                                                    labelPlacement="outside"
-                                                    placeholder="Enter your description"
-                                                    className="max-w-full"
-                                                    isDisabled={isEnable}
-                                                    value={selectedData.remark}
-                                                    onChange={(e) => setSelectedData((prev) => ({ ...prev, remark: e.target.value }))}
-                                                />
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </ModalBody>
-                            <ModalFooter>
-                                <Button color="danger" variant="light" onPress={onClose}>
-                                    ยกเลิก
-                                </Button>
-                                <Button
-                                    isDisabled={isDisabled}
-                                    color="primary"
-                                    onPress={() => {
-                                        onClose();
-                                        handleConfirmAdd();
-                                    }}
-                                >
-                                    ยืนยัน
-                                </Button>
-                            </ModalFooter>
-                        </>
-                    )}
-                </ModalContent>
-            </Modal >
+            {isOpen && (
+                <ModalAddExpensesDetails
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(false)}
+                    selectedAgent={selectedAgent.id}
+                    currentUser={currentUser}
+                    setTypeData={setTypeData}
+                    setTypeName={setTypeName}
+                    setIsEnable={setIsEnable}
+                    isEnable={isEnable}
+                    isDisabled={isDisabled}
+                    handleConfirmAdd={handleConfirmAdd}
+                    handleExpenseChange={handleExpenseChange}
+                    handleDeleteList={handleDeleteList}
+                    addExpenseItem={addExpenseItem}
+                    selectedData={selectedData}
+                    typeData={typeData}
+                    setSelectedData={setSelectedData}
+                    handleChange={handleChange}
+                />
+            )}
 
             {isOpenTypeExpenses && (
                 <ModalTypeExpenses

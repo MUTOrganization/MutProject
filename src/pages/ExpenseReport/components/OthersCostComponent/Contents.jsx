@@ -34,7 +34,7 @@ export default function Contents() {
 
     const [isEdit, setIsEdit] = useState(false)
     const [alreadyDelete, setAlreadyDelete] = useState(false)
-    const [value, setValue] = useState("ทั้งหมด")
+    const [typeValue, setTypeValue] = useState("ทั้งหมด")
 
     const getDataOtherExpenses = async () => {
         setIsLoading(true)
@@ -48,7 +48,7 @@ export default function Contents() {
             setIsLoading(false)
         }
     }
-    console.log(typeData)
+
     const months = {
         1: 'มกราคม',
         2: 'กุมภาพันธ์',
@@ -163,11 +163,11 @@ export default function Contents() {
 
     const handleChange = (selectedKey) => {
         if (selectedKey.target.value === 'all') {
-            setValue("ทั้งหมด")
+            setTypeValue("ทั้งหมด")
         } else {
             let getKey = selectedKey.target.value
-            const findValueById = typeData.find(e => String(e.id) === String(getKey));
-            setValue(findValueById.typeExpenses)
+            const findValueById = typeData.find(e => String(e.expensesTypeId) === String(getKey));
+            setTypeValue(findValueById.typeName)
         }
     };
 
