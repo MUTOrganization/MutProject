@@ -48,7 +48,7 @@ export default function Contents() {
             setIsLoading(false)
         }
     }
-
+    console.log(typeData)
     const months = {
         1: 'มกราคม',
         2: 'กุมภาพันธ์',
@@ -76,7 +76,7 @@ export default function Contents() {
     };
 
     const calculateSummaryAndCountByDate = () => {
-        const filteredData = data.filter(item => filterByDateRange(item.create_Date) && item.businessId === selectedAgent.id.toString() && (value === 'ทั้งหมด' || item.typeExpenses === value));
+        const filteredData = data?.filter(item => filterByDateRange(item.create_Date) && item.businessId === selectedAgent.id.toString() && (value === 'ทั้งหมด' || item.typeExpenses === value));
 
         const totalAmount = filteredData
             .flatMap(item => item.lists)
@@ -90,7 +90,7 @@ export default function Contents() {
         };
     };
 
-    const searchData = data.filter(item => {
+    const searchData = data?.filter(item => {
         const bid = item.businessId === selectedAgent.id.toString()
         const matchesSearchText = item.lists.some(a =>
             a.list.toLowerCase().includes(search.toLowerCase())
@@ -202,9 +202,9 @@ export default function Contents() {
                     <SelectItem key="all" value="ทั้งหมด">
                         ทั้งหมด
                     </SelectItem>
-                    {typeData.map((item) => (
-                        <SelectItem key={item.id} value={item.typeExpenses}>
-                            {item.typeExpenses}
+                    {typeData?.map((item) => (
+                        <SelectItem key={item.expensesTypeId} value={item.typeName}>
+                            {item.typeName}
                         </SelectItem>
                     ))}
                 </Select>

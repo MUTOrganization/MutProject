@@ -131,7 +131,7 @@ export const mainMenuItems = {
     path: "/ExpenseReport",
     text: "ค่าใช้จ่าย",
     icon: <BusinessCardHandIcon />,
-    access: [ACCESS.expenses.expenses_all],
+    access: [],
   },
   // HistoryTopup: {
   //   path: "/HistoryTopUp",
