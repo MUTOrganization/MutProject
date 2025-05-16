@@ -5,7 +5,7 @@ import api from '@/configs/api'
  * @param {number} status 
  * @returns 
  */
-export async function getAllUser(agentId, status = 1) {
+async function getAllUser(agentId, status = 1) {
     const url = 'users/getAll'
     const res = await api.get(url, {
         params: {
@@ -14,4 +14,8 @@ export async function getAllUser(agentId, status = 1) {
         }
     })
     return res.data
+}
+
+export default {
+    getAllUser
 }

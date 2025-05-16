@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { URLS } from "../config";
 import fetchProtectedData from "../../utils/fetchData";
 import { toastError } from "../component/Alert";
+import authService from "@/services/authService";
 
 const AppContext = createContext({});
 
@@ -16,9 +17,9 @@ export default function AppContextProvider({ children }) {
     async function fetchUserData() {
         try {
             setIsLoading(true);
-            const response = await fetchProtectedData.post(URLS.GETUSERDATA);
-            setCurrentUser(response.data.userData);
-            const agent = response.data.userData;
+            const data = await authService.getUserData();
+            setCurrentUser(data.userData);
+            const agent = data.userData;
             setSelectedAgent({
                 id: agent.businessId,
                 name: agent.businessName,
@@ -34,16 +35,12 @@ export default function AppContextProvider({ children }) {
             setIsLoading(false);
         }
     }
-
+    console.log(currentUser);
     async function login(username, password) {
         try {
-            const response = await axios.post(
-                URLS.LOGIN,
-                { username, password },
-                { withCredentials: true }
-            );
-            setCurrentUser(response.data.userData);
-            const agent = response.data.userData;
+            const data = await authService.login(username, password)
+            setCurrentUser(data.userData);
+            const agent = data.userData;
             setSelectedAgent({
                 id: agent.businessId,
                 name: agent.businessName,
@@ -75,10 +72,10 @@ export default function AppContextProvider({ children }) {
     async function fetchAgent() {
         try {
             setLoadingAgent(true);
-            const response = await fetchProtectedData.get(URLS.agent.getAll, {
-                params: { type: ["H", "A"] },
-            });
-            setAgents(response.data);
+            // const response = await fetchProtectedData.get(URLS.agent.getAll, {
+            //     params: { type: ["H", "A"] },
+            // });
+            // setAgents(response.data);
         } catch (err) {
             console.error("fetchAgent error:", err);
         } finally {
@@ -105,31 +102,11 @@ export default function AppContextProvider({ children }) {
     };
 
     useEffect(() => {
-        axios
-            .get(URLS.VERIFY_HQ_TOKEN, { withCredentials: true })
-            .then((resp) => {
-                if (resp.status === 200 && resp.data?.user) {
-                    axios
-                        .get(URLS.EXCHANGE_HQ_TOKEN, { withCredentials: true })
-                        .then((resp2) => {
-                            if (resp2.status === 200 && resp2.data?.userData) {
-                                fetchUserData();
-                            } else {
-                                fetchUserData();
-                            }
-                        })
-                        .catch((err2) => {
-                            console.error("exchangeHQToken error:", err2);
-                            fetchUserData();
-                        });
-                } else {
-                    fetchUserData();
-                }
-            })
-            .catch((err) => {
-                console.error("SSO token verify error:", err);
-                fetchUserData();
-            });
+        try{
+            fetchUserData()
+        }catch(err){
+            console.error("fetchUserData error:", err);
+        }
     }, []);
 
     useEffect(() => {
