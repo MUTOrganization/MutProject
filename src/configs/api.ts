@@ -46,7 +46,7 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try{
-                await axios.post(`${BASE_URL}/auth/refreshToken`, {}, { withCredentials: true })
+                await axios.post(`${BASE_URL}auth/refreshToken`, {}, { withCredentials: true })
                 processQueue(null);
                 return api(originalRequest);
             } catch (error) {

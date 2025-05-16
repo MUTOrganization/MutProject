@@ -72,7 +72,7 @@ function Login() {
             <div className="text-center font-semibold text-lg">เข้าสู่ระบบ</div>
           </div>
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => handleSubmit(e)}>
             <Input
               placeholder="กรอกชื่อผู้ใช้"
               color={!isValid ? "" : "danger"}
@@ -122,7 +122,6 @@ function Login() {
           )}
             <Button
               className="w-64 mb-4 bg-custom-redlogin border-custom-redlogin text-white shadow-lg shadow-custom-redlogin-effect"
-              onPress={handleSubmit}
               type="submit"
               isLoading={isLoadSubmit}
             >

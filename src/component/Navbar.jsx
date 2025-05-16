@@ -3,19 +3,14 @@ import {
   Navbar as NextUINavbar,
   NavbarBrand,
   NavbarContent,
-  NavbarItem,
-  Link,
   DropdownItem,
   DropdownTrigger,
   Dropdown,
   DropdownMenu,
-  Avatar,
-  User,
   NavbarMenuToggle,
-  NavbarMenuItem,
   NavbarMenu,
 } from "@nextui-org/react";
-import { Chip, Card } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 import { useAppContext } from "../contexts/AppContext";
 import NavMenu from "./NavMenu";
 import UserProfileAvatar from "./UserProfileAvatar";
@@ -24,12 +19,9 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar({ title }) {
   const { currentUser, logout } = useAppContext();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [openModalTopup, setOpenModalTopup] = useState(false);
-  const ImageProfile = currentUser.displayImgUrl;
-  const role = currentUser.role;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const role = currentUser.role.name;
   const navigate = useNavigate();
-  const currentData = useAppContext();
 
   const getChipColor = (role) => {
     switch (role) {
@@ -59,7 +51,7 @@ function Navbar({ title }) {
   return (
     <>
       <NextUINavbar
-        maxWidth="2xl"
+        maxWidth="full"
         isMenuOpen={isMenuOpen}
         onMenuOpenChange={setIsMenuOpen}
         className="px-4 bg-white py-2 rounded-b-xl shadow-none z-20">
@@ -96,7 +88,7 @@ function Navbar({ title }) {
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <span className="cursor-pointer">
-                <UserProfileAvatar name={currentUser.userName} imageURL={currentUser.displayImgUrl} />
+                <UserProfileAvatar name={currentUser.username} imageURL={currentUser.displayImgUrl} />
               </span>
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
@@ -106,7 +98,7 @@ function Navbar({ title }) {
                 className="h-14 gap-2"
                 id="user-profile-image">
                 <div className="flex space-x-2">
-                  <UserProfileAvatar name={currentUser.userName} size="sm" imageURL={currentUser.displayImgUrl} />
+                  <UserProfileAvatar name={currentUser.username} size="sm" imageURL={currentUser.displayImgUrl} />
 
                   {(() => {
                     if (currentUser.name && currentUser.nickname) {
