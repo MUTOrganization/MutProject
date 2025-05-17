@@ -1,9 +1,9 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import { Button, Select, SelectItem, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input } from '@nextui-org/react';
 import React from 'react'
-import { FaPlusCircle } from 'react-icons/fa';
+import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 
-function ModalAddExpensesDetails({ isOpen, onClose, handleChange, currentUser, setSelectedData, selectedData, typeData, isEnable, isDisabled, handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem }) {
+function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled, handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem }) {
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent className='max-w-2xl'>

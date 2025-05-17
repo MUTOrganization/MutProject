@@ -21,31 +21,18 @@ import ModalAddExpensesDetails from '../OtherExpensesModal/ModalAddExpensesDetai
 
 function ControlBar() {
 
-    const { setIsAdd, search, setSearch, dateRange, setDateRange, isSwap,
-        setIsSwap, setIsAddWithDraw, searchWithDraw, setSearchWithDraw,
-        searchDateWithDraw, setSearchDateWithDraw, searchDepartment, setSearchDepartment,
-        currentUser, selectedAgent,
-        typeData, setTypeData, isManageType, setIsManageType } = useContext(Data);
-
-    const currentMonthStart = startOfMonth(today());
-    const currentMonthEnd = endOfMonth(today());
+    const { setIsAdd, setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, setIsManageType, isAction } = useContext(Data);
 
     const [isOpen, setIsOpen] = useState(false)
-    const [isEdit, setIsEdit] = useState(false)
     const [isEnable, setIsEnable] = useState(false)
-    const [showBtnEdit, setShowBtnEdit] = useState(false)
-    const [isConfirmEdit, setIsConfirmEdit] = useState(false)
-    const [oldData, setOldData] = useState(false)
-    const [editIndex, setEditIndex] = useState(null);
-    const [isOpenWithDraw, setIsOpenWithDraw] = useState(false)
     const [isOpenTypeExpenses, setIsOpenTypeExpenses] = useState(false)
     const [selectType, setSelectType] = useState('')
     const [isOpenManageTypeModal, setIsOpenManageTypeModal] = useState(false)
 
-    // TypeExpenses
+    // Fetch TypeData
     const [typeName, setTypeName] = useState()
 
-    const getData = async () => {
+    const getTypeData = async () => {
         try {
             const res = await getExpensesType.getExpensesType(currentUser.agent.id)
             setTypeData(res)
@@ -55,49 +42,24 @@ function ControlBar() {
     }
 
     useEffect(() => {
-        getData()
+        getTypeData()
     }, [selectedAgent])
 
-    useEffect(() => {
-        if (isManageType) {
-            getData()
-            setIsManageType(false)
-        }
-    }, [isManageType])
-
-    const handleCloseWithDraw = () => {
-        setIsOpenWithDraw(false)
-    }
-
-    const departments = ["ทั้งหมด", "CRM", "SALE", "ADS", "Data & MARKETING", "ACC", "IT", "HR", "GM"];
     const [selectedData, setSelectedData] = useState({
         date: new Date().toISOString().split('T')[0],
         list: [{ name: '', qty: '', price: '', totalAmount: '' }],
         remark: null
     });
 
-    const [editData, setEditData] = useState({
-        date: null,
-        list: [{ name: '', qty: '', price: '', totalAmount: '' }],
-        remark: null
-    })
-
     const addExpenseItem = () => {
-        if (oldData) {
-            setEditData((prev) => ({
-                ...prev,
-                list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
-            }));
-        } else {
-            setSelectedData((prev) => ({
-                ...prev,
-                list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
-            }));
-        }
+        setSelectedData((prev) => ({
+            ...prev,
+            list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
+        }));
     };
 
     const handleExpenseChange = (index, field, value) => {
-        const updatedList = oldData ? [...editData.list] : [...selectedData.list];
+        const updatedList = [...selectedData.list];
 
         updatedList[index] = {
             ...updatedList[index],
@@ -108,25 +70,14 @@ function ControlBar() {
         const price = parseFloat(updatedList[index].price) || 0;
         updatedList[index].totalAmount = qty ? (qty * price).toFixed(2) : price.toFixed(2);
 
-        if (oldData) {
-            setEditData(prev => ({ ...prev, list: updatedList }));
-        } else {
-            setSelectedData(prev => ({ ...prev, list: updatedList }));
-        }
+        setSelectedData(prev => ({ ...prev, list: updatedList }));
     };
 
     const handleDeleteList = (index) => {
-        if (oldData) {
-            setEditData(prev => ({
-                ...prev,
-                list: prev.list.filter((_, i) => i !== index)
-            }));
-        } else {
-            setSelectedData(prev => ({
-                ...prev,
-                list: prev.list.filter((_, i) => i !== index)
-            }));
-        }
+        setSelectedData(prev => ({
+            ...prev,
+            list: prev.list.filter((_, i) => i !== index)
+        }));
     };
 
     const handleConfirmAdd = async () => {
@@ -160,7 +111,7 @@ function ControlBar() {
         const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
         setSelectType(findValueById?.typeName)
     };
-    
+
     // #region Return
     return (
         <>
@@ -180,11 +131,8 @@ function ControlBar() {
 
                     <div className='btn-container flex flex-col'>
                         <div className='invisible'>This text is</div>
-                        {isSwap === 'withDraw' ? (
-                            <button onPress={() => { setSearchWithDraw(''); setSearchDateWithDraw(null); setSearchDepartment('ทั้งหมด') }} className='bg-blue-500 text-white px-8 text-sm py-1 rounded-md hover:bg-blue-600'>ล้างการค้นหา</button>
-                        ) : (
-                            <button onPress={() => { setSearch(''); setDateRange(null); }} className='bg-blue-500 text-white px-8 text-sm py-1 rounded-md hover:bg-blue-600'>ล้างการค้นหา</button>
-                        )}
+                        <button onPress={() => { setSearch(''); setDateRange(null); }} className='bg-blue-500 text-white px-8 text-sm py-1 rounded-md hover:bg-blue-600'>ล้างการค้นหา</button>
+
                     </div>
                 </div>
 
@@ -247,6 +195,7 @@ function ControlBar() {
                     typeData={typeData}
                     setIsManageType={setIsManageType}
                     setIsOpenManageTypeModal={setIsOpenManageTypeModal}
+                    getTypeData={getTypeData}
                 />
             )}
 
