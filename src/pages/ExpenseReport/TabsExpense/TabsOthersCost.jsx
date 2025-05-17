@@ -14,8 +14,6 @@ function TabsOthersCost() {
   const currentUser = contextData.currentUser;
   const { agent } = useAppContext();
   const { selectedAgent } = agent;
-  // const [selectAgentFromModal, setSelectAgentFromModal] = useState(selectedAgent.id);
-
 
   const currentMonthStart = startOfMonth(today());
   const currentMonthEnd = endOfMonth(today());
@@ -28,12 +26,10 @@ function TabsOthersCost() {
   const [isAdd, setIsAdd] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
   const [search, setSearch] = useState('')
-  const [selectDate, setSelectDate] = useState(null)
-  const [isSwap, setIsSwap] = useState('otherExpenses')
   const [data, setData] = useState([])
-  const [isAddWithDraw, setIsAddWithDraw] = useState(false)
   const [typeData, setTypeData] = useState([])
   const [isManageType, setIsManageType] = useState(false)
+  const [isAction, setIsAction] = useState(false)
 
   // WithDraw
   const [searchWithDraw, setSearchWithDraw] = useState('')
@@ -43,10 +39,9 @@ function TabsOthersCost() {
   return (
     <div className='body-container'>
       <Data.Provider value={{
-        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, isSwap, setIsSwap, data, setData, isAddWithDraw, setIsAddWithDraw, searchWithDraw, setSearchWithDraw,
+        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, data, setData, searchWithDraw, setSearchWithDraw, isAction, setIsAction,
         searchDateWithDraw, setSearchDateWithDraw, searchDepartment, setSearchDepartment, currentUser, selectedAgent, typeData, setTypeData, isManageType, setIsManageType
       }}>
-
         <ControlBar />
         <Contents />
       </Data.Provider>

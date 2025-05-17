@@ -202,7 +202,7 @@ export default function Contents() {
                     <SelectItem key="all" value="ทั้งหมด">
                         ทั้งหมด
                     </SelectItem>
-                    {typeData?.map((item) => (
+                    {typeData?.filter(e => e.status === true).map((item) => (
                         <SelectItem key={item.expensesTypeId} value={item.typeName}>
                             {item.typeName}
                         </SelectItem>

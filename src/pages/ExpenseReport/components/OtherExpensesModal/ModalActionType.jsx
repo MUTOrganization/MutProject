@@ -1,43 +1,37 @@
 import { Input } from '@nextui-org/input'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Button } from '@nextui-org/react'
-import React, { act, useState } from 'react'
+import React, { act, useContext, useState } from 'react'
 import { URLS } from '../../../../config'
 import fetchProtectedData from '../../../../../utils/fetchData'
 import { useAppContext } from '../../../../contexts/AppContext'
 import { toast } from 'sonner'
+import expensesService from '@/services/expensesService'
+import { Data } from '../../TabsExpense/TabsOthersCost'
 
-function ModalActionType({ isOpen, onClose, action, selectData, id, setIsManageType, setIsAction }) {
+function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType, getTypeData }) {
 
   const { currentUser } = useAppContext()
-
+  const { isAction, setIsAction, } = useContext(Data)
   const [newValue, setNewValue] = useState('')
 
   const handleEdit = async () => {
-    const url = `${URLS.OTHEREXPENSES}/manageExpenses`
     try {
-      const res = await fetchProtectedData.post(url, {
-        action: 'edit',
-        id: id,
-        typeExpenses: newValue,
-        update_By: currentUser.userName
-      })
+      await expensesService.editExpensesType(action, id, newValue)
+      await getTypeData()
       toast.success('แก้ไขข้อมูลสำเร็จ', { position: 'top-right' })
-      setIsAction(true)
+      setIsAction(!isAction)
     } catch (error) {
       console.log('Something Wrong', error)
     }
   }
 
   const handleDelete = async () => {
-    const url = `${URLS.OTHEREXPENSES}/manageExpenses`
     try {
-      const res = await fetchProtectedData.post(url, {
-        action: 'delete',
-        id: id,
-      })
-      toast.success('ลบข้อมูลสำเร็จ', { position: 'top-right' })
-      setIsAction(true)
+      await expensesService.ChangeExpensestypeStatus(action, id, isCloseType)
+      await getTypeData()
+      toast.success('ปิดการใช้งานสำเร็จ', { position: 'top-right' })
+      setIsAction(!isAction)
     } catch (error) {
       console.log('Something Wrong', error)
     }
@@ -76,7 +70,7 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, setIsManageT
                 Close
               </Button>
               <Button size='sm' color="danger" onPress={() => { onClose(); handleDelete(); }}>
-                ยืนยันการปิดการใช้งาน
+                <span>{isCloseType ? 'ยืนยันการปิดการใช้งาน' : 'ยืนยันการเปิดการใช้งาน'}</span>
               </Button>
             </>)}
         </ModalFooter>
