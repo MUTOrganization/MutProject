@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAppContext } from "../../../../../contexts/AppContext";
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
-import { Button, Card, Checkbox, Select, SelectItem } from "@nextui-org/react";
+import { useAppContext } from "@/contexts/AppContext";
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal";
+import { Button, Card, Checkbox, Select, SelectItem } from "@heroui/react";
 import lodash from "lodash"
-import { groupArray, sortArrayMultiField } from "../../../../../../utils/arrayFunc";
-import { AlertQuestion, toastError, toastSuccess } from "../../../../../component/Alert";
-import fetchProtectedData from "../../../../../../utils/fetchData";
-import { URLS } from "../../../../../config";
-import { HFArrowRight } from "../../../../../component/Icons";
+import { groupArray, sortArrayMultiField } from "@/utils/arrayFunc";
+import { AlertQuestion, toastError, toastSuccess } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
+import { URLS } from "@/config";
+import { HFArrowRight } from "@/component/Icons";
 
 export default function MultiAddRoleAccessModal({isOpen, onClose, accessList, roleList}){
     const {currentUser, selectedAgent} = useAppContext()

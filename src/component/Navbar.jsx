@@ -9,8 +9,8 @@ import {
   DropdownMenu,
   NavbarMenuToggle,
   NavbarMenu,
-} from "@nextui-org/react";
-import { Chip } from "@nextui-org/react";
+} from "@heroui/react";
+import { Chip } from "@heroui/react";
 import { useAppContext } from "../contexts/AppContext";
 import NavMenu from "./NavMenu";
 import UserProfileAvatar from "./UserProfileAvatar";

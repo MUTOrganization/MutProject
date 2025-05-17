@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Accordion, AccordionItem } from "@nextui-org/react";
+import { Card, Accordion, AccordionItem } from "@heroui/react";
 import { useAppContext } from "../../../contexts/AppContext";
 
 function SideMenuManage({ setActiveComponent, activeComponent, list }) {

@@ -1,5 +1,5 @@
-import { Button } from "@nextui-org/button";
-import { Modal, ModalContent, ModalHeader } from "@nextui-org/modal";
+import { Button } from "@heroui/button";
+import { Modal, ModalContent, ModalHeader } from "@heroui/modal";
 
 export default function AddDepMenu({isOpen, onClose}) {
     return (

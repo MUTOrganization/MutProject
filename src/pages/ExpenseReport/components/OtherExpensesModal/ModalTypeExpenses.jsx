@@ -1,8 +1,6 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button, Input } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
-import fetchProtectedData from '../../../../../utils/fetchData'
-import { URLS } from '../../../../config'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button, Input } from "@heroui/react"
+import React from 'react'
 import { toast } from 'sonner'
 import expensesService from '@/services/expensesService'
 

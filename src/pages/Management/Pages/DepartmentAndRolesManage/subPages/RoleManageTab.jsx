@@ -3,7 +3,7 @@ import { useAppContext } from "../../../../../contexts/AppContext";
 import fetchProtectedData from "../../../../../../utils/fetchData";
 import { AlertQuestion, toastError, toastSuccess, toastWarning } from "../../../../../component/Alert";
 import { URLS } from "../../../../../config";
-import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@nextui-org/react";
+import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
 import { CheckIcon, DeleteIcon, HFCheck, HFPlus, MenuIcon, SortIcon } from "../../../../../component/Icons";
 import { toast } from "sonner";
 import RoleAccesBox from "../components/RoleAccessBox";

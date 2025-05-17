@@ -1,11 +1,11 @@
-import { Card, CardBody, Tab, Tabs } from "@nextui-org/react"
+import { Card, CardBody, Tab, Tabs } from "@heroui/react"
 import { useEffect, useState } from "react"
 import SetCommission from "./SetCommission"
 import CommissionSettingsTable from "./CommissionSettingsTable"
-import { URLS } from "../../../../config";
-import fetchProtectedData from "../../../../../utils/fetchData";
-import { toastError } from "../../../../component/Alert";
-import { useAppContext } from "../../../../contexts/AppContext";
+import { URLS } from "@/config";
+import fetchProtectedData from "@/utils/fetchData";
+import { toastError } from "@/component/Alert";
+import { useAppContext } from "@/contexts/AppContext";
 
 export default function CommissionSettings() {
     const {currentUser} = useAppContext();

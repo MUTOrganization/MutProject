@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import { CostSummaryData } from '../../TabsExpense/TabsCostSummary';
 import ReactApexChart from 'react-apexcharts';
-import { Select, SelectItem, Spinner, table, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react';
+import { Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 
 function ExpensesDashboard() {
     const { selectedAgent, selectedYear } = useContext(CostSummaryData);

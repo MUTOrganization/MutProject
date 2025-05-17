@@ -1,12 +1,12 @@
-import { Accordion, AccordionItem, Card, CardBody, CardHeader, Chip, Listbox, ListboxItem, Spinner, Table, TableColumn, TableHeader } from "@nextui-org/react";
+import { Accordion, AccordionItem, Card, CardBody, CardHeader, Chip, Listbox, ListboxItem, Spinner, Table, TableColumn, TableHeader } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
-import { toastError } from "../../../../component/Alert";
-import fetchProtectedData from "../../../../../utils/fetchData";
-import { URLS } from "../../../../config";
-import { useAppContext } from "../../../../contexts/AppContext";
-import { HFCheck } from "../../../../component/Icons";
-import { cFormatter } from "../../../../../utils/numberFormatter";
-import { sortArray } from "../../../../../utils/arrayFunc";
+import { toastError } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
+import { URLS } from "@/config";
+import { useAppContext } from "@/contexts/AppContext";
+import { HFCheck } from "@/component/Icons";
+import { cFormatter } from "@/utils/numberFormatter";
+import { sortArray } from "@/utils/arrayFunc";
 
 export default function CommissionSettingsTable({departmentData, depLoading}){
     const {currentUser} = useAppContext()

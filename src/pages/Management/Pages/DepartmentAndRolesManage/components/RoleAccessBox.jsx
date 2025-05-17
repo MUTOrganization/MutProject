@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppContext } from "../../../../../contexts/AppContext";
-import SearchBox from "../../../../../component/SearchBox";
-import { Button, Card, CardBody, CardHeader, Checkbox, CircularProgress, Modal, ModalBody, ModalContent, ModalHeader, Tooltip, useDisclosure } from "@nextui-org/react";
-import { HFDoubleArrowLeft, HFDoubleArrowRight, HFInfoFilled, HFSync } from "../../../../../component/Icons";
-import { URLS } from "../../../../../config";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import { useAppContext } from "@/contexts/AppContext";
+import SearchBox from "@/component/SearchBox";
+import { Button, Card, CardBody, CardHeader, Checkbox, CircularProgress, Modal, ModalBody, ModalContent, ModalHeader, Tooltip, useDisclosure } from "@heroui/react";
+import { HFDoubleArrowLeft, HFDoubleArrowRight, HFInfoFilled, HFSync } from "@/component/Icons";
+import { URLS } from "@/config";
+import fetchProtectedData from "@/utils/fetchData";
 
 import lodash, { isArray } from 'lodash';
-import { groupArray } from "../../../../../../utils/arrayFunc";
-import { toastError, toastSuccess } from "../../../../../component/Alert";
-import { ACCESS } from "../../../../../configs/accessids";
+import { groupArray } from "@/utils/arrayFunc";
+import { toastError, toastSuccess } from "@/component/Alert";
 
 export default function RoleAccesBox({selectedRole, accessList, loadAccessList, onSave}){
     const [loadingAccess,setLoadingAccess] = useState(false);

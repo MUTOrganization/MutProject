@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import "dayjs/locale/th";
 
 

@@ -1,13 +1,13 @@
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 import React, { useEffect, useState, useMemo } from 'react';
 import { formatNumber } from '../../../../component/FormatNumber';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
-import { formatDateObject } from '../../../../component/DateUtiils';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
+import { formatDateObject } from '@/utils/dateUtils';
 import { CommissionData, sumCommissionData } from '../../../Commission/Components/YearlyContent/CommissionData';
-import { calculate } from '../../../../component/Calculate';
+import { calculate } from '@/component/Calculate';
 import { useCommissionContext } from '../../../Commission/CommissionContext';
-import { useAppContext } from '../../../../contexts/AppContext';
+import { useAppContext } from '@/contexts/AppContext';
 
 function CostSummaryDashboard({ dateRange, contextData, currentUser }) {
     const { isSettingLoaded } = useCommissionContext();

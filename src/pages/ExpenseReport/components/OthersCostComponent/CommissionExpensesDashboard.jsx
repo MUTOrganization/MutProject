@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import fetchProtectedData from '@/utils/fetchData';
 import { CostSummaryData } from '../../TabsExpense/TabsCostSummary';
 import { useCommissionContext } from '../../../Commission/CommissionContext';
-import { URLS } from '../../../../config';
+import { URLS } from '@/config';
 import { CommissionData } from '../../../Commission/Components/YearlyContent/CommissionData';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 
 function CommissionExpensesDashboard() {
     const { selectedYear, selectedAgent } = useContext(CostSummaryData);

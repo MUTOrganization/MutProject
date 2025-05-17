@@ -1,7 +1,7 @@
 import React from 'react'
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import { Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import { toast, Toaster } from 'sonner';
 
 function ModalDelete({ isOpen, onClose, data, alreadyDelete }) {

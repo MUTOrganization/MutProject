@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import lodash from 'lodash'
-import { CopyIcon, HFDoubleArrowLeft, HFDoubleArrowRight, HFInfoFilled, HFRefresh, HFSync, InformationIcon } from "../../../../../component/Icons";
-import SearchBox from "../../../../../component/SearchBox";
-import { groupArray } from "../../../../../../utils/arrayFunc";
-import { URLS } from "../../../../../config";
-import { Button, Card, CardBody, CardHeader, Checkbox, CircularProgress, Modal, ModalBody, ModalContent, ModalHeader, Tooltip, useDisclosure } from "@nextui-org/react";
-import { toastError } from "../../../../../component/Alert";
-import fetchProtectedData from "../../../../../../utils/fetchData";
-import { useAppContext } from "../../../../../contexts/AppContext";
-import { ACCESS } from "../../../../../configs/accessids";
+import { CopyIcon, HFDoubleArrowLeft, HFDoubleArrowRight, HFInfoFilled, HFSync } from "@/component/Icons";
+import SearchBox from "@/component/SearchBox";
+import { groupArray } from "@/utils/arrayFunc";
+import { URLS } from "@/config";
+import { Button, Card, CardBody, CardHeader, Checkbox, CircularProgress, Modal, ModalBody, ModalContent, ModalHeader, Tooltip, useDisclosure } from "@heroui/react";
+import { toastError } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
+import { useAppContext } from "@/contexts/AppContext";
 import CopyAccessModal from "./copyAccessModal";
 
 export default function AccessManageBox({agent, mode, onSave, loadSubmit}){

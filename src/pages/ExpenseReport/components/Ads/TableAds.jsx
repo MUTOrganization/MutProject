@@ -22,14 +22,14 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { EditIcon, DeleteIcon } from "@/component/Icons";
 import { columnsAds } from "./settingAds";
-import { formatDateThai, formatDateThaiAndTime } from "@/component/DateUtiils";
+import { formatDateThai, formatDateThaiAndTime } from "@/utils/dateUtils";
 import { calculateVAT } from "@/component/Calculate";
 import { ConfirmCancelButtons } from "@/component/Buttons";
 import { toastError,toastSuccess,toastWarning } from "@/component/Alert";
-import fetchProtectedData from "../../../../../utils/fetchData";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "@/config";
 
 function TableAds({ filteredData, vatRate, isLoading,agentId,onDataChange }) {
@@ -107,7 +107,7 @@ function TableAds({ filteredData, vatRate, isLoading,agentId,onDataChange }) {
           <>
             <div className="flex flex-col">
               <Tooltip
-                content={`บันทึกเมื่อ ${formatDateThaiAndTime(item.created_at)}`}
+                content={`บันทึกเมื่อ ${formatDateThai(item.created_at, 'datetime')}`}
               >
                 <span>
                   <p className="text-bold text-small capitalize">
@@ -127,7 +127,7 @@ function TableAds({ filteredData, vatRate, isLoading,agentId,onDataChange }) {
         // แปลงเป็นสกุลเงินพร้อม comma
         return `฿${formattedValue(costAds.toFixed(2))}`;
       case "created_at":
-        return formatDateThaiAndTime(item[columnKey]);
+        return formatDateThai(item[columnKey], 'datetime');
       case "actions":
         // ตัวอย่างการใส่ปุ่ม Edit / Delete
         return (

@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { useAppContext } from "../../../../../contexts/AppContext";
-import { Card, getKeyValue, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
-import { HfGroups, HfPerson } from "../../../../../component/Icons";
-import SearchBox from "../../../../../component/SearchBox";
-import lodash from 'lodash';
+import { useAppContext } from "@/contexts/AppContext";
+import { Card, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import { HfGroups, HfPerson } from "@/component/Icons";
+import SearchBox from "@/component/SearchBox";
 import AccessManageBox from "../components/AccessManageBox";
-import { Toaster, toast } from "sonner"
-import { URLS } from "../../../../../config";
-import { toastError, toastSuccess } from "../../../../../component/Alert";
-import axios from "axios";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import { URLS } from "@/config";
+import { toastError, toastSuccess } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
 
 export default function AgentAccessManagePage() {
     const { currentUser, agent } = useAppContext();

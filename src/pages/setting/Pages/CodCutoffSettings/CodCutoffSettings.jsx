@@ -1,10 +1,9 @@
-import { Button, Card, CardBody, Checkbox, Chip, Input, Select, SelectItem, TimeInput } from "@nextui-org/react";
+import { Button, Card, CardBody, Checkbox, Chip, Input, Select, SelectItem, TimeInput } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
-import { AlertQuestion, toastError, toastSuccess } from "../../../../component/Alert";
-import fetchProtectedData from "../../../../../utils/fetchData";
-import { useAppContext } from "../../../../contexts/AppContext";
-import { URLS } from "../../../../config";
-import { thaiMonths } from "../../../../component/DateUtiils";
+import { toastError, toastSuccess } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
+import { useAppContext } from "@/contexts/AppContext";
+import { URLS } from "@/config";
 import AdvancedCodCuttoffSettings from "./AdvancedCodCuttoffSettings";
 export default function CodCutoffSettings() {
     const { currentUser } = useAppContext();

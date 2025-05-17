@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import { CostSummaryData } from '../../TabsExpense/TabsCostSummary';
 import ReactApexChart from 'react-apexcharts';
-import { Spinner } from '@nextui-org/react';
+import { Spinner } from "@heroui/react";
 
 function AdsExpensesDashboard() {
     const { selectedAgent, selectedYear } = useContext(CostSummaryData);

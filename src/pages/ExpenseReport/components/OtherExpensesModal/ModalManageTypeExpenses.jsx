@@ -1,11 +1,11 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button } from '@nextui-org/react'
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button } from "@heroui/react"
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/table"
 import React, { useContext, useEffect, useState } from 'react'
 import { FaBan, FaEdit, FaTrash } from 'react-icons/fa'
 import ModalActionType from './ModalActionType'
-import { URLS } from '../../../../config'
-import fetchProtectedData from '../../../../../utils/fetchData'
+import { URLS } from '@/config'
+import fetchProtectedData from '@/utils/fetchData'
 import { Data } from '../../TabsExpense/TabsOthersCost'
 
 function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData }) {

@@ -1,23 +1,15 @@
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Tabs, Tab, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Select, SelectItem, Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
-import { Colors } from '../../Constrants/Colors';
-import { useAppContext } from '../../../../contexts/AppContext';
-import { formatDateObject } from '../../../../component/DateUtiils';
 import { Data } from '../../TabsExpense/TabsOthersCost';
-import { FaPlusCircle, FaTrash } from 'react-icons/fa';
-import { formatNumberInput } from '../../../../component/FormatNumber';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
-import { Toaster, toast } from 'sonner';
-import Contents from './Contents';
-import ModalAddWithDraw from '../OtherExpensesModal/ModalAddWithDraw';
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import DateSelector from '../../../../component/DateSelector';
 import AgentSelector from '../../../../component/AgentSelector';
 import ModalTypeExpenses from '../OtherExpensesModal/ModalTypeExpenses';
 import ModalManageTypeExpenses from '../OtherExpensesModal/ModalManageTypeExpenses';
 import getExpensesType from '@/services/expensesService'
 import ModalAddExpensesDetails from '../OtherExpensesModal/ModalAddExpensesDetails';
+import { toastSuccess } from "@/component/Alert";
 
 function ControlBar() {
 
@@ -95,7 +87,7 @@ function ControlBar() {
             console.error('Error adding other expenses:', error);
         } finally {
             setIsAdd(true)
-            toast.success('เพิ่มข้อมูลสำเร็จ')
+            toastSuccess('เพิ่มข้อมูลสำเร็จ')
         }
     };
 

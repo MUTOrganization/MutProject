@@ -1,4 +1,4 @@
-import { Checkbox, DateRangePicker, Select, SelectItem, Tab, Tabs } from '@nextui-org/react'
+import { Checkbox, DateRangePicker, Select, SelectItem, Tab, Tabs } from "@heroui/react"
 import React, { createContext, useEffect, useState } from 'react'
 import ControlBar from '../components/OthersCostComponent/ControlBar'
 import Contents from '../components/OthersCostComponent/Contents'

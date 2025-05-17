@@ -1,11 +1,6 @@
 import ReactApexChart from "react-apexcharts";
-import { cFormatter, nFormatter } from "../../../../../utils/numberFormatter";
-import { Checkbox, CircularProgress, Spinner, Switch } from "@nextui-org/react";
-import { CommissionData } from "./CommissionData";
-import { cn } from "tailwind-variants";
-import lodash from 'lodash';
-import { useEffect, useState } from "react";
-import { values } from "lodash";
+import { cFormatter, nFormatter } from "@/utils/numberFormatter";
+import { Spinner } from "@heroui/react";
 
 /**
  * 

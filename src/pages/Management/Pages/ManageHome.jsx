@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, lazy } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Tabs, Tab } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Tabs, Tab } from "@heroui/react";
 import NewsTable from "../Components/newsTable";
 import EducationTable from '../Components/educationTable'
 

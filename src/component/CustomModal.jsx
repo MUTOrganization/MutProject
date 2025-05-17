@@ -9,7 +9,7 @@ import {
   Checkbox,
   DateRangePicker,
   CheckboxGroup,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { ConfirmCancelButtons } from "./Buttons";
 
 // CustomModal Component

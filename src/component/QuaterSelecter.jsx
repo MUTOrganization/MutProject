@@ -14,7 +14,7 @@ import {
     DropdownTrigger,
     Select,
     SelectItem,
-  } from "@nextui-org/react";
+  } from "@heroui/react";
   import dayjs from "dayjs";
   import { months } from "dayjs/locale/th";
   import { useEffect, useState } from "react";

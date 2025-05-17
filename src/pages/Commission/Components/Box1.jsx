@@ -1,7 +1,7 @@
 import React from 'react'
-import { Card, CardBody, Spinner } from '@nextui-org/react';
+import { Card, CardBody, Spinner } from "@heroui/react";
 import { useCommissionContext } from '../CommissionContext';
-import { cFormatter } from '../../../../utils/numberFormatter';
+import { cFormatter } from '@/utils/numberFormatter';
 
 function Box1({ isLoading }) {
     const {commData} = useCommissionContext()

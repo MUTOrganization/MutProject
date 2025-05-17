@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Divider, Button } from "@nextui-org/react";
+import { Divider, Button } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 import { MainMenu } from "./Sidebar";

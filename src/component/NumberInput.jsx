@@ -1,6 +1,6 @@
-import { Input } from "@nextui-org/react";
+import { Input } from "@heroui/react";
 import { useMemo } from "react";
-import { cFormatter } from "../../utils/numberFormatter";
+import { cFormatter } from "@/utils/numberFormatter";
 
 export default function NumberInput({
     className = '', 

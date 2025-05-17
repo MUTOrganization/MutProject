@@ -1,4 +1,4 @@
-import { Card, CardBody, CircularProgress, Tab, Tabs } from "@nextui-org/react";
+import { Card, CardBody, CircularProgress, Tab, Tabs } from "@heroui/react";
 import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
 import { ACCESS } from "../../../../configs/accessids";

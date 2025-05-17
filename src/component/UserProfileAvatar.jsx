@@ -1,5 +1,5 @@
-import { Avatar } from "@nextui-org/react";
-import { getProfileColor, getUserName } from "../../utils/util";
+import { Avatar } from "@heroui/react";
+import { getProfileColor, getUserName } from "@/utils/util";
 
 export default function UserProfileAvatar({ name, imageURL, className, size = 'md' }) {
     return (

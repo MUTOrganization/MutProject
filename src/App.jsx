@@ -4,18 +4,15 @@ import { useLocation } from "react-router-dom";
 import "./styles/App.css";
 import DefaultLayout from "./layouts/default";
 import { useAppContext } from "./contexts/AppContext";
-import { CircularProgress } from "@nextui-org/react";
+import { CircularProgress } from "@heroui/react";
 import { Toaster } from "sonner";
 
 const Management = lazy(() => import("./pages/Management/Management")); 
 const Setting = lazy(() => import("./pages/Setting/Setting"));
 const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
-const DashboardSummary = lazy(() => import("./pages/DashboardSummary/DashboardSummary"));
 const Commission = lazy(() => import("./pages/Commission/Commission"));
 const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
-const ConfirmCommissionBody = lazy(() => import("./pages/ConfirmCommssion/ConfirmCommissionBody"));
-const DashboardOverView = lazy(() => import("./pages/DashboardOverView/DashboardOverView"));
 const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
 const Page403 = lazy(() => import("./pages/page403"));
 const Page404 = lazy(() => import("./pages/Page404"));
@@ -58,30 +55,12 @@ const routes = [
     { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [] },
     { path: "/management", component: <Management />, title: "การจัดการ", access: [] },
     {
-      path: "/Dashboard-Summary",
-      component: <DashboardSummary />,
-      title: "แดชบอร์ด Summary",
-      access: []
-    },
-    {
       path: "/ExpenseReport",
       component: <ExpenseReport />,
       title: "ค่าใช้จ่าย",
       access: []
     },
     { path: "/Commission", component: <Commission />, title: "คอมมิชชัน", access: [] },
-    {
-      path: "/ConfirmCommission",
-      component: <ConfirmCommissionBody />,
-      title: "ยืนยันค่าคอม",
-      access: []
-    },
-    {
-      path: "/Dashboard-Overview",
-      component: <DashboardOverView />,
-      title: "แดชบอร์ดยอดสั่งซื้อ",
-      access: []
-    },
     {
       path: "/Dashboard-CEO",
       component: <DashboardCEO />,

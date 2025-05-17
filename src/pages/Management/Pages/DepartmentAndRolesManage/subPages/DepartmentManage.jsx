@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Chip, input, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
+import { Button, Card, Checkbox, Chip, input, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { AddStreamlineUltimateWhiteIcon, CheckIcon, ChecklistIcon, DeleteIcon, DisableIcon, EditIcon, SearchIcon } from "../../../../../component/Icons";
 import SearchBox from "../../../../../component/SearchBox";
 import { useEffect, useState } from "react";

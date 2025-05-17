@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
-import DefaultLayout from "../../layouts/default";
+import React, {useState } from "react";
 import { DotIcon } from "../../component/Icons";
 import SideMenuSetting from "./Components/SideMenuSetting";
 import SetCommission from "./Pages/CommissionSettings/CommissionSettings";
-import SetIncentive from "./Pages/SetIncentive";
-import SetModuleDepartment from "./Pages/SetModuleDepartment";
-import SetModuleRole from "./Pages/SetModuleRole";
-import ReturnFineSetting from "./Pages/ReturnFineSetting/ReturnFineSetting";
 import CodCutoffSettings from "./Pages/CodCutoffSettings/CodCutoffSettings";
-import MasterSettingAward from "./Pages/SettingAward/MasterSettingAward";
-import DashboardOverviewSettings from "./Pages/DashboardOverviewSettings/DashboardOverviewSettings";
 import { useAppContext } from "@/contexts/AppContext";
-import AgentSettingAward from "./Pages/SettingAward/subPages/AgentSettingAward";
-import MasterSettingOKR from "./SettingOKR/MasterSettingOKR";
 
 
 function Setting() {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Card } from "@nextui-org/react";
+import { Input, Button, Card } from "@heroui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LockIcon,

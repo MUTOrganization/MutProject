@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Chip, CircularProgress, Input, Select, SelectItem, SelectSection, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, User } from "@nextui-org/react";
+import { Button, Card, Checkbox, Chip, CircularProgress, Input, Select, SelectItem, SelectSection, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, User } from "@heroui/react";
 import { useAppContext } from "../../../../../contexts/AppContext"
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetchProtectedData from "../../../../../../utils/fetchData";
@@ -528,7 +528,8 @@ export default function UserRolePage(){
                                                 {(() => {
                                                     let groups = groupArray(roles,'departmentName')
                                                     const sectionClass = "flex w-full sticky top-0 z-20 py-1.5 px-2 font-bold text-black bg-default-100 rounded-small";
-                                                    return(
+                                                    return (
+                                                        // <GroupSelector items={items} value={selectedNewRole} onChange={(e) => setSelectedNewRole(e.target.value)} />
                                                         <Select aria-label="department select"
                                                             scrollShadowProps={{isEnabled: false}}
                                                             selectedKeys={[selectedNewRole]}
@@ -562,8 +563,7 @@ export default function UserRolePage(){
                                                                 <SelectItem key={'n'}>ไม่มีตำแหน่ง</SelectItem>
                                                             </SelectSection>
                                                         </Select>
-                                                        // <GroupSelector items={items} value={selectedNewRole} onChange={(e) => setSelectedNewRole(e.target.value)} />
-                                                    )
+                                                    );
                                                 })()}
                                             </div>
                                         </div>
@@ -614,6 +614,5 @@ export default function UserRolePage(){
                 }
             </div>
         </div>
-        
-    )
+    );
 }

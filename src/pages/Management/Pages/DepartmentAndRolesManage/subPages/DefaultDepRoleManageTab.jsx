@@ -3,7 +3,7 @@ import fetchProtectedData from "../../../../../../utils/fetchData"
 import { useAppContext } from "@/contexts/AppContext"
 import { useEffect, useMemo, useState } from "react"
 import { URLS } from "@/config"
-import { Button, Card, CardBody, CardHeader, Divider, Input, Listbox, ListboxItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@nextui-org/react"
+import { Button, Card, CardBody, CardHeader, Divider, Input, Listbox, ListboxItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@heroui/react"
 import { AddCircleIcon, AddStreamlineUltimateWhiteIcon, EditIcon, HFChevronRight, HFVerticalDots } from "@/component/Icons"
 import { DeleteIcon, PencilIcon } from "lucide-react"
 import RoleAccesBox from "../components/RoleAccessBox"
@@ -171,11 +171,8 @@ export default function DefaultDepRoleManageTab() {
                 content={`คุณต้องการลบ ${itemToDelete?.type == 'dep' ? 'แผนก' : 'ตำแหน่ง'} ${itemToDelete?.name} หรือไม่`}
                 color="danger"
             />
-
-
             <ManageDepModal isOpen={isManageDepModalOpen} onClose={() => setIsManageDepModalOpen(false)} dep={selectedDepToEdit} onSave={handleSaveDep} isLoading={isSubmitLoading} />
             <ManageRoleModal isOpen={isManageRoleModalOpen} onClose={() => setIsManageRoleModalOpen(false)} role={selectedRoleToEdit} onSave={handleSaveRole} isLoading={isSubmitLoading} />
-
             <div className="flex space-x-4 h-[680px]">
                 <div className="w-[240px] h-full">
                     <Card shadow="sm" className="h-full overflow-auto">
@@ -197,7 +194,7 @@ export default function DefaultDepRoleManageTab() {
                         {
                             depList.map((dep) => (
                                 // <Tooltip key={dep.id} content={dep.name}>
-                                    <div  
+                                    (<div  
                                         className={`flex items-center p-2 transition-all cursor-pointer rounded-md ${dep.id == selectedDep ? 'bg-primary-100 text-primary' : 'hover:bg-gray-100'}`}
                                         onClick={() => {
                                             setSelectedDep(dep.id)
@@ -235,7 +232,7 @@ export default function DefaultDepRoleManageTab() {
                                                 </Popover>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>)
                                 // </Tooltip>
                             ))
                         }
@@ -317,9 +314,8 @@ export default function DefaultDepRoleManageTab() {
                     </Card>
                 </div>
             </div>
-
         </div>
-    )
+    );
 }
 
 function ManageDepModal({isOpen, onClose, dep, onSave, isLoading}){

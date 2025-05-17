@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import lodash from 'lodash';
-import { SearchMatchScore } from "../../utils/search";
-import { Input } from "@nextui-org/react";
+import { SearchMatchScore } from "@/utils/search";
+import { Input } from "@heroui/react";
 import { SearchIcon } from "./Icons";
 
 

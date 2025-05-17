@@ -1,5 +1,5 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/modal";
-import { Button } from "@nextui-org/react";
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/modal";
+import { Button } from "@heroui/react";
 import { toast } from "sonner";
 import { HFExclamation, HFQuestionMark } from "./Icons";
 

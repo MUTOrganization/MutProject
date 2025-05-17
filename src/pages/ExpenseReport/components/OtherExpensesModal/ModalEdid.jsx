@@ -1,11 +1,9 @@
 import React, { useContext, useState } from 'react'
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, SelectItem , TableColumn, Select ,TableBody, TableRow, TableCell } from '@nextui-org/react';
-import { defaultDate } from '../../../../component/DateUtiils';
-import { FaPlus, FaPlusCircle, FaTrash } from 'react-icons/fa';
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
-import { useAppContext } from '../../../../contexts/AppContext';
-import { Data } from '../../TabsExpense/TabsOthersCost';
+import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Textarea, Table, TableHeader, SelectItem , TableColumn, Select ,TableBody, TableRow, TableCell } from "@heroui/react";
+import { FaPlusCircle, FaTrash } from 'react-icons/fa';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
+import { useAppContext } from '@/contexts/AppContext';
 import { toast, Toaster } from 'sonner';
 
 
@@ -249,7 +247,7 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
             </Modal>
             <Toaster richColors position='bottom-left' />
         </div>
-    )
+    );
 }
 
 export default ModalEdid

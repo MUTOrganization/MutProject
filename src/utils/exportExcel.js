@@ -1,7 +1,3 @@
-import * as XLSX from 'xlsx';
-import moment from 'moment';
-
-moment.locale('th');
 
 /**
  * Export data to an Excel file with multiple sheets.

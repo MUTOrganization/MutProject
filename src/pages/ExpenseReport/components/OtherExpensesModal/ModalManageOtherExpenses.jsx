@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 
 function ModalManageOtherExpenses({ isOpen, onClose, data }) {
 

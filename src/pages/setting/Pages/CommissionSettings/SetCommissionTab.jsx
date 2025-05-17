@@ -1,7 +1,7 @@
 import { PlusIcon, SubtractIcon } from "@/component/Icons";
 import NumberInput from "@/component/NumberInput";
 import { cFormatter } from "@/utils/numberFormatter";
-import { Radio, RadioGroup, Tooltip, Button } from "@nextui-org/react";
+import { Radio, RadioGroup, Tooltip, Button } from "@heroui/react";
 import { useMemo } from "react";
 import lodash from "lodash";
 

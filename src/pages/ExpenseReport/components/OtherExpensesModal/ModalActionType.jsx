@@ -1,9 +1,7 @@
-import { Input } from '@nextui-org/input'
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button } from '@nextui-org/react'
-import React, { act, useContext, useState } from 'react'
-import { URLS } from '../../../../config'
-import fetchProtectedData from '../../../../../utils/fetchData'
+import { Input } from "@heroui/input"
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button } from "@heroui/react"
+import React, { useContext, useState } from 'react'
 import { useAppContext } from '../../../../contexts/AppContext'
 import { toast } from 'sonner'
 import expensesService from '@/services/expensesService'

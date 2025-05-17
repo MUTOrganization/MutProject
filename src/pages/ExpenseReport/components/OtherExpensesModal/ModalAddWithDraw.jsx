@@ -1,10 +1,10 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button, DateRangePicker, Select, SelectItem, Textarea } from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button, DateRangePicker, Select, SelectItem, Textarea } from "@heroui/react"
 import React, { useContext, useState } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa'
 import { URLS } from '../../../../config'
-import fetchProtectedData from '../../../../../utils/fetchData'
-import { useAppContext } from '../../../../contexts/AppContext'
+import fetchProtectedData from '@/utils/fetchData'
+import { useAppContext } from '@/contexts/AppContext'
 import { Data } from '../../TabsExpense/TabsOthersCost'
 import { list } from 'postcss'
 import { toast, Toaster } from 'sonner'
@@ -231,9 +231,8 @@ function ModalAddWithDraw({ isOpen, onClose, setIsAddWithDraw, selectedAgent }) 
                 </ModalContent>
             </Modal>
             {/* <Toaster richColors position='bottom-left' /> */}
-
         </div >
-    )
+    );
 }
 
 export default ModalAddWithDraw

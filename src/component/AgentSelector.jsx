@@ -15,7 +15,7 @@ import {
     Card,
     Autocomplete,
     AutocompleteItem
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 import SearchBox from "./SearchBox";
 import { ConfirmCancelButtons } from "./Buttons";

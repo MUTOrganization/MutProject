@@ -1,10 +1,10 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button, Textarea } from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button, Textarea } from "@heroui/react"
 import React, { useState } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa'
-import { URLS } from '../../../../config'
-import fetchProtectedData from '../../../../../utils/fetchData'
-import { useAppContext } from '../../../../contexts/AppContext'
+import { URLS } from '@/config'
+import fetchProtectedData from '@/utils/fetchData'
+import { useAppContext } from '@/contexts/AppContext'
 import { toast, Toaster } from 'sonner'
 
 function ModalEditWithDraw({ isOpen, onClose, data, setIsEdit }) {
@@ -228,9 +228,8 @@ function ModalEditWithDraw({ isOpen, onClose, data, setIsEdit }) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-            
         </div>
-    )
+    );
 }
 
 export default ModalEditWithDraw

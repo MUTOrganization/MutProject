@@ -1,15 +1,10 @@
-import { Avatar, Button, Card, Chip, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
+import { Avatar, Button, Card, Chip, Divider, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { useEffect, useState } from "react";
-import AgentSelector from "../../../component/AgentSelector";
-import fetchProtectedData from "../../../../utils/fetchData";
-import { URLS } from "../../../config";
-import { useAppContext } from "../../../contexts/AppContext";
-import { toastError, toastSuccess } from "../../../component/Alert";
-import SearchBox from "../../../component/SearchBox";
-import { CompareStatus } from "../../../../utils/CompareStatus";
-import { InfomationIcon, InformationIcon } from "../../../component/Icons";
-import { ConfirmCancelButtons } from "../../../component/Buttons";
-import UserProfileAvatar from "../../../component/UserProfileAvatar";
+import fetchProtectedData from "@/utils/fetchData";
+import { URLS } from "@/config";
+import { useAppContext } from "@/contexts/AppContext";
+import { toastError, toastSuccess } from "@/component/Alert";
+import { ConfirmCancelButtons } from "@/component/Buttons";
 
 function AddPersonelDepartment({ open, close, listRoles, listUsers, isSave = false }) {
     const context = useAppContext();

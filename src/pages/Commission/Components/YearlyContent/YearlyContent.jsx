@@ -1,12 +1,5 @@
-import { Card, CardBody, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Card, CardBody } from "@heroui/react";
 import CommissionChart from "./CommissionChart";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { sortArray } from "../../../../../utils/arrayFunc";
-import fetchProtectedData from "../../../../../utils/fetchData";
-import { useAppContext } from "../../../../contexts/AppContext";
-import { toastError } from "../../../../component/Alert";
-import { URLS } from "../../../../config";
-import { CommissionData } from "./CommissionData";
 import SummaryTable from "./SummaryTable";
 import IncomeChart from "./IncomeChart";
 import SaleOrderChart from "./SaleOrderChart";

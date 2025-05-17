@@ -13,27 +13,22 @@ import {
   TableRow,
   TableCell,
   Badge,
-  useDisclosure,
   Modal,
-  ModalHeader,
   ModalBody,
-  ModalFooter,
   ModalContent,
-  Spinner,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { parseDate, today } from "@internationalized/date";
 import {
   formatDateThai,
   formatDateObject,
-} from "../../../../component/DateUtiils";
-import { DeleteIcon, EditIcon, PlusIcon } from "../../../../component/Icons";
+} from "@/utils/dateUtils";
+import { DeleteIcon, EditIcon, PlusIcon } from "@/component/Icons";
 import {
   ConfirmCancelButtons,
   PrimaryButton,
-} from "../../../../component/Buttons";
-import { toastSuccess, toastError } from "../../../../component/Alert";
-import { useAppContext } from "../../../../contexts/AppContext";
-import fetchProtectedData from "../../../../../utils/fetchData";
+} from "@/component/Buttons";
+import { toastSuccess, toastError } from "@/component/Alert";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "@/config";
 
 const FormInputAds = ({

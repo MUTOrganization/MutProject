@@ -1,12 +1,12 @@
 import { toastError } from "@/component/Alert";
 import { HFInfoFilled } from "@/component/Icons";
 import { useAppContext } from "@/contexts/AppContext";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/modal";
-import { Button, Card, Checkbox, CircularProgress, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
-import { useEffect, useMemo, useState } from "react";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
+import { Button, Card, Checkbox, CircularProgress, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import { useEffect, useState } from "react";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "@/config";
-import { groupArray } from "../../../../../../utils/arrayFunc";
+import { groupArray } from "@/utils/arrayFunc";
 
 export default function CopyAccessModal({isCopyModalOpen, onClose, onCopy}) {
     const agentList = useAppContext().agent.agentList;

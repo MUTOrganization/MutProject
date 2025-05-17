@@ -1,8 +1,8 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
-import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
+import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea } from "@heroui/react";
 import React from 'react'
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import { toast } from 'sonner';
 
 function ModalDeleteWithDraw({ isOpen, onClose, data, setIsDelete }) {

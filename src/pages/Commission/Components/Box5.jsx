@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import fetchProtectedData from '../../../../utils/fetchData'
-import { useAppContext } from '../../../contexts/AppContext';
-import { Card, CardHeader, CardBody, CardFooter, Spinner , Switch , cn , Divider , Tooltip , Progress} from '@nextui-org/react';
-import { URLS } from '../../../config';
+import React, { useState } from 'react'
+import { Card, CardBody, Spinner , Switch , Divider , Tooltip , Progress} from "@heroui/react";
 import { useCommissionContext } from '../CommissionContext';
-import { cFormatter } from '../../../../utils/numberFormatter';
+import { cFormatter } from '@/utils/numberFormatter';
 
 function Box5({ isLoading, dateRange, selectedEmployee }) {
     const {commData} = useCommissionContext();

@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Tooltip } from "@nextui-org/react";
+import { Button, Card, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Textarea, Tooltip } from "@heroui/react";
 import {
-  AddStreamlineUltimateIcon,
   AddStreamlineUltimateWhiteIcon,
-  CheckCircle,
-  DeleteIcon,
   EditIcon,
   InfomationIcon,
-  InformationIcon,
   SearchIcon,
 } from "../../../component/Icons";
 import { URLS } from "../../../config";
 import { useAppContext } from "../../../contexts/AppContext";
-import fetchProtectedData from "../../../../utils/fetchData";
-import lodash, { set } from "lodash";
-import axios from "axios";
+import fetchProtectedData from "@/utils/fetchData";
+import lodash from "lodash";
 
 import { ConfirmCancelButtons } from "../../../component/Buttons";
 import { toastError, toastSuccess } from "../../../component/Alert";
-import { data } from "autoprefixer";
-import SearchBox from "../../../component/SearchBox";
 import AgentSelector from "../../../component/AgentSelector";
 
 
@@ -488,7 +481,7 @@ function Permission() {
 
       <AddGroup open={openModalAddGroup} close={e => setOpenModalAddGroup(e)} listGroupAccess={listGroupAccess} isSave={e => setIsSave(e)} />
       <DeleteAccessModal open={openModalConfirmDelete} close={() => setOpenModalConfirmDelete(false)} isDelete={e => setIsDelete(e)} id={selectedRowAccessId} accessName={selectedRowAccessName} />
-
+      
       <Modal backdrop="opaque" isDismissable={false} isOpen={openModal} onClose={() => setOpenModal(false)}>
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1 text-2xl p-0">
@@ -664,7 +657,6 @@ function Permission() {
             </div>
           </div>
         </Card>
-
         <Card shadow="sm" className="flex-1 p-4 h-[630px]">
           <div className="rounded-lg size-full">
             {/* table */}

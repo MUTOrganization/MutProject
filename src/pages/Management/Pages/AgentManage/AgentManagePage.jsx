@@ -1,4 +1,4 @@
-import { Card, CardBody, Tab, Table, TableBody, TableColumn, TableHeader, Tabs } from "@nextui-org/react";
+import { Card, CardBody, Tab, Table, TableBody, TableColumn, TableHeader, Tabs } from "@heroui/react";
 import { useState } from "react";
 import AgentAccessManagePage from "./subPages/AgentAccessManagePage";
 

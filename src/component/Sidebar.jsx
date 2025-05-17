@@ -15,7 +15,7 @@ import {
   Button,
   Card,
   Divider,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
 

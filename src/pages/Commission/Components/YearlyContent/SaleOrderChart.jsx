@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { CommissionData } from "./CommissionData";
-import { cFormatter, nFormatter } from "../../../../../utils/numberFormatter";
-import { Checkbox, Spinner, Switch } from "@nextui-org/react";
+import { cFormatter, nFormatter } from "@/utils/numberFormatter";
+import { Spinner, Switch } from "@heroui/react";
 import ReactApexChart from "react-apexcharts";
 import lodash from 'lodash'
 /**

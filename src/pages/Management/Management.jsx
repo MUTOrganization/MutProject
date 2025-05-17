@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useEffect, useState } from "react";
 import { DotIcon } from "@/component/Icons";
 import { useNavigate } from "react-router-dom";
 import SideMenu from "./Components/SideMenuManage";
-import { Accordion, AccordionItem, CircularProgress } from "@nextui-org/react";
+import { Accordion, AccordionItem, CircularProgress } from "@heroui/react";
 import { useAppContext } from "../../contexts/AppContext";
 
 const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));

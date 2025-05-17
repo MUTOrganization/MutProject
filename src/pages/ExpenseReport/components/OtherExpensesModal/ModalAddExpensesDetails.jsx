@@ -1,5 +1,5 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
-import { Button, Select, SelectItem, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input } from '@nextui-org/react';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
+import { Button, Select, SelectItem, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input } from "@heroui/react";
 import React from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 
@@ -179,7 +179,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                 )}
             </ModalContent>
         </Modal >
-    )
+    );
 }
 
 export default ModalAddExpensesDetails

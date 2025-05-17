@@ -1,4 +1,3 @@
-import { CommissionData } from "../src/pages/Commission/Components/YearlyContent/CommissionData";
 
 /**
 * 
@@ -92,8 +91,4 @@ export function sortArray(arr, fieldName, direction) {
         return String(first).localeCompare(String(second)) * factor; // ถ้าไม่ใช่ตัวเลข ให้เรียงตามตัวอักษร
       }
     });
-  }
-
-  function ss(ar){
-    return ar.sort();
   }

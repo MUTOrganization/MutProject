@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import fetchProtectedData from '../../../../utils/fetchData'
-import { useAppContext } from '../../../contexts/AppContext';
-import { Card, CardHeader, CardBody, CardFooter, Spinner, Tooltip, Popover, PopoverTrigger, PopoverContent, Button } from '@nextui-org/react';
-import { URLS } from '../../../config';
-import { InfomationIcon } from '../../../component/Icons'
+import fetchProtectedData from '@/utils/fetchData'
+import { useAppContext } from '@/contexts/AppContext';
+import { Card, CardBody, Spinner, Popover, PopoverTrigger, PopoverContent, Button } from "@heroui/react";
+import { URLS } from '@/config';
+import { InfomationIcon } from '@/component/Icons'
 
 function Box4({ isLoading, dateRange, selectedEmployee, selectedDepartment }) {
 

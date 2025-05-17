@@ -1,4 +1,4 @@
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import UserProfileAvatar from "./UserProfileAvatar";
 
 export default function EmployeeSelector({employeeList, selectedEmployee, onSelected, label}) {

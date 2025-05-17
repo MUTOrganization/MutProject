@@ -1,7 +1,7 @@
-import { Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react';
+import { Spinner, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react'
-import { URLS } from '../../../../config';
-import fetchProtectedData from '../../../../../utils/fetchData';
+import { URLS } from '@/config';
+import fetchProtectedData from '@/utils/fetchData';
 import ModalViewWithDraw from '../OtherExpensesModal/ModalViewWithDraw';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEditWithDraw from '../OtherExpensesModal/ModalEditWithDraw';

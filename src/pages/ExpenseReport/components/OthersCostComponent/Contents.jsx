@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import fetchProtectedData from '../../../../../utils/fetchData'
-import { URLS } from '../../../../config';
+import fetchProtectedData from '@/utils/fetchData'
+import { URLS } from '@/config';
 import {
     Spinner,
     Table,
@@ -12,14 +12,13 @@ import {
     getKeyValue,
     SelectItem,
     Select
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import ModalManageOtherExpenses from '../OtherExpensesModal/ModalManageOtherExpenses';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEdid from '../OtherExpensesModal/ModalEdid';
 import ModalDelete from '../OtherExpensesModal/ModalDelete';
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
-import { formatDateObject } from '../../../../component/DateUtiils';
+import { formatDateObject } from '@/utils/dateUtils';
 
 
 export default function Contents() {

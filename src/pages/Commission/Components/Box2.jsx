@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import fetchProtectedData from '../../../../utils/fetchData'
-import { useAppContext } from '../../../contexts/AppContext';
-import { Card, CardHeader, CardBody, CardFooter, Spinner, Tooltip, Popover, PopoverTrigger, PopoverContent, Button } from '@nextui-org/react';
-import { URLS } from '../../../config';
-import { InfomationIcon } from '../../../component/Icons'
+import React from 'react'
+import { Card, CardBody, Spinner } from "@heroui/react";
 import { useCommissionContext } from '../CommissionContext';
-import { cFormatter } from '../../../../utils/numberFormatter';
+import { cFormatter } from '@/utils/numberFormatter';
 
 function Box2({ isLoading }) {
     const { commData } = useCommissionContext();
