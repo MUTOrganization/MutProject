@@ -1,37 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "./styles/App.css";
 import DefaultLayout from "./layouts/default";
-
-import Management from "./pages/Management/Management";
-import Setting from "./pages/Setting/Setting";
-import Home from "./pages/Home/Home";
-import Login from "./pages/Login/Login";
-import DashboardSummary from "./pages/DashboardSummary/DashboardSummary";
-import Commission from "./pages/Commission/Commission";
-import ExpenseReport from "./pages/ExpenseReport/ExpenseReport";
-
-
 import { useAppContext } from "./contexts/AppContext";
 import { CircularProgress } from "@nextui-org/react";
 import { Toaster } from "sonner";
-import ConfirmCommissionBody from "./pages/ConfirmCommssion/ConfirmCommissionBody";
-import DashboardOverView from "./pages/DashboardOverView/DashboardOverView";
-import DashboardCEO from "./pages/DashboardCEO/DashboardCEO";
+
+const Management = lazy(() => import("./pages/Management/Management")); 
+const Setting = lazy(() => import("./pages/Setting/Setting"));
+const Home = lazy(() => import("./pages/Home/Home"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const DashboardSummary = lazy(() => import("./pages/DashboardSummary/DashboardSummary"));
+const Commission = lazy(() => import("./pages/Commission/Commission"));
+const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
+const ConfirmCommissionBody = lazy(() => import("./pages/ConfirmCommssion/ConfirmCommissionBody"));
+const DashboardOverView = lazy(() => import("./pages/DashboardOverView/DashboardOverView"));
+const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
+const Page403 = lazy(() => import("./pages/page403"));
+const Page404 = lazy(() => import("./pages/Page404"));
+
+
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, isUserLoading } = useAppContext();
+  const { currentUser, isUserLoading, accessCheck } = useAppContext();
 
   useEffect(() => {
     if (!isUserLoading) {
       if (!currentUser) {
         navigate("/login", { replace: true, state: { from: location } });
+      }else{
+        const route = routes.find(route => route.path === location.pathname);
+        if(!route){
+          console.log("ไม่พบหน้าที่คุณกำลังค้นหา");
+          return navigate("/notfound", { replace: true });
+        }
+        if(!accessCheck.haveAny(route.access)){
+          console.log("ไม่มีสิทธิ์เข้าถึงหน้านี้");
+          return navigate("/forbidden", { replace: true });
+        }
       }
     }
-  }, [currentUser, isUserLoading, location, navigate]);
+  }, [currentUser, isUserLoading, location]);
 
   if (isUserLoading) {
     // อาจโชว์ Loading หรือเปล่า
@@ -41,39 +53,42 @@ function ProtectedRoute({ children }) {
   return currentUser ? children : null;
 }
 
-const primaryRoutes = {
-  one: [
-    { path: "/home", component: <Home />, title: "หน้าแรก" },
-    { path: "/setting", component: <Setting />, title: "การตั้งค่า" },
-    { path: "/management", component: <Management />, title: "การจัดการ" },
+const routes = [
+    { path: "/home", component: <Home />, title: "หน้าแรก", access: [] },
+    { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [] },
+    { path: "/management", component: <Management />, title: "การจัดการ", access: [] },
     {
       path: "/Dashboard-Summary",
       component: <DashboardSummary />,
       title: "แดชบอร์ด Summary",
+      access: []
     },
     {
       path: "/ExpenseReport",
       component: <ExpenseReport />,
       title: "ค่าใช้จ่าย",
+      access: []
     },
-    { path: "/Commission", component: <Commission />, title: "คอมมิชชัน" },
+    { path: "/Commission", component: <Commission />, title: "คอมมิชชัน", access: [] },
     {
       path: "/ConfirmCommission",
       component: <ConfirmCommissionBody />,
       title: "ยืนยันค่าคอม",
+      access: []
     },
     {
       path: "/Dashboard-Overview",
       component: <DashboardOverView />,
       title: "แดชบอร์ดยอดสั่งซื้อ",
+      access: []
     },
     {
       path: "/Dashboard-CEO",
       component: <DashboardCEO />,
       title: "แดชบอร์ดผู้บริหาร",
+      access: []
     },
-  ],
-};
+];
 
 function App() {
   const { isUserLoading } = useAppContext();
@@ -87,31 +102,34 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/login" element={<Login />} />
-      <Route
-        path="/*"
-        element={
-          <ProtectedRoute>
-            <Routes>
-              {primaryRoutes.one.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={
-                    <DefaultLayout title={route.title}>
-                      {route.component}
-                    </DefaultLayout>
-                  }
-                />
-              ))}
-            </Routes>
-            <Toaster richColors />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <Suspense fallback={<div className="fixed size-full flex justify-center items-center"><CircularProgress aria-label="Loading..." size="lg" color="primary" className="" /></div>}>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forbidden" element={<Page403 />} />
+        <Route path="/notfound" element={<Page404 />} />
+        <Route path="/*"
+          element={
+            <ProtectedRoute>
+              <Routes>
+                {routes.map((route) => (
+                  <Route
+                    key={route.path}
+                    path={route.path}
+                    element={
+                      <DefaultLayout title={route.title}>
+                        {route.component}
+                      </DefaultLayout>
+                    }
+                  />
+                ))}
+              </Routes>
+              <Toaster richColors />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Suspense>
   );
 }
 

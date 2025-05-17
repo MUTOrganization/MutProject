@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from "react";
-import SideMenu from "./Components/SideMenuManage";
-import AgentManage from "./Pages/AgentManage/AgentManagePage";
-import Permission from "./Pages/Permission";
-import { Accordion, AccordionItem } from "@nextui-org/react";
-import ManageUser from "./Pages/UserManage/ManageUser";
-import { useAppContext } from "../../contexts/AppContext";
-import { ACCESS } from "../../configs/access";
-import DepartmentAndRoleManage from "./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { DotIcon } from "@/component/Icons";
+import { useNavigate } from "react-router-dom";
+import SideMenu from "./Components/SideMenuManage";
+import { Accordion, AccordionItem, CircularProgress } from "@nextui-org/react";
+import { useAppContext } from "../../contexts/AppContext";
+
+const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));
+const Permission = lazy(() => import("./Pages/Permission"));
+const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
+const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
+import Page403 from "../page403";
 
 function Management() {
+  const navigate = useNavigate();
   const [activeComponent, setActiveComponent] = useState(sessionStorage.getItem('managePageMenu') ?? null);
+  const [isForbidden, setIsForbidden] = useState(false);
+
   const { accessCheck } = useAppContext()
 
   const handleItemClick = (itemName) => {
@@ -30,24 +35,31 @@ function Management() {
         const item = items[itemKey];
         return Array.isArray(item.access) && accessCheck.haveAny(item.access);
       });
-      setActiveComponent(initialComponent || null);
+      if (initialComponent) {
+        setActiveComponent(initialComponent);
+        sessionStorage.setItem('managePageMenu', initialComponent);
+      } else {
+        setActiveComponent(null);
+        sessionStorage.removeItem('managePageMenu');
+        setIsForbidden(true);
+      }
     }
-  }, []);
+  }, [activeComponent]);
 
   const list = {
     การจัดการ: {
       // Home: { display: "จัดการหน้าแรก", component: <ManageHome />, access: [ACCESS.home.manage_home] },
-      accessManage: { display: "จัดการสิทธิ์", component: <Permission />, access: [ACCESS.access_manage.access_view] },
-      agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [ACCESS.agentManage.view] },
+      accessManage: { display: "จัดการสิทธิ์", component: <Permission />, access: [] },
+      agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [] },
       depAndRole: {
         display: "จัดการแผนกและตำแหน่ง",
         component: <DepartmentAndRoleManage />,
         access: [
-          ACCESS.role_manage.roleManage_view,
-          ACCESS.department.view
+          
+          
         ]
       },
-      usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [ACCESS.userManage.view, ACCESS.role_manage.userRole_view] },
+      usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [] },
     },
   };
 
@@ -151,7 +163,12 @@ function Management() {
           </Accordion>
         </div>
         <div className="sm:px-4 flex-1">
-          {items[activeComponent]?.component ?? items["depAndRole"].component}
+          {isForbidden ? <Page403 /> 
+          : 
+          <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
+            {items[activeComponent]?.component}
+          </Suspense>
+          }
         </div>
       </div>
     </section>

@@ -7,7 +7,7 @@ import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody,
 import { CheckIcon, DeleteIcon, HFCheck, HFPlus, MenuIcon, SortIcon } from "../../../../../component/Icons";
 import { toast } from "sonner";
 import RoleAccesBox from "../components/RoleAccessBox";
-import { ACCESS } from "../../../../../configs/access";
+import { ACCESS } from "../../../../../configs/accessids";
 import MultiAddRoleAccessModal from "../components/MultiAddRoleAccessModal";
 import AgentSelector from "../../../../../component/AgentSelector";
 import SortableDragAndDrop from "../../../../../component/DragAndDrop/SortableDragAndDrop";
@@ -434,7 +434,7 @@ export default function RoleManageTab() {
                 </div>
                 <div>
                     {
-                        accessCheck.haveAny([ACCESS.role_manage.roleManage_manage_all, ACCESS.role_manage.roleManage_manage_own]) &&
+                        accessCheck.haveAny(['FIX']) &&
                         <Button size="sm" className="text-white bg-amber-500 font-bold" onPress={() => setIsShowMultiAdd(true)}>เพิ่มสิทธิ์ให้หลายตำแหน่ง</Button>
                     }
                 </div>
@@ -465,7 +465,7 @@ export default function RoleManageTab() {
                                 <TableColumn>
                                     <div className="flex justify-end py-2">
                                         {
-                                        accessCheck.haveAny([ACCESS.role_manage.roleManage_manage_all, ACCESS.role_manage.roleManage_manage_own]) &&
+                                        accessCheck.haveAny(['FIX']) &&
                                         <div className="flex">
                                             <Tooltip content="เพิ่มตำแหน่ง" placement="top" color="success" classNames={{content: 'text-white'}}>
                                                 <Button size="sm" isIconOnly variant="light" color="success" onPress={() => onOpen()}><HFPlus size={16} /></Button>
@@ -509,7 +509,7 @@ export default function RoleManageTab() {
                                         <TableCell className="text-end">
                                             {
                                                 !((role.isHq == '1' && selectedAgent.id != '1') ||
-                                                    !(accessCheck.haveOne(ACCESS.role_manage.roleManage_manage_all) || accessCheck.haveOne(ACCESS.role_manage.roleManage_manage_own) && role.createBy == currentUser.userName)) &&
+                                                    !(accessCheck.haveOne('FIX'))) && 
                                                 <Button isIconOnly variant="light" color="danger" onPress={() => handleDeleteRoleClick(role.id)}>
                                                     <DeleteIcon />
                                                 </Button>

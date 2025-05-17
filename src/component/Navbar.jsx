@@ -52,7 +52,7 @@ function Navbar({ title }) {
         onMenuOpenChange={setIsMenuOpen}
         className="px-4 bg-white py-2 rounded-b-xl shadow-none z-20">
         <NavbarBrand>
-          <div className="flex justify-between items-center w-full sm:w-auto gap-4">
+          <div className="flex justify-between items-center sw-full sm:w-auto gap-4">
             <NavbarMenuToggle
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               className="xl:hidden mr-2 h-8" />
@@ -61,9 +61,14 @@ function Navbar({ title }) {
                 {title}
               </p>
               {/* Role Chip */}
-              <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
-                {role}
-              </Chip>
+              <div className="flex gap-2 max-sm:hidden">
+                <Chip variant="flat" color="warning" className="sm:text-sm">
+                  {currentUser.department.departmentName}
+                </Chip>
+                <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
+                  {role}
+                </Chip>
+              </div>
             </div>
           </div>
         </NavbarBrand>
@@ -91,15 +96,26 @@ function Navbar({ title }) {
                 key="profile-display"
                 textValue={currentUser.username}
                 isReadOnly
-                className="h-14 gap-2"
+                className="gap-2"
                 id="user-profile-image">
-                <div className="flex space-x-2">
-                  <UserProfileAvatar name={currentUser.username} size="sm" imageURL={currentUser.displayImgUrl} />
-                  <div className="flex flex-col justify-start items-start text-sm">
-                    <p className="font-bold">{currentUser.username}</p>
-                    <p className="text-gray-500 text-xs">{currentUser.name} { currentUser.nickname ? `(${currentUser.nickname})` : ""}</p>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex space-x-2">
+                      <UserProfileAvatar name={currentUser.username} size="sm" imageURL={currentUser.displayImgUrl} />
+                      <div className="flex flex-col justify-start items-start text-sm">
+                        <p className="font-bold">{currentUser.username}</p>
+                        <p className="text-gray-500 text-xs">{currentUser.name} { currentUser.nickname ? `(${currentUser.nickname})` : ""}</p>
+                      </div>
+                    </div>
+                    <div className="sm:hidden space-x-2">
+                      <Chip variant="flat" color="warning" className="sm:text-sm">
+                        {currentUser.department.departmentName}
+                      </Chip>
+                      <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
+                        {role}
+                      </Chip>
+                    </div>
+
                   </div>
-                </div>
               </DropdownItem>
               <DropdownItem 
                 key="settings" 

@@ -6,27 +6,8 @@ import {
   SettingIcon,
   PadUnlockSquare,
   PadlockSquare,
-  DashBoardAdsIcon,
-  DevIcon,
-  DashboardSummaryIcon,
-  StatsplatformIcon,
-  DashBoardSaleIcon,
-  MoneyBagIcon,
   DashboardCEOIcon,
   BusinessCardHandIcon,
-  MoneyBeggingIcon,
-  ConfirmCommssionIcon,
-  ExpenseIcon,
-  PhoneTalkIcon,
-  OverviewIcon,
-  DocumentProductIcon,
-  DashBoardNightcoreIcon,
-  AwardMedalIcon,
-  RankIcon,
-  RankingIcon,
-  InsightsIcon,
-  OKR,
-  OKR_Dashboard
 } from "./Icons";
 import {
   Accordion,
@@ -36,150 +17,45 @@ import {
   Divider,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { ACCESS } from "../configs/access";
 import { useAppContext } from "../contexts/AppContext";
 
-//!!!!!เพิ่มเมนูใหม่ใน Sidebar และ NavMenu ได้ที่นี่
 export const mainMenuItems = {
   home: {
     path: "/home",
-    text: "หน้าแรก",
+    text: "หน้าแรก", 
     icon: <HomeIcon />,
     access: [],
   },
-  // DashBoardNightcore: {
-  //   path: "/DashBoardNicecall",
-  //   text: "Nice Call",
-  //   icon: <DashBoardNightcoreIcon />,
-  //   access: [ACCESS.dashboard.dashboardNiceCall],
-  // },
-  // DocumentProduct: {
-  //   path: "/DocumentProduct",
-  //   text: "ข้อมูลสินค้า",
-  //   icon: <DocumentProductIcon />,
-  //   access: [ACCESS.document_product.view_document_product],
-  // },
   Commission: {
     path: "/Commission",
     text: "แดชบอร์ด Sales",
     icon: <DashboardCEOIcon />,
-    access: [
-      ACCESS.commisson.commissionView,
-    ],
+    access: []
+      
   },
   DashboardCEO: {
     path: "/Dashboard-CEO",
     text: "แดชบอร์ดผู้บริหาร",
     icon: <DashboardCEOIcon />,
-    access: [ACCESS.dashboardCEO.ceo_view],
+    access: [],
   },
-  // DashBoardInsights: {
-  //   path: "/Dashboard-Insights",
-  //   text: "แดชบอร์ด RFM",
-  //   icon: <InsightsIcon />,
-  //   access: [ACCESS.dashboard_rfm.dashboard_rfm],
-  // },
-  // DashBoardCRM: {
-  //   path: "/Dashboard-CRM",
-  //   text: "แดชบอร์ด CRM",
-  //   icon: <MoneyBagIcon />,
-  //   access: [ACCESS.dashboard_crm.crm_dashboard],
-  // },
-  // DashBoardTalkTime: {
-  //   path: "/Dashboard-TalkTime",
-  //   text: "แดชบอร์ด Talk Time",
-  //   icon: <PhoneTalkIcon />,
-  //   access: [ACCESS.dashboard_talk_time.dashboard_talk_time],
-  // },
-  // DashboardOverView: {
-  //   path: "/Dashboard-Overview",
-  //   text: "แดชบอร์ด ยอดสั่งซื้อ",
-  //   icon: <OverviewIcon />,
-  //   access: [ACCESS.dashboard_overview.dashboard_overview],
-  // },
-  // ConfirmCommssion: {
-  //   path: "/ConfirmCommission",
-  //   text: "ยืนยันค่าคอม",
-  //   icon: <ConfirmCommssionIcon />,
-  //   access: [ACCESS.commisson.confirmCommission],
-  // },
-  // DashboardSummary: {
-  //   path: "/Dashboard-Summary",
-  //   text: "Summary",
-  //   icon: <DashboardSummaryIcon />,
-  //   access: [ACCESS.dashboard.summary_veiw],
-  // },
-  // DashBoardSale: {
-  //   path: "/Dashboard-Sale",
-  //   text: "Dashboar Sale",
-  //   icon: <DashBoardSaleIcon />,
-  //   access: [ACCESS.dashboard.view_dashboard_sale],
-  // },
-  // DashBoardAds: {
-  //   path: "/Dashboard-Ads",
-  //   text: "Dashboard Ads",
-  //   icon: <DashBoardAdsIcon />,
-  //   access: [ACCESS.dashboard.stat_platform],
-  // },
-  // DashboardStatsPlatform: {
-  //   path: "/Dashboard-StatsPlatform",
-  //   text: "StatsPlatform",
-  //   icon: <StatsplatformIcon />,
-  //   access: [ACCESS.dashboard.stat_platform],
-  // },
   ExpenseReport: {
     path: "/ExpenseReport",
     text: "ค่าใช้จ่าย",
     icon: <BusinessCardHandIcon />,
     access: [],
   },
-  // HistoryTopup: {
-  //   path: "/HistoryTopUp",
-  //   text: "เติมเงิน",
-  //   icon: <MoneyBeggingIcon />,
-  //   access: [ACCESS.topup.topup_own_view],
-  // },
-  // TransactionHistory: {
-  //   path: "/TransactionHistory",
-  //   text: "ประวัติการทำธุรกรรม",
-  //   icon: <ExpenseIcon />,
-  //   access: [ACCESS.TransactionHistory.viewOwner],
-  // },
-  // AwardDashboard: {
-  //   path: "/Award_Dashboard",
-  //   text: "AwardDashboard",
-  //   icon: <RankingIcon />,
-  //   access: [ACCESS.hopeful_hero.Award_Dashboard],
-  // },
-  // Award: {
-  //   path: "/Award",
-  //   text: "Award",
-  //   icon: <AwardMedalIcon />,
-  //   access: [ACCESS.hopeful_hero.Award_View],
-  // },
-  // OKR: {  
-  //   path: "/okr",
-  //   text: "My OKR",
-  //   icon: <OKR />,
-  //   access: [ACCESS.OKR.okr_personalprofile],
-  // },
-  // OKRDashboard: {
-  //   path: "/okr_dashboard",
-  //   text: "OKR Dashboard",
-  //   icon: <OKR_Dashboard />,
-  //   access: [ACCESS.OKR.okr_dashboard],
-  // },
   management: {
     path: "/management",
     text: "การจัดการ",
     icon: <ManagementIcon />,
-    access: [ACCESS.management.management_all],
+    access: [],
   },
   setting: {
     path: "/setting",
     text: "การตั้งค่า",
     icon: <SettingIcon />,
-    access: [ACCESS.settings.settings_all],
+    access: [],
   },
 
   //ลองเล่นได้

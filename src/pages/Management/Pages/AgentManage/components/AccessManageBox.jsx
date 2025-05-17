@@ -4,12 +4,11 @@ import { CopyIcon, HFDoubleArrowLeft, HFDoubleArrowRight, HFInfoFilled, HFRefres
 import SearchBox from "../../../../../component/SearchBox";
 import { groupArray } from "../../../../../../utils/arrayFunc";
 import { URLS } from "../../../../../config";
-import {toast} from 'sonner'
 import { Button, Card, CardBody, CardHeader, Checkbox, CircularProgress, Modal, ModalBody, ModalContent, ModalHeader, Tooltip, useDisclosure } from "@nextui-org/react";
 import { toastError } from "../../../../../component/Alert";
 import fetchProtectedData from "../../../../../../utils/fetchData";
 import { useAppContext } from "../../../../../contexts/AppContext";
-import { ACCESS } from "../../../../../configs/access";
+import { ACCESS } from "../../../../../configs/accessids";
 import CopyAccessModal from "./copyAccessModal";
 
 export default function AccessManageBox({agent, mode, onSave, loadSubmit}){
@@ -41,7 +40,7 @@ export default function AccessManageBox({agent, mode, onSave, loadSubmit}){
     },[searchedRightAccess])
 
     const isDisable = useMemo(() => {
-        return !accessCheck.haveAny([ACCESS.agentManage.manage]);
+        return !accessCheck.haveAny(['FIX']);
     },[])
 
     useEffect(() => {
@@ -49,8 +48,6 @@ export default function AccessManageBox({agent, mode, onSave, loadSubmit}){
         clearSelection();
         if(mode == '0'){
             fetchAgentAccess();
-        }else{
-
         }
     },[mode])
 

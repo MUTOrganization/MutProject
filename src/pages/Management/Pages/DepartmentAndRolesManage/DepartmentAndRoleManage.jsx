@@ -1,7 +1,7 @@
 import { Card, CardBody, CircularProgress, Tab, Tabs } from "@nextui-org/react";
 import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
-import { ACCESS } from "../../../../configs/access";
+import { ACCESS } from "../../../../configs/accessids";
 import DefaultDepRoleManageTab from "./subPages/DefaultDepRoleManageTab";
 
 const DepartmentManageTab = lazy(() => import('./subPages/DepartmentManage'))
@@ -30,7 +30,7 @@ export default function DepartmentAndRoleManage(){
                 }}
                 >
                     {
-                        accessCheck.haveAny([ACCESS.department.view]) &&
+                        accessCheck.haveAny(['FIX']) &&
                         <Tab
                             key="department"
                             title={
@@ -41,7 +41,7 @@ export default function DepartmentAndRoleManage(){
                         />
                     }
                     {
-                        accessCheck.haveAny([ACCESS.role_manage.roleManage_view]) &&
+                        accessCheck.haveAny(['FIX']) &&
                         <Tab
                             key="role"
                             title={
@@ -51,17 +51,6 @@ export default function DepartmentAndRoleManage(){
                             }
                         />
                     }
-                    {/* {
-                        (accessCheck.haveAll([ACCESS.role_manage.roleManage_view, ACCESS.department.manage]) && currentUser.businessId == 1) &&
-                        <Tab
-                            key="defaultDepRole"
-                            title={
-                                <div className="flex items-center space-x-2">
-                                    <span>จัดการแผนกต้นแบบให้ตัวแทน</span>
-                                </div>
-                            }
-                        />
-                    } */}
 
 
                 </Tabs>

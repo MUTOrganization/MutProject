@@ -1,7 +1,7 @@
 import { Card, CardBody, CircularProgress, Tab, Tabs } from "@nextui-org/react";
 import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
-import { ACCESS } from "../../../../configs/access";
+import { ACCESS } from "../../../../configs/accessids";
 
 const UserProbationManageTab = lazy(() => import('./subPages/UserProbationManage'))
 const UserRoleManageTab = lazy(() => import('./subPages/UserRoleTab'))
@@ -36,7 +36,7 @@ export default function UserManage(){
                 }}
                 >
                     {
-                        accessCheck.haveAny([ACCESS.role_manage.userRole_view]) &&
+                        accessCheck.haveAny(['FIX']) &&
                         <Tab
                         key="role"
                         title={
@@ -47,7 +47,7 @@ export default function UserManage(){
                             />
                         }
                         {
-                            accessCheck.haveAny([ACCESS.userManage.view]) &&
+                            accessCheck.haveAny(['FIX']) &&
                             <Tab
                                 key="probation"
                                 title={

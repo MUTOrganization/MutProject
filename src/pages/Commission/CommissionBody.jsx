@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import DefaultLayout from '../../layouts/default.jsx';
 import { Card, DateRangePicker, Select, SelectItem, CardBody, Avatar, Chip, Button, ButtonGroup, Switch, cn, Tooltip, CardHeader, Divider, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react';
 import {
@@ -12,20 +12,18 @@ import CommissionContent from './Components/comissionContent.jsx'
 import fetchProtectedData from '../../../utils/fetchData.js';
 import { useAppContext } from '../../contexts/AppContext.jsx';
 import { URLS } from '../../config.js';
-import { HFRefresh, InfomationIcon, MoneyBeggingIcon, RefreshIcon } from '../../component/Icons.jsx';
+import { HFRefresh } from '../../component/Icons.jsx';
 import YearlyContent from './Components/YearlyContent/YearlyContent.jsx';
 import { toastError } from '../../component/Alert.jsx';
-import { ACCESS } from '../../configs/access.ts';
+import { ACCESS } from '../../configs/accessids';
 import { sortArray } from '../../../utils/arrayFunc.js';
 import { useCommissionContext } from './CommissionContext.jsx';
 import { CommissionData, sumCommissionData } from './Components/YearlyContent/CommissionData.js';
 import DateSelector from '../../component/DateSelector.jsx';
 import { cFormatter } from '../../../utils/numberFormatter.js';
 import { ExportExcel } from '../../../utils/exportExcel.js';
-import AgentSelector from '../../component/AgentSelector.jsx';
 import OrderDataModal from './Components/OrderDataModal.jsx';
 import ld from 'lodash';
-import EmployeeSelector from '@/component/EmployeeSelector.jsx';
 
 export const animals = [
     { key: "cat", label: "Cat" },
@@ -45,13 +43,13 @@ export const animals = [
 
 
 function CommissionBody() {
-    const isDev = process.env.NODE_ENV === 'development';
+    const isDev = useMemo(() => process.env.NODE_ENV === 'development', []);
 
     const { currentUser, agent, accessCheck } = useAppContext();
     const { agentList, selectedAgent, setSelectedAgentFromId, loadAgent } = agent;
-    const isAllViewUser = accessCheck.haveOne(ACCESS.commisson.commissionAllVeiw);
-    const isTeamViewUser = accessCheck.haveOne(ACCESS.commisson.commissionTeamView);
-    const isAllOwnerViewUser = accessCheck.haveOne(ACCESS.commisson.commissionOwnerAgentView);
+    const isAllViewUser = accessCheck.haveOne('');
+    const isTeamViewUser = accessCheck.haveOne('');
+    const isAllOwnerViewUser = accessCheck.haveOne('');
 
     const isSelfOnly = !isAllViewUser && !isTeamViewUser && !isAllOwnerViewUser;
 

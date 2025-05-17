@@ -20,7 +20,7 @@ import { sortArray } from '../../../utils/arrayFunc';
 import ModalMultipleCom from './Components/Modals/ModalMultipleCom';
 import { calculate } from '../../component/Calculate';
 import { formatNumber } from '../../component/FormatNumber';
-import { ACCESS } from '../../configs/access';
+import { ACCESS } from '../../configs/accessids';
 import TableCom from './Components/Table';
 import TeamView from './Components/TeamView';
 import EmployeeSelector from '@/component/EmployeeSelector';

@@ -13,7 +13,7 @@ import {
 import fetchProtectedData from '../../../../utils/fetchData.js';
 import { useAppContext } from '../../../contexts/AppContext.jsx';
 import { URLS } from '../../../config.js';
-import { ACCESS } from '../../../configs/access.ts'
+import { ACCESS } from '../../../configs/accessids.js'
 import ReturnOrderTable from './returnOrderTable.jsx';
 import { IncorrectIcon, CorrectIcon } from '../../../component/Icons.jsx';
 import { useNavigate } from 'react-router-dom';

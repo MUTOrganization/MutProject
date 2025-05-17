@@ -9,7 +9,7 @@ import fetchProtectedData from "../../../../../../utils/fetchData";
 import lodash, { isArray } from 'lodash';
 import { groupArray } from "../../../../../../utils/arrayFunc";
 import { toastError, toastSuccess } from "../../../../../component/Alert";
-import { ACCESS } from "../../../../../configs/access";
+import { ACCESS } from "../../../../../configs/accessids";
 
 export default function RoleAccesBox({selectedRole, accessList, loadAccessList, onSave}){
     const [loadingAccess,setLoadingAccess] = useState(false);
@@ -39,7 +39,7 @@ export default function RoleAccesBox({selectedRole, accessList, loadAccessList, 
     },[searchedRightAccess])
 
     const isDisable = useMemo(() => {
-        return !selectedRole || (selectedRole?.isHq == '1' && selectedAgent.id != '1') || !accessCheck.haveAny(ACCESS.role_manage.roleManage_manage_all, ACCESS.role_manage.roleManage_manage_own)
+        return !selectedRole || (selectedRole?.isHq == '1' && selectedAgent.id != '1') || !accessCheck.haveAny('FIX')
     },[selectedAgent, selectedRole]) 
 
 

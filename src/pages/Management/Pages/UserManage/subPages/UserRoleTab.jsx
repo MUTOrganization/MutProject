@@ -7,7 +7,7 @@ import { groupArray, moveToLastOfArray } from "../../../../../../utils/arrayFunc
 import { SearchMatchScore } from "../../../../../../utils/search";
 import { getProfileColor, getUserName } from "../../../../../../utils/util";
 import lodash from "lodash";
-import { ACCESS } from "../../../../../configs/access";
+import { ACCESS } from "../../../../../configs/accessids";
 import { AlertQuestion, toastError, toastSuccess } from "../../../../../component/Alert";
 import th from "dayjs/locale/th";
 import AgentSelector from "../../../../../component/AgentSelector";

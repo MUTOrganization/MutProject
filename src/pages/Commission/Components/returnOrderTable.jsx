@@ -6,7 +6,7 @@ import fetchProtectedData from './../../../../utils/fetchData';
 import { useAppContext } from '../../../contexts/AppContext';
 import dayjs from 'dayjs';
 import 'dayjs/locale/th';
-import { ACCESS } from '../../../configs/access';
+import { ACCESS } from '../../../configs/accessids';
 import { URLS } from '../../../config';
 import { data } from 'autoprefixer';
 import ConfirmPenalty from './ConfirmPenaltyModal';
