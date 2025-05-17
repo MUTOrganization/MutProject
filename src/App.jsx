@@ -81,7 +81,7 @@ function App() {
   if (isUserLoading) {
     return (
       <div className="fixed size-full flex justify-center items-center">
-        <CircularProgress size="lg" color="primary" className="" />
+        <CircularProgress aria-label="Loading..." size="lg" color="primary" className="" />
       </div>
     );
   }

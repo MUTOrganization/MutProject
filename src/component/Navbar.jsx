@@ -14,13 +14,13 @@ import { Chip } from "@nextui-org/react";
 import { useAppContext } from "../contexts/AppContext";
 import NavMenu from "./NavMenu";
 import UserProfileAvatar from "./UserProfileAvatar";
-import { LogoutIcon } from './Icons'
 import { useNavigate } from "react-router-dom";
+import { LogOutIcon } from "lucide-react";
 
 function Navbar({ title }) {
   const { currentUser, logout } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const role = currentUser.role.name;
+  const role = currentUser.role.roleName;
   const navigate = useNavigate();
 
   const getChipColor = (role) => {
@@ -41,12 +41,8 @@ function Navbar({ title }) {
 
   const handleLogout = () => {
     logout();
-
     navigate("/login");
   };
-
-
-
 
   return (
     <>
@@ -74,7 +70,6 @@ function Navbar({ title }) {
         <NavbarMenu className=" rounded-xl shadow-none w-[97%] mx-auto">
           <NavMenu />
         </NavbarMenu>
-
         <NavbarContent
           as="div"
           justify="end"
@@ -82,7 +77,7 @@ function Navbar({ title }) {
         >
           <div className="hidden sm:flex flex-col text-end">
             <p className="font-bold">{currentUser.name}</p>
-            <p>{currentUser.userName}</p>
+            <p className="text-sm text-gray-400 font-bold">{currentUser.username}</p>
           </div>
 
           <Dropdown placement="bottom-end">
@@ -93,39 +88,26 @@ function Navbar({ title }) {
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
-                isReadOnly
                 key="profile-display"
+                textValue={currentUser.username}
+                isReadOnly
                 className="h-14 gap-2"
                 id="user-profile-image">
                 <div className="flex space-x-2">
                   <UserProfileAvatar name={currentUser.username} size="sm" imageURL={currentUser.displayImgUrl} />
-
-                  {(() => {
-                    if (currentUser.name && currentUser.nickname) {
-                      return (
-                        <div className="flex flex-col justify-start items-start text-xs">
-                          <p>{currentUser.name}</p>
-                          <p>{currentUser.nickname}</p>
-                        </div>
-                      );
-                    } else if (currentUser.name || currentUser.nickname) {
-                      return (
-                        <div className="flex justify-start items-center text-xs">
-                          <p>{currentUser.name || currentUser.nickname}</p>
-                        </div>
-                      );
-                    }else {
-                      return (
-                        <div className="flex justify-start items-center text-xs">
-                          <p>{currentUser.userName}</p>
-                        </div>
-                      );
-                    }
-                  })()}
-
+                  <div className="flex flex-col justify-start items-start text-sm">
+                    <p className="font-bold">{currentUser.username}</p>
+                    <p className="text-gray-500 text-xs">{currentUser.name} { currentUser.nickname ? `(${currentUser.nickname})` : ""}</p>
+                  </div>
                 </div>
               </DropdownItem>
-              <DropdownItem key="settings" color="danger" startContent={<LogoutIcon />} onPress={handleLogout}>
+              <DropdownItem 
+                key="settings" 
+                textValue="ออกจากระบบ" 
+                color="danger" 
+                startContent={<LogOutIcon className="text-red-400" size={16} />} 
+                onPress={handleLogout}
+              >
                 ออกจากระบบ
               </DropdownItem>
             </DropdownMenu>

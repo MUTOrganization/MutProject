@@ -1,41 +1,61 @@
-import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
-import { URLS } from "../config";
-import fetchProtectedData from "../../utils/fetchData";
-import { toastError } from "../component/Alert";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import authService from "@/services/authService";
 
-const AppContext = createContext({});
+const AppContext = createContext({
+    /** @type {import('@/models/user').default} */
+    currentUser: null,
+    isUserLoading: true,
+    login: () => {},
+    logout: () => {},
+    agent: {
+        /** @type {Array<import('@/models/agent').default>} */
+        agentList: [],
+        /** @type {import('@/models/agent').default} */
+        selectedAgent: null,
+        isAgentLoading: false,
+        setSelectedAgentFromId: () => {},
+    },
+    accessCheck: {
+        haveOne: () => false,
+        haveAny: () => false,
+        haveAll: () => false,
+    },
+});
 
 export default function AppContextProvider({ children }) {
     const [currentUser, setCurrentUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isUserLoading, setIsUserLoading] = useState(true);
     const [agents, setAgents] = useState([]);
-    const [loadAgent, setLoadingAgent] = useState(false);
+    const [isAgentLoading, setIsAgentLoading] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState(null);
 
-    async function fetchUserData() {
-        try {
-            setIsLoading(true);
-            const data = await authService.getUserData();
-            setCurrentUser(data.userData);
-            const agent = data.userData;
+    const userAccessMap = useMemo(() => {
+        return currentUser ? new Map(currentUser.access.map(e => [e, true])) : new Map();
+    },[currentUser])
+
+    useEffect(() => {
+        setIsUserLoading(true);
+        authService.getUserData().then((data) => {
+            setCurrentUser(data);
+            const agent = data;
             setSelectedAgent({
                 id: agent.businessId,
                 name: agent.businessName,
                 code: agent.businessCode,
             });
-        } catch (err) {
+        }).catch((err) => {
             console.error("fetchUserData error:", err);
-            if (err.status === 401) {
-                return;
-            }
-            toastError("เกิดข้อผิดพลาด", "กรุณาลองใหม่อีกครั้ง");
-        } finally {
-            setIsLoading(false);
+        }).finally(() => {
+            setIsUserLoading(false);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (currentUser && currentUser.businessId == "1") {
+            fetchAgent();
         }
-    }
-    console.log(currentUser);
+    }, [currentUser]);
+
     async function login(username, password) {
         try {
             const data = await authService.login(username, password)
@@ -57,11 +77,9 @@ export default function AppContextProvider({ children }) {
     }
 
     async function logout() {
-        sessionStorage.removeItem("token");
-        localStorage.removeItem("currentUser");
         setCurrentUser(null);
         try {
-            await axios.post(URLS.LOGOUT, {}, { withCredentials: true });
+            await authService.logout();
             return true;
         } catch (err) {
             console.error("logout error:", err);
@@ -71,7 +89,7 @@ export default function AppContextProvider({ children }) {
 
     async function fetchAgent() {
         try {
-            setLoadingAgent(true);
+            setIsAgentLoading(true);
             // const response = await fetchProtectedData.get(URLS.agent.getAll, {
             //     params: { type: ["H", "A"] },
             // });
@@ -79,7 +97,7 @@ export default function AppContextProvider({ children }) {
         } catch (err) {
             console.error("fetchAgent error:", err);
         } finally {
-            setLoadingAgent(false);
+            setIsAgentLoading(false);
         }
     }
 
@@ -94,38 +112,21 @@ export default function AppContextProvider({ children }) {
         }
     }
 
-    const userAccess = currentUser?.access;
     const accessCheck = {
-        haveOne: (acc) => haveOne(userAccess, acc),
-        haveAny: (acc) => haveAny(userAccess, acc),
-        haveAll: (acc) => haveAll(userAccess, acc),
+        haveOne: (acc) => haveOne(userAccessMap, acc),
+        haveAny: (acc) => haveAny(userAccessMap, acc),
+        haveAll: (acc) => haveAll(userAccessMap, acc),
     };
-
-    useEffect(() => {
-        try{
-            fetchUserData()
-        }catch(err){
-            console.error("fetchUserData error:", err);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (currentUser && currentUser.businessId == "1") {
-            fetchAgent();
-        }
-    }, [currentUser]);
 
     const value = {
         currentUser,
-        setCurrentUser,
-        isUserLoading: isLoading,
+        isUserLoading,
         login,
         logout,
         agent: {
             agentList: agents,
             selectedAgent,
-            setSelectedAgent,
-            loadAgent,
+            isAgentLoading,
             setSelectedAgentFromId,
         },
         accessCheck,
@@ -134,19 +135,19 @@ export default function AppContextProvider({ children }) {
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
-function haveOne(userAccess, access) {
-    if (!userAccess || !access) return false;
-    return userAccess.includes(access);
+function haveOne(userAccessMap, access) {
+    if (!userAccessMap || !access) return false;
+    return userAccessMap.has(access);
 }
 
-function haveAll(userAccess, access) {
-    if (!Array.isArray(userAccess) || !access) return false;
-    return access.length === 0 || access.every((e) => userAccess.includes(e));
+function haveAll(userAccessMap, access) {
+    if (!userAccessMap || !access) return false;
+    return access.length === 0 || access.every((e) => userAccessMap.has(e));
 }
 
-function haveAny(userAccess, access) {
-    if (!Array.isArray(userAccess) || !access) return false;
-    return access.length === 0 || userAccess.some((e) => access.includes(e));
+function haveAny(userAccessMap, access) {
+    if (!userAccessMap || !access) return false;
+    return access.length === 0 || access.some((e) => userAccessMap.has(e));
 }
 
 export const useAppContext = () => useContext(AppContext);
