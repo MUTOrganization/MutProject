@@ -1,5 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import authService from "@/services/authService";
+import { SESSION_STORAGE_KEYS } from "@/configs/sessionStorageKeys";
+import Agent from "@/models/agent";
+import User from "@/models/user";
 
 const AppContext = createContext({
     /** @type {import('@/models/user').default} */
@@ -36,13 +39,9 @@ export default function AppContextProvider({ children }) {
     useEffect(() => {
         setIsUserLoading(true);
         authService.getUserData().then((data) => {
-            setCurrentUser(data);
-            const agent = data;
-            setSelectedAgent({
-                id: agent.businessId,
-                name: agent.businessName,
-                code: agent.businessCode,
-            });
+            setCurrentUser(new User(data));
+            const agent = data.agent;
+            setSelectedAgent(new Agent(agent));
         }).catch((err) => {
             console.error("fetchUserData error:", err);
         }).finally(() => {
@@ -59,13 +58,9 @@ export default function AppContextProvider({ children }) {
     async function login(username, password) {
         try {
             const data = await authService.login(username, password)
-            setCurrentUser(data.userData);
-            const agent = data.userData;
-            setSelectedAgent({
-                id: agent.businessId,
-                name: agent.businessName,
-                code: agent.businessCode,
-            });
+            setCurrentUser(new User(data.userData));
+            const agent = data.userData.agent;
+            setSelectedAgent(new Agent(agent));
             return "success";
         } catch (err) {
             console.error("login error:", err);
@@ -77,9 +72,12 @@ export default function AppContextProvider({ children }) {
     }
 
     async function logout() {
-        setCurrentUser(null);
         try {
             await authService.logout();
+            setCurrentUser(null);
+            Object.values(SESSION_STORAGE_KEYS).forEach(value => {
+                sessionStorage.removeItem(value);
+            });
             return true;
         } catch (err) {
             console.error("logout error:", err);

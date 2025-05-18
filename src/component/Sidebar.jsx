@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
@@ -56,42 +56,7 @@ export const mainMenuItems = {
     text: "การตั้งค่า",
     icon: <SettingIcon />,
     access: [],
-  },
-
-  //ลองเล่นได้
-  // hasSubMenu: {
-  //   text: "เมนูแบบมีเมนูย่อย",
-  //   icon: <HintIcon />,
-  //   subMenu: {
-  //     sub1: {
-  //       path: "/management", text: "การจัดการ", icon: <ManagementIcon />,
-  //       access: []
-  //     },
-  //     sub2: {
-  //       path: "/setting", text: "การตั้งค่า", icon: <SettingIcon />,
-  //       access: []
-  //     }
-  //   }
-  // },
-  // hasSubMenu2: {
-  //   text: "เมนูแบบมีเมนูย่อย2",
-  //   icon: <LoginKeyIcon />,
-  //   subMenu: {
-  //     sub1: {
-  //       path: "/HistoryTopUp", text: "เติมเงิน", icon: <MoneyBeggingIcon />,
-  //       access: []
-  //     },
-  //     sub2: {
-  //       path: "/TransactionHistory", text: "ประวัติการทำธุรกรรม", icon: <ExpenseIcon />,
-  //       access: []
-  //     }
-  //   }
-  // },
-
-  // dev: {
-  //   path: "/dev", text: "Dev Hopeful", icon: <DevIcon />,
-  //   access: []
-  // },
+  }
 };
 
 function Sidebar() {
@@ -209,7 +174,7 @@ function Sidebar() {
   );
 }
 
-export function MainMenu({ isShow, isNavMenu }) {
+export function MainMenu({ isShow, isNavMenu, onSelectMenu = () => {} }) {
   const currentData = useAppContext();
   const location = useLocation();
   const [selectedMenu, setSelectedMenu] = useState(
@@ -226,6 +191,11 @@ export function MainMenu({ isShow, isNavMenu }) {
       return null;
     });
   }
+
+  function handleSelectMenu(menu) {
+    setSelectedMenu(menu);
+    onSelectMenu(menu);
+  }
   return (
     <div className="mt-4">
       {Object.entries(mainMenuItems).map(([key, value]) => {
@@ -238,9 +208,7 @@ export function MainMenu({ isShow, isNavMenu }) {
                     selectedKeys={
                       !isShow ? [] : !selectedMenu ? [] : [selectedMenu]
                     }
-                    onSelectionChange={(keys) =>
-                      setSelectedMenu(Array.from(keys)[0])
-                    }
+                    onSelectionChange={() => handleSelectMenu(value.text)}
                   >
                     <AccordionItem
                       key={key}
@@ -295,6 +263,7 @@ export function MainMenu({ isShow, isNavMenu }) {
                 </div>
               ) : currentData.accessCheck.haveAny(value.access) ? (
                 <Link
+                  onClick={() => handleSelectMenu(value.text)}
                   to={value.path}
                   className={`rounded-none py-3 flex items-center hover:bg-custom-menu-hover transition-colors duration-200 
                     ${location.pathname === value.path

@@ -2,12 +2,12 @@ import { Button, Card, Checkbox, Chip, input, Input, Modal, ModalBody, ModalCont
 import { AddStreamlineUltimateWhiteIcon, CheckIcon, ChecklistIcon, DeleteIcon, DisableIcon, EditIcon, SearchIcon } from "../../../../../component/Icons";
 import SearchBox from "../../../../../component/SearchBox";
 import { useEffect, useState } from "react";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "../../../../../config";
 import { useAppContext } from "../../../../../contexts/AppContext";
 import { toastError, toastSuccess } from "../../../../../component/Alert";
-import { CustomFormatDate } from "../../../../../../utils/FormatDate";
-import { CompareStatus, CompareValue } from "../../../../../../utils/CompareStatus";
+import { CustomFormatDate } from "@/utils/dateUtils";
+import { CompareStatus, CompareValue } from "@/utils/CompareStatus";
 import { ConfirmCancelButtons } from "../../../../../component/Buttons";
 import AgentSelector from "../../../../../component/AgentSelector";
 

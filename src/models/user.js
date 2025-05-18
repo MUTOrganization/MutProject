@@ -5,8 +5,6 @@ import Role from "./roles";
 
 export default class User {
     constructor(data) {
-        /** @type {number} */
-        this.id = data.id;
         /** @type {string} */
         this.username = data.username;
         /** @type {string} */

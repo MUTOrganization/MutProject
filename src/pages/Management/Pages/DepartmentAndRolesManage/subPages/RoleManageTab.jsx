@@ -6,7 +6,6 @@ import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody,
 import { CheckIcon, DeleteIcon, HFCheck, HFPlus, MenuIcon, SortIcon } from "../../../../../component/Icons";
 import { toast } from "sonner";
 import RoleAccesBox from "../components/RoleAccessBox";
-import { ACCESS } from "../../../../../configs/accessids";
 import MultiAddRoleAccessModal from "../components/MultiAddRoleAccessModal";
 import AgentSelector from "../../../../../component/AgentSelector";
 import SortableDragAndDrop from "../../../../../component/DragAndDrop/SortableDragAndDrop";

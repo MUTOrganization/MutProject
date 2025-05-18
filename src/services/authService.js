@@ -17,7 +17,6 @@ async function logout() {
 async function getUserData() {
     const url = 'auth/getUserData';
     const res = await api.post(url)
-    console.log(res.data);
     return res.data
 }
 

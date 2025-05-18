@@ -4,7 +4,7 @@ import Department from "./department";
 export default class Agent {
     constructor(data) {
         /** @type {number} */
-        this.id = data.id;
+        this.agentId = data.agentId;
         /** @type {string} */
         this.name = data.name;
         /** @type {string} */

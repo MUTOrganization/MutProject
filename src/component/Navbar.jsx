@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar as NextUINavbar,
   NavbarBrand,
@@ -72,8 +72,8 @@ function Navbar({ title }) {
             </div>
           </div>
         </NavbarBrand>
-        <NavbarMenu className=" rounded-xl shadow-none w-[97%] mx-auto">
-          <NavMenu />
+        <NavbarMenu className="xl:hidden rounded-xl shadow-none w-[97%] mx-auto ">
+          <NavMenu onSelectMenu={() => {setIsMenuOpen(false); console.log("close");}} />
         </NavbarMenu>
         <NavbarContent
           as="div"
