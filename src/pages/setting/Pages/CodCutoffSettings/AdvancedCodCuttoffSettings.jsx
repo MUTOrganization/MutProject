@@ -20,8 +20,8 @@ export default function AdvancedCodCuttoffSettings() {
     const [isLoading, setIsLoading] = useState(false);
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
-    const [newCutoffDay, setNewCutoffDay] = useState({ day: 1, time: { hour: 0, minute: 0 } });
-    const [selectedMonths, setSelectedMonths] = useState([]);
+    const [newCutoffDay, setNewCutffDay] = useState({ day: 1, time: { hour: 0, minute: 0 } });
+    const [selectedMonths, setSelecotedMonths] = useState([]);
     const [isAdvancedModalOpen, setIsAdvancedModalOpen] = useState(false);
     const [isSetTime, setIsSetTime] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);

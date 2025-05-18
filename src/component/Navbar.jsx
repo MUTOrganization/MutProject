@@ -61,14 +61,14 @@ function Navbar({ title }) {
                 {title}
               </p>
               {/* Role Chip */}
-              {/* <div className="flex gap-2 max-sm:hidden">
+              <div className="flex gap-2 max-sm:hidden">
                 <Chip variant="flat" color="warning" className="sm:text-sm">
                   {currentUser.department?.departmentName}
                 </Chip>
                 <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
                   {role}
                 </Chip>
-              </div> */}
+              </div>
             </div>
           </div>
         </NavbarBrand>
