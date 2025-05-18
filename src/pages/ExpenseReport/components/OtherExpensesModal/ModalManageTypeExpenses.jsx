@@ -35,7 +35,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData
     }
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size='2xl'>
+        <Modal isOpen={isOpen} onOpenChange={onClose} size='2xl' className="overflow-hidden">
             <ModalContent className='space-y-5'>
                 <ModalHeader className='text-slate-600'>จัดการประเภทค่าใช้จ่าย</ModalHeader>
                 <ModalBody className=''>

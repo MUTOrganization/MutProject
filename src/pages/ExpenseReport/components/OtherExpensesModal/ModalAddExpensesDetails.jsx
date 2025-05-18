@@ -1,16 +1,16 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
 import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Select, SelectItem } from "@heroui/react";
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
 
 function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate }) {
+    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
 
     const { typeValue, setTypeValue } = useContext(Data)
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size="xl">
+        <Modal isOpen={isOpen} onOpenChange={onClose} size="xl" className="overflow-hidden">
             <ModalContent>
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
@@ -22,11 +22,10 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                 onChange={(e) => setExpensesDate(e)}
                             />
                         </div>
-
+                        {console.log(selectType)}
                         <div className='relative'>
-                            <div className='flex justify-end mb-3 bg-red-300'>
-                                <select name="" id="" className="select select-sm select-bordered">
-                                    <option value="">ประเภท</option>
+                            <div className='flex justify-end mb-3'>
+                                <select onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
                                     {typeData?.filter(e => e.status === true).map((item) => (
                                         <option value={item.expensesTypeId}>{item.typeName}</option>
                                     ))}
