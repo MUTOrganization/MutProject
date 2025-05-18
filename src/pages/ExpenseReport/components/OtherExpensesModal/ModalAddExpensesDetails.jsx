@@ -22,7 +22,6 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                 onChange={(e) => setExpensesDate(e)}
                             />
                         </div>
-                        {console.log(selectType)}
                         <div className='relative'>
                             <div className='flex justify-end mb-3'>
                                 <select onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
@@ -135,10 +134,10 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
 
                         <div className="other w-full">
                             <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                <label className="text-sm text-slate-500">หมายเหตุ (ถ้ามี)</label>
+                                <label className="text-sm text-slate-500">หมายเหตุ</label>
                                 <Textarea
                                     labelPlacement="outside"
-                                    placeholder="Enter your description"
+                                    placeholder="กรุณากรอกหมายเหตุ"
                                     className="max-w-full"
                                     isDisabled={isEnable}
                                     value={selectedData.remark}

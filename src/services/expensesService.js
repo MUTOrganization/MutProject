@@ -53,10 +53,9 @@ async function getExpensesDetails(agentId, startDate, endDate) {
     return res.data
 }
 
-async function addExpensesDetails(remark, note, expensesDate, details, typeId) {
+async function addExpensesDetails(remark, expensesDate, details, typeId) {
     const res = await api.post(`${ExpensesDetailsURL}/addExpensesDetails`, {
         remark,
-        note,
         expensesDate,
         details,
         typeId
@@ -64,5 +63,14 @@ async function addExpensesDetails(remark, note, expensesDate, details, typeId) {
     return res.data
 }
 
+async function deleteExpensesDetails(expensesId) {
+    const res = await api.delete(`${ExpensesDetailsURL}/deleteExpenses`, {
+        params: {
+            expensesId
+        }
+    })
+    return res.data
+}
 
-export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails }
+
+export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails, deleteExpensesDetails }
