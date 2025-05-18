@@ -1,14 +1,32 @@
 import { Card, CardBody, CircularProgress, Tab, Tabs } from "@heroui/react";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
 import { ACCESS } from "../../../../configs/accessids";
-import DefaultDepRoleManageTab from "./subPages/DefaultDepRoleManageTab";
+import departmentService from "@/services/departmentService";
 
 const DepartmentManageTab = lazy(() => import('./subPages/DepartmentManage'))
 const RoleManageTab = lazy(() => import('./subPages/RoleManageTab'))
 export default function DepartmentAndRoleManage(){
-    const [activateTab, setActivateTab] = useState(localStorage.getItem('depAndRoleTabs')??"department");
-    const {currentUser, accessCheck} = useAppContext()
+    const [activateTab, setActivateTab] = useState(sessionStorage.getItem('depAndRoleTabs')??"department");
+    const {currentUser, accessCheck, agent: { selectedAgent }} = useAppContext()
+
+    useEffect(() => {
+        console.log(selectedAgent);
+        console.log(currentUser);
+        departmentService.getDepartments(selectedAgent.id)
+    },[selectedAgent])
+
+    const allowTabs = useMemo(() => {
+        return {
+            department: accessCheck.haveAny([]),
+            role: accessCheck.haveAny([]),
+        }
+    }, [currentUser])
+
+    const handleTabChange = (key) => {
+        setActivateTab(key);
+        sessionStorage.setItem('depAndRoleTabs', key)
+    }
     return(
         <section className="w-full">
             <Card className="flex sm:p-4 max-h-[calc(100vh-120px)] max-w-screen-2xl overflow-hidden" shadow="none" radius="sm">
@@ -24,13 +42,10 @@ export default function DepartmentAndRoleManage(){
                     tabContent: "group-data-[selected=true]:text-[#06b6d4]",
                 }}
                 selectedKey={activateTab}
-                onSelectionChange={(key) => {
-                    setActivateTab(key);
-                    localStorage.setItem('depAndRoleTabs', key)
-                }}
+                onSelectionChange={handleTabChange}
                 >
                     {
-                        accessCheck.haveAny(['FIX']) &&
+                        allowTabs.department &&
                         <Tab
                             key="department"
                             title={
@@ -38,10 +53,14 @@ export default function DepartmentAndRoleManage(){
                                 <span>จัดการแผนก</span>
                             </div>
                             }
-                        />
+                        >
+                            <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
+                                <DepartmentManageTab />
+                            </Suspense>
+                        </Tab>
                     }
                     {
-                        accessCheck.haveAny(['FIX']) &&
+                        allowTabs.role &&
                         <Tab
                             key="role"
                             title={
@@ -49,28 +68,15 @@ export default function DepartmentAndRoleManage(){
                                 <span>จัดการตำแหน่ง</span>
                             </div>
                             }
-                        />
+                        >
+                            <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
+                                <RoleManageTab />
+                            </Suspense>
+                        </Tab>
                     }
 
 
                 </Tabs>
-                <CardBody>
-                    <div className="">
-                        <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
-                            {
-                                activateTab == 'department' ?
-                                <DepartmentManageTab />
-                                :
-                                activateTab == 'defaultDepRole' ?
-                                <DefaultDepRoleManageTab />
-                                :
-                                <RoleManageTab />
-                            }
-                        </Suspense>
-
-
-                    </div>
-                </CardBody>
             </Card>
         </section>
     )
