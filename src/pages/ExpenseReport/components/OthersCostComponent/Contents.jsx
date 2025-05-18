@@ -19,13 +19,14 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEdid from '../OtherExpensesModal/ModalEdid';
 import ModalDelete from '../OtherExpensesModal/ModalDelete';
 import { formatDateObject } from '@/utils/dateUtils';
+import expensesService from '@/services/expensesService'
+import { endOfMonth, startOfMonth, today } from '@internationalized/date';
 
 
 export default function Contents() {
-    const { isAdd, setIsAdd, search, setSearch, selectDate, setSelectDate, isSwap, setIsSwap, data, setData, selectedAgent, typeData, isManageType, dateRange } = useContext(Data)
+    const { isAdd, setIsAdd, search, selectDate, data, setData, selectedAgent, typeData, isManageType, dateRange, currentUser, typeValue, setTypeValue } = useContext(Data)
     const [isLoading, setIsLoading] = useState(false)
     const [selectData, setSelectData] = useState(null)
-    const [selectDataEdit, setSelectDataEdit] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isModalEdit, setIsModalEdit] = useState(false)
     const [isDelete, setIsDelete] = useState(false)
@@ -33,18 +34,24 @@ export default function Contents() {
 
     const [isEdit, setIsEdit] = useState(false)
     const [alreadyDelete, setAlreadyDelete] = useState(false)
-    const [typeValue, setTypeValue] = useState("ทั้งหมด")
+
+    // Date
+
+    const startDate = startOfMonth(today())
+    const endDate = endOfMonth(today())
+    const [expensesDate, setExpensesDate] = useState({
+        startDate: startDate,
+        endDate: endDate
+    })
 
     const getDataOtherExpenses = async () => {
         setIsLoading(true)
         try {
-            const urlOtherExpenses = `${URLS.OTHEREXPENSES}/getOtherExpenses?businessId=${selectedAgent.id}&startDate=${formatDateObject(dateRange.start)}&endDate=${formatDateObject(dateRange.end)}`;
-            const res = await fetchProtectedData.get(urlOtherExpenses);
-            setData(res.data);
+            const res = await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(expensesDate.startDate), formatDateObject(expensesDate.endDate))
+            setData(res);
+            setIsLoading(false)
         } catch (error) {
             console.error('ไม่สามารถดึงข้อมูลได้:', error);
-        } finally {
-            setIsLoading(false)
         }
     }
 
@@ -74,31 +81,29 @@ export default function Contents() {
         return itemDateObj >= startDate && itemDateObj <= endDate;
     };
 
-    const calculateSummaryAndCountByDate = () => {
-        const filteredData = data?.filter(item => filterByDateRange(item.create_Date) && item.businessId === selectedAgent.id.toString() && (value === 'ทั้งหมด' || item.typeExpenses === value));
+    // const calculateSummaryAndCountByDate = () => {
+    //     const filteredData = data?.filter(item => filterByDateRange(item.expensesDate) && item.expensesType.agentId === selectedAgent.id.toString() && (value === 'ทั้งหมด' || item.expensesType.typeName === value));
 
-        const totalAmount = filteredData
-            .flatMap(item => item.lists)
-            .reduce((sum, entry) => sum + (parseFloat(entry.totalAmount) || 0), 0);
+    //    const totalAmount = filteredData.details.reduce((acc , item) => acc + item.)
 
-        const count = filteredData.length;
+    //     const count = filteredData.length;
 
-        return {
-            totalAmount: totalAmount.toLocaleString(),
-            count: count
-        };
-    };
+    //     return {
+    //         totalAmount: totalAmount.toLocaleString(),
+    //         count: count
+    //     };
+    // };
 
-    const searchData = data?.filter(item => {
-        const bid = item.businessId === selectedAgent.id.toString()
-        const matchesSearchText = item.lists.some(a =>
-            a.list.toLowerCase().includes(search.toLowerCase())
-        );
-        const matchesType = value === 'ทั้งหมด' || item.typeExpenses === value;
-        const matchesDateRange = filterByDateRange(item.create_Date);
+    // const searchData = data?.filter(item => {
+    //     const bid = item.businessId === selectedAgent.id.toString()
+    //     const matchesSearchText = item.lists.some(a =>
+    //         a.list.toLowerCase().includes(search.toLowerCase())
+    //     );
+    //     const matchesType = value === 'ทั้งหมด' || item.typeExpenses === value;
+    //     const matchesDateRange = filterByDateRange(item.create_Date);
 
-        return matchesSearchText && matchesType
-    });
+    //     return matchesSearchText && matchesType
+    // });
 
     useEffect(() => {
         getDataOtherExpenses();
@@ -177,19 +182,18 @@ export default function Contents() {
             <div className='flex flex-row space-x-8 px-6 py-3 mb-3'>
                 <div className='flex flex-col'>
                     <span className='text-slate-500 text-sm'>ยอดรวม</span>
-                    <span className='text-2xl'>{calculateSummaryAndCountByDate().totalAmount || 0}</span>
+                    {/* <span className='text-2xl'>{calculateSummaryAndCountByDate().totalAmount || 0}</span> */}
                 </div>
 
                 <div className='border-1 h-12 ms-5'></div>
 
                 <div className='flex flex-col text-sm'>
                     <span className='text-slate-500'>จำนวนรายการ</span>
-                    <span className='text-2xl'>{calculateSummaryAndCountByDate().count || 0}</span>
+                    {/* <span className='text-2xl'>{calculateSummaryAndCountByDate().count || 0}</span> */}
                 </div>
             </div>
             <div className='ps-4'>
                 <Select
-                    // placeholder="ประเภท"
                     color="primary"
                     className="w-48"
                     size="sm"
@@ -211,9 +215,8 @@ export default function Contents() {
             <div style={{ overflow: 'hidden' }}>
                 <Table aria-label="Expenses Table" className="table w-full text-center text-slate-600" shadow='none'>
                     <TableHeader className="bg-slate-100">
-                        <TableColumn>วันที่สร้าง</TableColumn>
-                        <TableColumn>ประเภท</TableColumn>
                         <TableColumn>รายการ</TableColumn>
+                        <TableColumn>ประเภท</TableColumn>
                         <TableColumn>ยอดรวม</TableColumn>
                         <TableColumn>Notes</TableColumn>
                         <TableColumn>สร้างโดย</TableColumn>
@@ -221,21 +224,16 @@ export default function Contents() {
                         <TableColumn>อัพเดทโดย</TableColumn>
                         <TableColumn>Actions</TableColumn>
                     </TableHeader>
-                    <TableBody items={searchData} isLoading={isLoading} loadingContent={<Spinner />}>
+                    <TableBody items={data || []} isLoading={isLoading} loadingContent={<Spinner />}>
                         {item => (
-                            <TableRow key={item.id} onPress={() => handleOpenModal(item)} className="hover:bg-slate-50 cursor-pointer text-slate-600 h-12">
-                                <TableCell >{handleFormatDate(item, 'create') || '-'}</TableCell>
-                                <TableCell >{item.typeExpenses}</TableCell>
-                                <TableCell>{item.lists.map(e => e.list).join(',')}</TableCell>
-                                <TableCell>
-                                    {new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-                                        item.lists.reduce((sum, entry) => sum + parseFloat(entry.totalAmount || 0), 0)
-                                    )}
-                                </TableCell>
-                                <TableCell>{item.remark || '-'}</TableCell>
-                                <TableCell>{item.create_By}</TableCell>
-                                <TableCell>{item.update_Date ? handleFormatDate(item, 'update') : '-'}</TableCell>
-                                <TableCell>{item.update_By || '-'}</TableCell>
+                            <TableRow key={item.expensesId} onPress={() => handleOpenModal(item)} className="hover:bg-slate-50 cursor-pointer text-slate-600 h-12">
+                                <TableCell >{item.remarks}</TableCell>
+                                <TableCell>{item.expensesType.typeName}</TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
+                                <TableCell></TableCell>
                                 <TableCell>
                                     <div className="flex flex-row space-x-2 transition duration-200 ease-in">
                                         <FaEdit
