@@ -14,8 +14,7 @@ function TabsOthersCost() {
   const currentUser = contextData.currentUser;
   const { agent } = useAppContext();
   const { selectedAgent } = agent;
-  const userAgent = currentUser.userData.agent.id;
-  
+
   const currentMonthStart = startOfMonth(today());
   const currentMonthEnd = endOfMonth(today());
 
@@ -31,22 +30,17 @@ function TabsOthersCost() {
   const [typeData, setTypeData] = useState([])
   const [isManageType, setIsManageType] = useState(false)
   const [isAction, setIsAction] = useState(false)
-
-  // WithDraw
-  const [searchWithDraw, setSearchWithDraw] = useState('')
-  const [searchDateWithDraw, setSearchDateWithDraw] = useState('')
-  const [searchDepartment, setSearchDepartment] = useState('ทั้งหมด')
-
+  const [typeValue, setTypeValue] = useState("ทั้งหมด")
   return (
     <div className='body-container'>
       <Data.Provider value={{
-        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, data, setData, searchWithDraw, setSearchWithDraw, isAction, setIsAction,
-        searchDateWithDraw, setSearchDateWithDraw, searchDepartment, setSearchDepartment, currentUser, selectedAgent, typeData, setTypeData, isManageType, setIsManageType
+        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, data, setData, isAction, setIsAction,
+        currentUser, selectedAgent, typeData, setTypeData, isManageType, setIsManageType, typeValue, setTypeValue
       }}>
         <ControlBar />
         <Contents />
       </Data.Provider>
-    </div>
+    </div >
   )
 }
 

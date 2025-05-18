@@ -1,4 +1,4 @@
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@heroui/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { URLS } from '@/config';
@@ -10,52 +10,62 @@ import ModalManageTypeExpenses from '../OtherExpensesModal/ModalManageTypeExpens
 import getExpensesType from '@/services/expensesService'
 import ModalAddExpensesDetails from '../OtherExpensesModal/ModalAddExpensesDetails';
 import { toastSuccess } from "@/component/Alert";
+import expensesService from "@/services/expensesService";
+import { endOfMonth, startOfMonth, today } from "@internationalized/date";
 
 function ControlBar() {
-
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const { setIsAdd, setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, setIsManageType, isAction } = useContext(Data);
 
-    const [isOpen, setIsOpen] = useState(false)
-    const [isEnable, setIsEnable] = useState(false)
+    // Trigger For Modal
+    const [isOpenExpensesDetails, setIsOpenExpensesDetails] = useState(false)
     const [isOpenTypeExpenses, setIsOpenTypeExpenses] = useState(false)
-    const [selectType, setSelectType] = useState('')
     const [isOpenManageTypeModal, setIsOpenManageTypeModal] = useState(false)
+
+    // Enable Action When put data and not at all!
+    const [isEnable, setIsEnable] = useState(false)
+
+    // Select Type
+    const [selectType, setSelectType] = useState('')
 
     // Fetch TypeData
     const [typeName, setTypeName] = useState()
 
+    // Selected Data State
+    const [selectedData, setSelectedData] = useState({
+        list: [{ name: '', qty: '', price: '', totalAmount: '' }],
+        remark: null
+    });
+
+    // Date
+    const [expensesDate, setExpensesDate] = useState(today())
+    // fetchData
     const getTypeData = async () => {
         try {
-            const res = await getExpensesType.getExpensesType(currentUser.agent.id)
+            const res = await getExpensesType.getExpensesType(currentUser.agent.agentId)
             setTypeData(res)
         } catch (err) {
             console.log('Error', err)
         }
     }
 
+    // All Use Effect
     useEffect(() => {
         getTypeData()
     }, [selectedAgent])
 
-    const [selectedData, setSelectedData] = useState({
-        date: new Date().toISOString().split('T')[0],
-        list: [{ name: '', qty: '', price: '', totalAmount: '' }],
-        remark: null
-    });
-
+    // All Function
     const addExpenseItem = () => {
         setSelectedData((prev) => ({
             ...prev,
             list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
         }));
     };
-
     const handleExpenseChange = (index, field, value) => {
         const updatedList = [...selectedData.list];
 
         updatedList[index] = {
-            ...updatedList[index],
-            [field]: value || null,
+            ...updatedList[index], [field]: value || null,
         };
 
         const qty = parseFloat(updatedList[index].qty) || null;
@@ -73,15 +83,8 @@ function ControlBar() {
     };
 
     const handleConfirmAdd = async () => {
-        const urlOtherExpenses = `${URLS.OTHEREXPENSES}/addOtherExpenses`;
-
         try {
-            const response = await fetchProtectedData.post(urlOtherExpenses, {
-                data: selectedData,
-                type: selectType,
-                businessId: selectedAgent.id,
-                user: currentUser.userName
-            });
+            const res = await expensesService.addExpensesDetails()
             console.log('Response:', response.data);
         } catch (error) {
             console.error('Error adding other expenses:', error);
@@ -99,6 +102,7 @@ function ControlBar() {
     );
 
     const handleChange = (selectedKey) => {
+        console.log(selectedKey)
         let getKey = selectedKey.target.value
         const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
         setSelectType(findValueById?.typeName)
@@ -113,14 +117,11 @@ function ControlBar() {
                     <div className="flex flex-col gap-2">
                         <Input type='text' label='รายการ' onChange={(e) => setSearch(e.target.value)} variant="bordered" size='sm'></Input>
                     </div>
-
-
                     {currentUser.businessId === 1 && (
                         <>
                             <AgentSelector />
                         </>
                     )}
-
                     <div className='btn-container flex flex-col'>
                         <div className='invisible'>This text is</div>
                         <button onPress={() => { setSearch(''); setDateRange(null); }} className='bg-blue-500 text-white px-8 text-sm py-1 rounded-md hover:bg-blue-600'>ล้างการค้นหา</button>
@@ -137,7 +138,7 @@ function ControlBar() {
                             </button>
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Static Actions">
-                            <DropdownItem onPress={() => setIsOpen(true)} key="new">เพิ่มค่าใช้จ่าย</DropdownItem>
+                            <DropdownItem onPress={() => onOpen()} key="new">เพิ่มค่าใช้จ่าย</DropdownItem>
                             <DropdownItem onPress={() => setIsOpenTypeExpenses(true)} key="copy">เพิ่มประเภทค่าใช้จ่าย</DropdownItem>
                             <DropdownItem onPress={() => setIsOpenManageTypeModal(true)} key="type">จัดการประเภทค่าใช้จ้่ย</DropdownItem>
                         </DropdownMenu>
@@ -148,7 +149,7 @@ function ControlBar() {
             {isOpen && (
                 <ModalAddExpensesDetails
                     isOpen={isOpen}
-                    onClose={() => setIsOpen(false)}
+                    onClose={onOpenChange}
                     selectedAgent={selectedAgent.id}
                     currentUser={currentUser}
                     setTypeData={setTypeData}
@@ -164,6 +165,8 @@ function ControlBar() {
                     typeData={typeData}
                     setSelectedData={setSelectedData}
                     handleChange={handleChange}
+                    expensesDate={expensesDate}
+                    setExpensesDate={setExpensesDate}
                 />
             )}
 
