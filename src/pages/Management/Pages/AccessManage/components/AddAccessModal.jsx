@@ -26,12 +26,12 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
         if (!isValid) return;
 
         setIsLoading(true);
-        const fullAccessName = `${groupSelected.groupName}_${accessName}`;
+        const fullAccessCode = `${groupSelected.groupName}_${accessCode}`;
 
         await createAccess({
-            accessName: fullAccessName,
-            accessCode,
-            description,
+            accessName: accessName,
+            accessCode: fullAccessCode,
+            description: description,
             accessGroupId: groupSelected.accessGroupId
         })
             .then(() => {
@@ -41,10 +41,10 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
             })
             .catch((err) => {
                 console.log(err);
-                if(err.response.status === 400){
+                if (err.response.status === 400) {
                     setError('รหัสสิทธิ์นี้มีอยู่ในระบบแล้ว');
                     toastError('รหัสสิทธิ์นี้มีอยู่ในระบบแล้ว');
-                }else{
+                } else {
                     toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเพิ่มสิทธิ์ได้ กรุณาลองใหม่อีกครั้ง');
                 }
             })
@@ -124,16 +124,8 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
                             label="ชื่อสิทธิ์"
                             labelPlacement="outside"
                             placeholder="กรุณากรอกชื่อสิทธิ์"
-                            startContent={
-                                <div className="flex items-center">
-                                    <span className="text-primary text-nowrap text-xs font-medium ">
-                                        {groupSelected.groupName}_
-                                    </span>
-                                </div>
-                            }
                             value={accessName}
                             onChange={(e) => setAccessName(e.target.value)}
-                            description={`ชื่อเต็ม: ${groupSelected.groupName}_${accessName}`}
                         />
                     </div>
 
@@ -144,8 +136,16 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
                             label="รหัสสิทธิ์"
                             labelPlacement="outside"
                             placeholder="กรุณากรอกรหัสสิทธิ์"
+                            startContent={
+                                <div className="flex items-center">
+                                    <span className="text-primary text-nowrap text-xs font-medium ">
+                                        {groupSelected.groupName}_
+                                    </span>
+                                </div>
+                            }
                             value={accessCode}
                             onChange={(e) => setAccessCode(e.target.value)}
+                            description={`ชื่อเต็ม: ${groupSelected.groupName}_${accessCode}`}
                         />
                     </div>
 

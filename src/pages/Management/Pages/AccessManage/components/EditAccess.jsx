@@ -5,8 +5,8 @@ import { InfoIcon, MessageCircleQuestion } from "lucide-react";
 import { useState } from "react";
 
 function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected }) {
-    const [accessName, setAccessName] = useState(accessItem?.accessName?.replace(`${groupSelected.groupName}_`, "") || "");
-    const [accessCode, setAccessCode] = useState(accessItem?.accessCode || "");
+    const [accessName, setAccessName] = useState(accessItem?.accessName || '');
+    const [accessCode, setAccessCode] = useState(accessItem?.accessCode?.replace(`${groupSelected.groupName}_`, "") || "");
     const [description, setDescription] = useState(accessItem?.description || "");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -26,15 +26,19 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
         if (!isValid) return;
 
         setIsLoading(true);
-        const fullAccessName = `${groupSelected.groupName}_${accessName}`;
+        const fullAccessCode = `${groupSelected.groupName}_${accessCode}`;
 
-        await updateAccess({
+        const payload = {
             accessId: accessItem.accessId,
-            accessName: fullAccessName,
-            accessCode,
-            description,
+            accessName: accessName,
+            accessCode: fullAccessCode,
+            description: description,
             accessGroupId: groupSelected.accessGroupId
-        })
+        }
+
+        console.log(payload);
+
+        await updateAccess(payload)
             .then(() => {
                 toastSuccess("แก้ไขสิทธิ์สำเร็จ");
                 isFetchAccess();
@@ -117,16 +121,8 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
                             aria-label="ชื่อสิทธิ์"
                             labelPlacement="outside"
                             placeholder="กรุณากรอกชื่อสิทธิ์"
-                            startContent={
-                                <div className="flex items-center">
-                                    <span className="text-primary text-nowrap text-xs font-medium ">
-                                        {groupSelected.groupName}_
-                                    </span>
-                                </div>
-                            }
                             value={accessName}
                             onChange={(e) => setAccessName(e.target.value)}
-                            description={`ชื่อเต็ม: ${groupSelected.groupName}_${accessName}`}
                         />
                     </div>
 
@@ -140,6 +136,14 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
                             placeholder="กรุณากรอกรหัสสิทธิ์"
                             value={accessCode}
                             onChange={(e) => setAccessCode(e.target.value)}
+                            startContent={
+                                <div className="flex items-center">
+                                    <span className="text-primary text-nowrap text-xs font-medium ">
+                                        {groupSelected.groupName}_
+                                    </span>
+                                </div>
+                            }
+                            description={`ชื่อเต็ม: ${groupSelected.groupName}_${accessCode}`}
                         />
                     </div>
 
