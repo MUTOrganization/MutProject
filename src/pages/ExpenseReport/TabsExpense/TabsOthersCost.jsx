@@ -14,7 +14,8 @@ function TabsOthersCost() {
   const currentUser = contextData.currentUser;
   const { agent } = useAppContext();
   const { selectedAgent } = agent;
-
+  const userAgent = currentUser.userData.agent.id;
+  
   const currentMonthStart = startOfMonth(today());
   const currentMonthEnd = endOfMonth(today());
 
