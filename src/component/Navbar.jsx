@@ -81,37 +81,37 @@ function Navbar({ title }) {
           className="w-full sm:flex sm:items-center sm:justify-end"
         >
           <div className="hidden sm:flex flex-col text-end">
-            <p className="font-bold">{currentUser.name}</p>
-            <p className="text-sm text-gray-400 font-bold">{currentUser.username}</p>
+            <p className="font-bold">{currentUser.userData.name}</p>
+            <p className="text-sm text-gray-400 font-bold">{currentUser.userData.username}</p>
           </div>
 
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <span className="cursor-pointer">
-                <UserProfileAvatar name={currentUser.username} imageURL={currentUser.displayImgUrl} />
+                <UserProfileAvatar name={currentUser.userData.username} imageURL={currentUser.userData.displayImgUrl} />
               </span>
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
                 key="profile-display"
-                textValue={currentUser.username}
+                textValue={currentUser.userData.username}
                 isReadOnly
                 className="gap-2"
                 id="user-profile-image">
                   <div className="flex flex-col gap-2">
                     <div className="flex space-x-2">
-                      <UserProfileAvatar name={currentUser.username} size="sm" imageURL={currentUser.displayImgUrl} />
+                      <UserProfileAvatar name={currentUser.userData.username} size="sm" imageURL={currentUser.userData.displayImgUrl} />
                       <div className="flex flex-col justify-start items-start text-sm">
-                        <p className="font-bold">{currentUser.username}</p>
-                        <p className="text-gray-500 text-xs">{currentUser.name} { currentUser.nickname ? `(${currentUser.nickname})` : ""}</p>
+                        <p className="font-bold">{currentUser.userData.username}</p>
+                        <p className="text-gray-500 text-xs">{currentUser.userData.name} { currentUser.userData.nickname ? `(${currentUser.userData.nickname})` : ""}</p>
                       </div>
                     </div>
                     <div className="sm:hidden space-x-2">
                       <Chip variant="flat" color="warning" className="sm:text-sm">
-                        {currentUser.department?.departmentName}
+                        {currentUser.userData.department?.departmentName}
                       </Chip>
                       <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
-                        {role}
+                        {currentUser.userData.role?.name}
                       </Chip>
                     </div>
 
