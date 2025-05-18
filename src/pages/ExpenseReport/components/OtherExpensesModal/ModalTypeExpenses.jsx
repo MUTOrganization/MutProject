@@ -17,7 +17,7 @@ function ModalTypeExpenses({ isOpen, onClose, selectedAgent, currentUser, setTyp
     }
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose}>
+        <Modal isOpen={isOpen} onOpenChange={onClose} className="overflow-hidden">
             <ModalContent>
                 <ModalHeader>เพิ่มประเภทค่าใช้จ่าย</ModalHeader>
                 <ModalBody>

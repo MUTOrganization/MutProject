@@ -1,4 +1,4 @@
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure } from "@heroui/react";
+import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { URLS } from '@/config';
@@ -9,13 +9,14 @@ import ModalTypeExpenses from '../OtherExpensesModal/ModalTypeExpenses';
 import ModalManageTypeExpenses from '../OtherExpensesModal/ModalManageTypeExpenses';
 import getExpensesType from '@/services/expensesService'
 import ModalAddExpensesDetails from '../OtherExpensesModal/ModalAddExpensesDetails';
-import { toastSuccess } from "@/component/Alert";
+import { toastError, toastSuccess } from "@/component/Alert";
 import expensesService from "@/services/expensesService";
 import { endOfMonth, startOfMonth, today } from "@internationalized/date";
+import { formatDateObject } from "@/utils/dateUtils";
 
-function ControlBar() {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const { setIsAdd, setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, setIsManageType, isAction } = useContext(Data);
+function ControlBar({ expensesDate, setExpensesDate }) {
+
+    const { setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, setIsManageType, getDataOtherExpenses } = useContext(Data);
 
     // Trigger For Modal
     const [isOpenExpensesDetails, setIsOpenExpensesDetails] = useState(false)
@@ -26,7 +27,7 @@ function ControlBar() {
     const [isEnable, setIsEnable] = useState(false)
 
     // Select Type
-    const [selectType, setSelectType] = useState('')
+    const [selectType, setSelectType] = useState(null)
 
     // Fetch TypeData
     const [typeName, setTypeName] = useState()
@@ -34,11 +35,9 @@ function ControlBar() {
     // Selected Data State
     const [selectedData, setSelectedData] = useState({
         list: [{ name: '', qty: '', price: '', totalAmount: '' }],
-        remark: null
+        remark: ''
     });
 
-    // Date
-    const [expensesDate, setExpensesDate] = useState(today())
     // fetchData
     const getTypeData = async () => {
         try {
@@ -53,6 +52,12 @@ function ControlBar() {
     useEffect(() => {
         getTypeData()
     }, [selectedAgent])
+
+    useEffect(() => {
+        if (typeData?.length > 0 && !selectType) {
+            setSelectType(typeData[0].expensesTypeId);
+        }
+    }, [typeData]);
 
     // All Function
     const addExpenseItem = () => {
@@ -84,25 +89,23 @@ function ControlBar() {
 
     const handleConfirmAdd = async () => {
         try {
-            const res = await expensesService.addExpensesDetails()
-            console.log('Response:', response.data);
+            await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
+            await getDataOtherExpenses()
+            toastSuccess('เพิ่มข้อมูลสำเร็จ')
         } catch (error) {
             console.error('Error adding other expenses:', error);
-        } finally {
-            setIsAdd(true)
-            toastSuccess('เพิ่มข้อมูลสำเร็จ')
+            toastError('เพิ่มข้อมูลไม่สำเร็จ')
         }
     };
 
     const isDisabled = selectedData.list.some(e =>
-        !e.list || e.list.trim() === '' ||
+        !e.name || e.name.trim() === '' ||
         // !e.qty || e.qty.trim() === '' ||
         !e.price || e.price.trim() === '' ||
-        !selectType || selectType === undefined
+        !selectType || selectType === null
     );
 
     const handleChange = (selectedKey) => {
-        console.log(selectedKey)
         let getKey = selectedKey.target.value
         const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
         setSelectType(findValueById?.typeName)
@@ -130,26 +133,47 @@ function ControlBar() {
                 </div>
 
                 <div className='btn-container-add'>
-                    <Dropdown>
+                    <Dropdown
+                        autoFocus={false}
+                        closeOnSelect={true}
+                        disableAnimation={true}
+                    >
                         <DropdownTrigger>
-                            <button className='bg-green-500 text-white px-8 py-1.5 rounded-md text-sm hover:bg-green-600'
-                            >
-                                เพิ่มข้อมูล
-                            </button>
+                            <Button className="text-white" color="success">เพิ่มค่าใช้จ่าย</Button>
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Static Actions">
-                            <DropdownItem onPress={() => onOpen()} key="new">เพิ่มค่าใช้จ่าย</DropdownItem>
-                            <DropdownItem onPress={() => setIsOpenTypeExpenses(true)} key="copy">เพิ่มประเภทค่าใช้จ่าย</DropdownItem>
-                            <DropdownItem onPress={() => setIsOpenManageTypeModal(true)} key="type">จัดการประเภทค่าใช้จ้่ย</DropdownItem>
+
+                        <DropdownMenu
+                            aria-label="Static Actions"
+                            onAction={(key) => {
+                                requestAnimationFrame(() => {
+                                    if (key === "addexpenses") setIsOpenExpensesDetails(true);
+                                    if (key === "addexpensestype") setIsOpenTypeExpenses(true);
+                                    if (key === "manageexpensestype") setIsOpenManageTypeModal(true);
+                                });
+                            }}
+                        >
+                            <DropdownItem
+                                title="เพิ่มข้อมูล"
+                                key="addexpenses"
+                            />
+                            <DropdownItem
+                                title="เพิ่มประเภทค่าใช้จ่าย"
+                                key="addexpensestype"
+                            />
+                            <DropdownItem
+                                title="จัดการประเภทค่าใช้จ่าย"
+                                key="manageexpensestype"
+                            />
                         </DropdownMenu>
                     </Dropdown>
+
                 </div>
             </div>
 
-            {isOpen && (
+            {isOpenExpensesDetails && (
                 <ModalAddExpensesDetails
-                    isOpen={isOpen}
-                    onClose={onOpenChange}
+                    isOpen={isOpenExpensesDetails}
+                    onClose={() => { setIsOpenExpensesDetails(false); setSelectedData({ list: [{ name: '', qty: '', price: '', totalAmount: '' }], remark: '' }) }}
                     selectedAgent={selectedAgent.id}
                     currentUser={currentUser}
                     setTypeData={setTypeData}
@@ -167,6 +191,8 @@ function ControlBar() {
                     handleChange={handleChange}
                     expensesDate={expensesDate}
                     setExpensesDate={setExpensesDate}
+                    setSelectType={setSelectType}
+                    selectType={selectType}
                 />
             )}
 

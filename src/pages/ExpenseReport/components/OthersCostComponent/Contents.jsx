@@ -23,37 +23,17 @@ import expensesService from '@/services/expensesService'
 import { endOfMonth, startOfMonth, today } from '@internationalized/date';
 
 
-export default function Contents() {
-    const { isAdd, setIsAdd, search, selectDate, data, setData, selectedAgent, typeData, isManageType, dateRange, currentUser, typeValue, setTypeValue } = useContext(Data)
-    const [isLoading, setIsLoading] = useState(false)
+export default function Contents({ isLoading }) {
+    const { selectDate, data, typeData, setTypeValue } = useContext(Data)
+
     const [selectData, setSelectData] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isModalEdit, setIsModalEdit] = useState(false)
     const [isDelete, setIsDelete] = useState(false)
+
+    // Set ExpensesData
     const [selectDataDelete, setSelectDataDelete] = useState([])
-
     const [isEdit, setIsEdit] = useState(false)
-    const [alreadyDelete, setAlreadyDelete] = useState(false)
-
-    // Date
-
-    const startDate = startOfMonth(today())
-    const endDate = endOfMonth(today())
-    const [expensesDate, setExpensesDate] = useState({
-        startDate: startDate,
-        endDate: endDate
-    })
-
-    const getDataOtherExpenses = async () => {
-        setIsLoading(true)
-        try {
-            const res = await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(expensesDate.startDate), formatDateObject(expensesDate.endDate))
-            setData(res);
-            setIsLoading(false)
-        } catch (error) {
-            console.error('ไม่สามารถดึงข้อมูลได้:', error);
-        }
-    }
 
     const months = {
         1: 'มกราคม',
@@ -105,31 +85,6 @@ export default function Contents() {
     //     return matchesSearchText && matchesType
     // });
 
-    useEffect(() => {
-        getDataOtherExpenses();
-    }, [selectedAgent, isManageType, dateRange])
-
-    useEffect(() => {
-        if (isAdd) {
-            getDataOtherExpenses();
-            setIsAdd(false);
-        }
-    }, [isAdd]);
-
-    useEffect(() => {
-        if (isEdit) {
-            getDataOtherExpenses();
-            setIsEdit(false);
-        }
-    }, [isEdit]);
-
-    useEffect(() => {
-        if (alreadyDelete) {
-            getDataOtherExpenses();
-            setAlreadyDelete(false);
-        }
-    }, [alreadyDelete]);
-
     const handleOpenModal = (item) => {
         setSelectData(item);
         setIsModalOpen(true);
@@ -146,15 +101,6 @@ export default function Contents() {
     const handleOpenEdit = (item) => {
         setSelectData(item)
         setIsModalEdit(true)
-    }
-
-    const handleDelete = (item) => {
-        setSelectDataDelete(item)
-        setIsDelete(true)
-    }
-
-    const handleCloseDelete = () => {
-        setIsDelete(false)
     }
 
     const handleFormatDate = (item, field) => {
@@ -181,15 +127,15 @@ export default function Contents() {
 
             <div className='flex flex-row space-x-8 px-6 py-3 mb-3'>
                 <div className='flex flex-col'>
-                    <span className='text-slate-500 text-sm'>ยอดรวม</span>
-                    {/* <span className='text-2xl'>{calculateSummaryAndCountByDate().totalAmount || 0}</span> */}
+                    <span className='text-slate-500 text-sm pb-2'>ยอดรวม</span>
+                    <span className='text-2xl text-slate-600'>{data?.reduce((sum, item) => sum + item.totalAmount, 0).toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</span>
                 </div>
 
-                <div className='border-1 h-12 ms-5'></div>
+                <div className='border-1 h-16 ms-5'></div>
 
                 <div className='flex flex-col text-sm'>
-                    <span className='text-slate-500'>จำนวนรายการ</span>
-                    {/* <span className='text-2xl'>{calculateSummaryAndCountByDate().count || 0}</span> */}
+                    <span className='text-slate-500 pb-2'>จำนวนรายการ</span>
+                    <span className='text-2xl text-slate-600'>{data?.length || 0}</span>
                 </div>
             </div>
             <div className='ps-4'>
@@ -215,25 +161,19 @@ export default function Contents() {
             <div style={{ overflow: 'hidden' }}>
                 <Table aria-label="Expenses Table" className="table w-full text-center text-slate-600" shadow='none'>
                     <TableHeader className="bg-slate-100">
-                        <TableColumn>รายการ</TableColumn>
                         <TableColumn>ประเภท</TableColumn>
+                        <TableColumn>รายการ</TableColumn>
                         <TableColumn>ยอดรวม</TableColumn>
-                        <TableColumn>Notes</TableColumn>
-                        <TableColumn>สร้างโดย</TableColumn>
-                        <TableColumn>วันที่อัพเดท</TableColumn>
-                        <TableColumn>อัพเดทโดย</TableColumn>
+                        <TableColumn>วันที่สร้าง</TableColumn>
                         <TableColumn>Actions</TableColumn>
                     </TableHeader>
-                    <TableBody items={data || []} isLoading={isLoading} loadingContent={<Spinner />}>
+                    <TableBody items={data || []} isLoading={isLoading} emptyContent={<span>ไม่พบข้อมูล</span>} loadingContent={<Spinner />}>
                         {item => (
                             <TableRow key={item.expensesId} onPress={() => handleOpenModal(item)} className="hover:bg-slate-50 cursor-pointer text-slate-600 h-12">
-                                <TableCell >{item.remarks}</TableCell>
-                                <TableCell>{item.expensesType.typeName}</TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
-                                <TableCell></TableCell>
+                                <TableCell>{item?.expensesType.typeName}</TableCell>
+                                <TableCell >{item?.remarks}</TableCell>
+                                <TableCell>{item?.totalAmount.toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</TableCell>
+                                <TableCell>{new Date(item?.createdDate).toLocaleDateString('th-GB', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Bangkok' })}</TableCell>
                                 <TableCell>
                                     <div className="flex flex-row space-x-2 transition duration-200 ease-in">
                                         <FaEdit
@@ -248,8 +188,11 @@ export default function Contents() {
                                             size={18}
                                             className="hover:scale-150 text-red-400 transition duration-100 ease-in"
                                             onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDelete(item);
+                                                {
+                                                    e.stopPropagation();
+                                                    setSelectDataDelete(item)
+                                                    setIsDelete(true)
+                                                }
                                             }}
                                         />
                                     </div>
@@ -283,9 +226,8 @@ export default function Contents() {
             {isDelete && (
                 <ModalDelete
                     isOpen={isDelete}
-                    onClose={handleCloseDelete}
+                    onClose={() => setIsDelete(false)}
                     data={selectDataDelete}
-                    alreadyDelete={setAlreadyDelete}
                 />
             )}
 
