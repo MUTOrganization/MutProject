@@ -28,6 +28,8 @@ function MasterAccess() {
         setIsLoading(false)
     }
 
+    const allAccessByGroupId = accessList.filter(access => access.accessGroupId === groupSelected.accessGroupId)
+
     useEffect(() => {
         fetchGetData()
     }, [])
@@ -53,11 +55,11 @@ function MasterAccess() {
                     <Tab key="1" title="จัดการสิทธิ์" />
                 </Tabs>
             </CardHeader>
-            <CardBody className="flex flex-row gap-4">
+            <CardBody className="flex flex-row gap-4 max-md:flex-col">
                 {/* หมวดหมู่สิทธิ์ */}
-                <GroupList groupList={groupList} groupSelected={groupSelected} setGroupSelected={setGroupSelected} />
+                <GroupList groupList={groupList} isLoading={isLoading} groupSelected={groupSelected} setGroupSelected={setGroupSelected} isFetchGroup={fetchGetData} />
                 {/* รายการสิทธิ์ */}
-                <AccessList />
+                <AccessList accessList={allAccessByGroupId} groupSelected={groupSelected} isFetchAccess={fetchGetData} isLoading={isLoading} />
             </CardBody>
         </Card>
     )

@@ -1,14 +1,33 @@
 import { Button, Skeleton } from "@heroui/react";
 import { ChevronsRight, DeleteIcon, EditIcon } from "lucide-react";
+import { useState } from "react";
+import AddGroupModal from "./addGroupModal";
+import DelGroupModal from "./DelGroupModal";
 
-function GroupList({ groupList, groupSelected, setGroupSelected, isLoading }) {
+function GroupList({ groupList, groupSelected, setGroupSelected, isLoading, isFetchGroup }) {
 
+    const [createModal, setCreateModal] = useState(false);
+    const [delGroupModal, setDelGroupModal] = useState(false);
+    const [delGroupItem, setDelGroupItem] = useState(null);
+
+    //* เปิดหน้าเพิ่มหมวดหมู่สิทธิ์
+    const handleCreateGroup = () => {
+        setCreateModal(true);
+    }
+
+    //* เปิดหน้าลบหมวดหมู่สิทธิ์
+    const handleDelGroup = (group) => {
+        setDelGroupModal(true);
+        setDelGroupItem(group);
+    }
+
+    //* เลือกหมวดหมู่สิทธิ์
     const handleSelectGroup = (group) => {
         setGroupSelected(group);
     }
 
     return (
-        <div className="h-[500px] w-[320px] overflow-y-auto scrollbar-hide border border-gray-200 bg-white rounded-xl p-3 shadow-lg transition-all duration-200">
+        <div className="max-md:w-full h-[500px] w-[320px] overflow-y-auto scrollbar-hide border border-gray-200 bg-white rounded-xl p-3 shadow-lg transition-all duration-200">
             <div className="mb-5 flex items-center justify-between sticky top-0 z-10 bg-white p-3 rounded-xl border-b border-gray-100 shadow-sm">
                 <h2 className="text-xl font-bold text-gray-800 tracking-tight">หมวดหมู่สิทธิ์</h2>
                 <Button
@@ -16,10 +35,32 @@ function GroupList({ groupList, groupSelected, setGroupSelected, isLoading }) {
                     color="primary"
                     variant="solid"
                     className="text-xs font-medium shadow-md hover:scale-105 transition-transform"
+                    onPress={handleCreateGroup}
                 >
                     เพิ่มหมวดหมู่
                 </Button>
             </div>
+
+            {/* หน้าเพิ่มหมวดหมู่สิทธิ์ */}
+            {createModal && (
+                <AddGroupModal
+                    isOpen={createModal}
+                    onClose={() => setCreateModal(false)}
+                    isFetchGroup={isFetchGroup}
+                />
+            )}
+
+            {/* หน้าลบหมวดหมู่สิทธิ์ */}
+            {delGroupModal && (
+                <DelGroupModal
+                    isOpen={delGroupModal}
+                    onClose={() => setDelGroupModal(false)}
+                    groupItem={delGroupItem}
+                    isFetchGroup={isFetchGroup}
+                />
+            )}
+
+            {/* รายการหมวดหมู่สิทธิ์ */}
             <div className="space-y-4">
                 {groupList.length > 0 ? groupList.map((group) => {
                     const isSelected = groupSelected && group.accessGroupId === groupSelected.accessGroupId;
@@ -53,10 +94,10 @@ function GroupList({ groupList, groupSelected, setGroupSelected, isLoading }) {
                                 </div>
                                 <div className={`flex flex-col items-end gap-1 transition-opacity ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
                                     <div className="flex gap-1">
-                                        <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50">
+                                        {/* <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50">
                                             <EditIcon className="w-4 h-4" />
-                                        </Button>
-                                        <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50">
+                                        </Button> */}
+                                        <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50" onPress={() => handleDelGroup(group)}>
                                             <DeleteIcon className="w-4 h-4" />
                                         </Button>
                                     </div>
