@@ -1,5 +1,4 @@
 import { AlertQuestion, toastError, toastSuccess, toastWarning } from "@/component/Alert"
-import fetchProtectedData from "../../../../../../utils/fetchData"
 import { useAppContext } from "@/contexts/AppContext"
 import { useEffect, useMemo, useState } from "react"
 import { URLS } from "@/config"
@@ -7,6 +6,7 @@ import { Button, Card, CardBody, CardHeader, Divider, Input, Listbox, ListboxIte
 import { AddCircleIcon, AddStreamlineUltimateWhiteIcon, EditIcon, HFChevronRight, HFVerticalDots } from "@/component/Icons"
 import { DeleteIcon, PencilIcon } from "lucide-react"
 import RoleAccesBox from "../components/RoleAccessBox"
+import fetchProtectedData from "@/utils/fetchData"
 
 export default function DefaultDepRoleManageTab() {
     const {currentUser, agent} = useAppContext()

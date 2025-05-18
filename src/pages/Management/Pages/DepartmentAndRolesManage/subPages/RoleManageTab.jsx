@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../../../../contexts/AppContext";
-import fetchProtectedData from "../../../../../../utils/fetchData";
 import { AlertQuestion, toastError, toastSuccess, toastWarning } from "../../../../../component/Alert";
 import { URLS } from "../../../../../config";
 import { Button, Card, CheckboxIcon, Chip, getKeyValue, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useDisclosure } from "@heroui/react";
@@ -11,6 +10,7 @@ import { ACCESS } from "../../../../../configs/accessids";
 import MultiAddRoleAccessModal from "../components/MultiAddRoleAccessModal";
 import AgentSelector from "../../../../../component/AgentSelector";
 import SortableDragAndDrop from "../../../../../component/DragAndDrop/SortableDragAndDrop";
+import fetchProtectedData from "@/utils/fetchData";
 
 export default function RoleManageTab() {
     const { currentUser, agent, accessCheck } = useAppContext();

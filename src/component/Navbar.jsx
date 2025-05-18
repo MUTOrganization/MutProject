@@ -20,7 +20,7 @@ import { LogOutIcon } from "lucide-react";
 function Navbar({ title }) {
   const { currentUser, logout } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const role = currentUser.role.roleName;
+  const role = currentUser.role?.roleName;
   const navigate = useNavigate();
 
   const getChipColor = (role) => {
@@ -61,14 +61,14 @@ function Navbar({ title }) {
                 {title}
               </p>
               {/* Role Chip */}
-              <div className="flex gap-2 max-sm:hidden">
+              {/* <div className="flex gap-2 max-sm:hidden">
                 <Chip variant="flat" color="warning" className="sm:text-sm">
-                  {currentUser.department.departmentName}
+                  {currentUser.department?.departmentName}
                 </Chip>
                 <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
                   {role}
                 </Chip>
-              </div>
+              </div> */}
             </div>
           </div>
         </NavbarBrand>
@@ -108,7 +108,7 @@ function Navbar({ title }) {
                     </div>
                     <div className="sm:hidden space-x-2">
                       <Chip variant="flat" color="warning" className="sm:text-sm">
-                        {currentUser.department.departmentName}
+                        {currentUser.department?.departmentName}
                       </Chip>
                       <Chip color={getChipColor(role)} variant="flat" className="sm:text-sm">
                         {role}

@@ -9,6 +9,7 @@ const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));
 const Permission = lazy(() => import("./Pages/Permission"));
 const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
 const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
+const MasterAccess = lazy(() => import("./Pages/accessManage/MasterAccess"));
 import Page403 from "../page403";
 
 function Management() {
@@ -49,14 +50,13 @@ function Management() {
   const list = {
     การจัดการ: {
       // Home: { display: "จัดการหน้าแรก", component: <ManageHome />, access: [ACCESS.home.manage_home] },
-      accessManage: { display: "จัดการสิทธิ์", component: <Permission />, access: [] },
+      accessManage: { display: "จัดการสิทธิ์", component: <MasterAccess />, access: [] },
       agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [] },
       depAndRole: {
         display: "จัดการแผนกและตำแหน่ง",
         component: <DepartmentAndRoleManage />,
         access: [
-          
-          
+
         ]
       },
       usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [] },
@@ -163,11 +163,11 @@ function Management() {
           </Accordion>
         </div>
         <div className="sm:px-4 flex-1">
-          {isForbidden ? <Page403 /> 
-          : 
-          <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
-            {items[activeComponent]?.component}
-          </Suspense>
+          {isForbidden ? <Page403 />
+            :
+            <Suspense fallback={<div className="w-full flex justify-center mt-4"><CircularProgress /></div>}>
+              {items[activeComponent]?.component}
+            </Suspense>
           }
         </div>
       </div>

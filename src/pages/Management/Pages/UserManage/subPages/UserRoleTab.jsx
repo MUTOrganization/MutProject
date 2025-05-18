@@ -1,11 +1,11 @@
 import { Button, Card, Checkbox, Chip, CircularProgress, Input, Select, SelectItem, SelectSection, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, User } from "@heroui/react";
 import { useAppContext } from "../../../../../contexts/AppContext"
 import { useCallback, useEffect, useMemo, useState } from "react";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "../../../../../config";
-import { groupArray, moveToLastOfArray } from "../../../../../../utils/arrayFunc";
-import { SearchMatchScore } from "../../../../../../utils/search";
-import { getProfileColor, getUserName } from "../../../../../../utils/util";
+import { groupArray, moveToLastOfArray } from "@/utils/arrayFunc";
+import { SearchMatchScore } from "@/utils/search";
+import { getProfileColor, getUserName } from "@/utils/util";
 import lodash from "lodash";
 import { ACCESS } from "../../../../../configs/accessids";
 import { AlertQuestion, toastError, toastSuccess } from "../../../../../component/Alert";

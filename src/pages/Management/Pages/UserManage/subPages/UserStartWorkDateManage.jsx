@@ -1,7 +1,7 @@
 import { Button, Card, DateInput, DatePicker, Divider, Listbox, ListboxItem, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { useAppContext } from "../../../../../contexts/AppContext"
 import { toastError, toastSuccess, toastWarning } from "../../../../../component/Alert";
-import fetchProtectedData from "../../../../../../utils/fetchData";
+import fetchProtectedData from "@/utils/fetchData";
 import { URLS } from "../../../../../config";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowDownStreamlineUltimateIcon, DeleteIcon } from "../../../../../component/Icons";
@@ -11,7 +11,7 @@ import UserProfileAvatar from "../../../../../component/UserProfileAvatar";
 import lodash from 'lodash'
 import { CalendarDate, parseDate, today } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
-import { CustomFormatDate } from "../../../../../../utils/FormatDate";
+import { CustomFormatDate } from "@/utils/dateUtils";
 
 export default function UserStartWorkDateManage(){
     const { currentUser, agent } = useAppContext();

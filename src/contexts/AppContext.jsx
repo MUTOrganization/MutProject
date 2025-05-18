@@ -30,7 +30,7 @@ export default function AppContextProvider({ children }) {
     const [selectedAgent, setSelectedAgent] = useState(null);
 
     const userAccessMap = useMemo(() => {
-        return currentUser ? new Map(currentUser.access.map(e => [e, true])) : new Map();
+        return currentUser ? new Map(currentUser.access?.map(e => [e, true])) : new Map();
     },[currentUser])
 
     useEffect(() => {
