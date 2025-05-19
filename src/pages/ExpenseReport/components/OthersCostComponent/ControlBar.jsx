@@ -1,4 +1,4 @@
-import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown } from "@heroui/react";
+import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { URLS } from '@/config';
@@ -13,10 +13,11 @@ import { toastError, toastSuccess } from "@/component/Alert";
 import expensesService from "@/services/expensesService";
 import { endOfMonth, startOfMonth, today } from "@internationalized/date";
 import { formatDateObject } from "@/utils/dateUtils";
+import { FaEraser } from "react-icons/fa";
 
-function ControlBar({ expensesDate, setExpensesDate }) {
+function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }) {
 
-    const { setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, setIsManageType, getDataOtherExpenses } = useContext(Data);
+    const { setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, getDataOtherExpenses } = useContext(Data);
 
     // Trigger For Modal
     const [isOpenExpensesDetails, setIsOpenExpensesDetails] = useState(false)
@@ -28,9 +29,6 @@ function ControlBar({ expensesDate, setExpensesDate }) {
 
     // Select Type
     const [selectType, setSelectType] = useState(null)
-
-    // Fetch TypeData
-    const [typeName, setTypeName] = useState()
 
     // Selected Data State
     const [selectedData, setSelectedData] = useState({
@@ -73,7 +71,7 @@ function ControlBar({ expensesDate, setExpensesDate }) {
             ...updatedList[index], [field]: value || null,
         };
 
-        const qty = parseFloat(updatedList[index].qty) || null;
+        const qty = parseFloat(updatedList[index].qty) || 1;
         const price = parseFloat(updatedList[index].price) || 0;
         updatedList[index].totalAmount = qty ? (qty * price).toFixed(2) : price.toFixed(2);
 
@@ -117,19 +115,17 @@ function ControlBar({ expensesDate, setExpensesDate }) {
             <div className='flex flex-col lg:flex-row lg:justify-between items-center'>
                 <div className='header p-3 flex flex-col lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
                     <DateSelector value={dateRange} onChange={setDateRange} />
-                    <div className="flex flex-col gap-2">
-                        <Input type='text' label='รายการ' onChange={(e) => setSearch(e.target.value)} variant="bordered" size='sm'></Input>
+                    <div className="flex flex-row items-center justify-between space-x-2">
+                        <Input type='text' label='รายการ' value={searchText} onChange={(e) => setSearchText(e.target.value)} variant="bordered" size='sm'></Input>
+                        <Tooltip content='ล้างการค้ยหา' placement="right" color="danger">
+                            <span className="px-2 py-2 bg-red-200 rounded-full cursor-pointer" onClick={() => setSearchText('')}><FaEraser className="text-red-500" /></span>
+                        </Tooltip>
                     </div>
                     {currentUser.businessId === 1 && (
                         <>
                             <AgentSelector />
                         </>
                     )}
-                    <div className='btn-container flex flex-col'>
-                        <div className='invisible'>This text is</div>
-                        <button onPress={() => { setSearch(''); setDateRange(null); }} className='bg-blue-500 text-white px-8 text-sm py-1 rounded-md hover:bg-blue-600'>ล้างการค้นหา</button>
-
-                    </div>
                 </div>
 
                 <div className='btn-container-add'>
@@ -177,7 +173,6 @@ function ControlBar({ expensesDate, setExpensesDate }) {
                     selectedAgent={selectedAgent.id}
                     currentUser={currentUser}
                     setTypeData={setTypeData}
-                    setTypeName={setTypeName}
                     setIsEnable={setIsEnable}
                     isEnable={isEnable}
                     isDisabled={isDisabled}
@@ -200,12 +195,9 @@ function ControlBar({ expensesDate, setExpensesDate }) {
                 <ModalTypeExpenses
                     isOpen={isOpenTypeExpenses}
                     onClose={() => setIsOpenTypeExpenses(false)}
-                    selectedAgent={selectedAgent.id}
                     currentUser={currentUser}
-                    setTypeData={setTypeData}
-                    setTypeName={setTypeName}
-                    typeName={typeName}
-                    setIsManageType={setIsManageType}
+                    typeData={typeData}
+                    getTypeData={getTypeData}
                 />
             )}
 
@@ -214,7 +206,6 @@ function ControlBar({ expensesDate, setExpensesDate }) {
                     isOpen={isOpenManageTypeModal}
                     onClose={() => setIsOpenManageTypeModal(false)}
                     typeData={typeData}
-                    setIsManageType={setIsManageType}
                     setIsOpenManageTypeModal={setIsOpenManageTypeModal}
                     getTypeData={getTypeData}
                 />

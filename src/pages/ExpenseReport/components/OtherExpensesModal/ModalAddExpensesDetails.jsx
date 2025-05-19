@@ -3,14 +3,15 @@ import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Texta
 import React, { useContext, useRef } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
+import { formatNumber } from "@/component/FormatNumber";
 
 function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
     handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
-
+        
     const { typeValue, setTypeValue } = useContext(Data)
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size="xl" className="overflow-hidden">
+        <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" className="overflow-hidden">
             <ModalContent>
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
@@ -43,22 +44,22 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                     {selectedData.list.map((item, index) => (
                                         <>
                                             <TableRow key={index}>
-                                                <TableCell >
-                                                    <input
+                                                <TableCell className="w-5/12" >
+                                                    <Input maxLength={50} className="shadow-sm"
                                                         type="text"
-                                                        maxLength={50}
                                                         value={item.name}
                                                         disabled={isEnable}
                                                         onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
-                                                        className='input input-sm input-bordered focus:outline-none text-sm h-9 px-2'
                                                         placeholder="รายการ"
+                                                        size="sm"
                                                     />
                                                 </TableCell>
-                                                <TableCell>
-                                                    <input
+                                                <TableCell className="w-2/12">
+                                                    <Input
                                                         type="text"
-                                                        maxLength={50}
+                                                        maxLength={6}
                                                         value={item.qty}
+                                                        size="sm"
                                                         disabled={isEnable}
                                                         onChange={(e) => {
                                                             const value = e.target.value;
@@ -66,7 +67,6 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                                 handleExpenseChange(index, 'qty', value);
                                                             }
                                                         }}
-                                                        className='input input-sm input-bordered focus:outline-none w-full text-sm h-9'
                                                         placeholder="0"
                                                         onKeyDown={(e) => {
                                                             if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
@@ -76,8 +76,8 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                         pattern="[0-9]*"
                                                     />
                                                 </TableCell>
-                                                <TableCell className=''>
-                                                    <input
+                                                <TableCell className='w-3/12'>
+                                                    <Input
                                                         type="text"
                                                         maxLength={10}
                                                         value={item.price}
@@ -89,7 +89,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                             }
                                                         }}
                                                         placeholder='0.00'
-                                                        className='input input-sm input-bordered h-9 focus:outline-none text-sm w-full ps-3'
+                                                        size="sm"
                                                         onKeyDown={(e) => {
                                                             if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                                                                 e.preventDefault();
@@ -100,7 +100,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                 </TableCell>
                                                 <TableCell className=''>
                                                     <div className='w-full'>
-                                                        {item.totalAmount || '0.00'}
+                                                        {formatNumber(item.totalAmount) || '0.00'}
 
                                                     </div>
                                                 </TableCell>

@@ -7,20 +7,26 @@ import { toast } from 'sonner'
 import expensesService from '@/services/expensesService'
 import { Data } from '../../TabsExpense/TabsOthersCost'
 
-function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType, getTypeData }) {
+function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType, getTypeData, typeData }) {
 
   const { currentUser } = useAppContext()
-  const { isAction, setIsAction, } = useContext(Data)
+  const { isAction, setIsAction, getDataOtherExpenses } = useContext(Data)
   const [newValue, setNewValue] = useState('')
 
   const handleEdit = async () => {
-    try {
-      await expensesService.editExpensesType(action, id, newValue)
-      await getTypeData()
-      toast.success('แก้ไขข้อมูลสำเร็จ', { position: 'top-right' })
-      setIsAction(!isAction)
-    } catch (error) {
-      console.log('Something Wrong', error)
+    if (typeData?.find(e => e.typeName === newValue)) {
+      toast.error('ประเภทนี้มีอยู่ในระบบแล้ว')
+      return;
+    } else {
+      try {
+        await expensesService.editExpensesType(action, id, newValue)
+        await getTypeData()
+        await getDataOtherExpenses()
+        toast.success('แก้ไขข้อมูลสำเร็จ', { position: 'top-right' })
+        setIsAction(!isAction)
+      } catch (error) {
+        console.log('Something Wrong', error)
+      }
     }
   }
 
@@ -28,6 +34,7 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
     try {
       await expensesService.ChangeExpensestypeStatus(action, id, isCloseType)
       await getTypeData()
+      await getDataOtherExpenses()
       toast.success('ปิดการใช้งานสำเร็จ', { position: 'top-right' })
       setIsAction(!isAction)
     } catch (error) {
@@ -67,8 +74,8 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
               <Button size='sm' color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button size='sm' color="danger" onPress={() => { onClose(); handleDelete(); }}>
-                <span>{isCloseType ? 'ยืนยันการปิดการใช้งาน' : 'ยืนยันการเปิดการใช้งาน'}</span>
+              <Button size='sm' color={isCloseType ? 'danger' : 'primary'} onPress={() => { onClose(); handleDelete(); }}>
+                <span className='text-white'>{isCloseType ? 'ยืนยันการปิดการใช้งาน' : 'ยืนยันการเปิดการใช้งาน'}</span>
               </Button>
             </>)}
         </ModalFooter>

@@ -41,9 +41,9 @@ function ModalDelete({ isOpen, onClose, data }) {
                     <ModalBody>
                         <div className='form space-y-8'>
                             <div className='flex flex-row'>
-                                <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
+                                <div className="w-full">
                                     <label className="text-sm text-slate-500">วันที่กรอก</label>
-                                    <input value={new Date(data.create_Date).toLocaleDateString()} disabled type="text" className='input input-sm input-bordered focus:outline-none w-full text-sm h-9' />
+                                    <input value={new Date(data.expensesDate).toLocaleDateString()} disabled type="text" className='input input-sm input-bordered bg-slate-100 focus:outline-none w-full text-sm h-9 px-4 text-slate-500 rounded-md shadow-sm' />
                                 </div>
                             </div>
 

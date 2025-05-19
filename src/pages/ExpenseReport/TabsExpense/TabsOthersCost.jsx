@@ -17,13 +17,14 @@ function TabsOthersCost() {
   const { agent } = useAppContext();
   const { selectedAgent } = agent;
 
-  const [isAdd, setIsAdd] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
-  const [search, setSearch] = useState('')
-  const [data, setData] = useState([])
-  const [typeData, setTypeData] = useState([])
-  const [isManageType, setIsManageType] = useState(false)
   const [isAction, setIsAction] = useState(false)
+  const [searchText, setSearchText] = useState('')
+
+  // Fetch Data
+  const [typeData, setTypeData] = useState([])
+  const [data, setData] = useState([])
+
+  // Select Type
   const [typeValue, setTypeValue] = useState("ทั้งหมด")
 
   // Loading
@@ -32,9 +33,7 @@ function TabsOthersCost() {
   // Date
   const startDate = startOfMonth(today())
   const endDate = endOfMonth(today())
-
   const [expensesDate, setExpensesDate] = useState(today())
-
   const [dateRange, setDateRange] = useState({
     start: startDate,
     end: endDate,
@@ -56,13 +55,35 @@ function TabsOthersCost() {
     getDataOtherExpenses();
   }, [selectedAgent, dateRange])
 
+  const filterByDateRange = (itemDate) => {
+    if (!dateRange || !dateRange.start || !dateRange.end) {
+      return true;
+    }
+
+    const startDate = new Date(dateRange.start.year, dateRange.start.month - 1, dateRange.start.day);
+    const endDate = new Date(dateRange.end.year, dateRange.end.month - 1, dateRange.end.day);
+    const dateTarget = new Date(itemDate);
+    return dateTarget >= startDate && dateTarget <= endDate;
+  };
+
+  const filterData = data?.filter(item => {
+    const matchesType = typeValue === 'ทั้งหมด' || item.expensesType.typeName === typeValue;
+    const matchesDateRange = filterByDateRange(item.expensesDate);
+    const martchText = item.remarks.toLowerCase().includes(searchText?.toLowerCase())
+    const matchisActvive = item?.expensesType?.status === true
+
+    return matchesDateRange && matchesType && martchText && matchisActvive
+  });
+
+
+
   return (
     <div className='body-container'>
       <Data.Provider value={{
-        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, data, setData, isAction, setIsAction, currentUser, selectedAgent, typeData, setTypeData,
-        isManageType, setIsManageType, typeValue, setTypeValue, getDataOtherExpenses
+        dateRange, setDateRange, data, setData, isAction, setIsAction, currentUser, selectedAgent, typeData, setTypeData,
+        typeValue, setTypeValue, getDataOtherExpenses, typeValue, filterData
       }}>
-        <ControlBar expensesDate={expensesDate} setExpensesDate={setExpensesDate} />
+        <ControlBar expensesDate={expensesDate} setExpensesDate={setExpensesDate} setSearchText={setSearchText} searchText={searchText} />
         <Contents isLoading={isLoading} />
       </Data.Provider>
     </div >

@@ -72,5 +72,16 @@ async function deleteExpensesDetails(expensesId) {
     return res.data
 }
 
+async function editExpensesDetail(expensesId, remark, expensesDate, details, typeId) {
+    const res = await api.post(`${ExpensesDetailsURL}/editExpenses`, {
+        expensesId,
+        remark,
+        expensesDate,
+        details,
+        typeId
+    })
+    return res.data
+}
 
-export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails, deleteExpensesDetails }
+
+export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails, deleteExpensesDetails, editExpensesDetail }
