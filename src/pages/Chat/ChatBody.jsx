@@ -1,11 +1,13 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import MemberList from './ChatComponents/MemberList'
 import MemberChat from './ChatComponents/MemberChat'
 
 function ChatBody({ isOpen, onOpenChange }) {
-    return (
 
+    const [isPrivateChat, setIsPrivateChat] = useState(true)
+
+    return (
         // ความสูง กว้าง กำหนด ชั่วคราว อยากได้เท่าไหร่ ปรับเอาเลย
         <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent className="w-full max-w-7xl h-[80vh]">
@@ -13,10 +15,10 @@ function ChatBody({ isOpen, onOpenChange }) {
                 <ModalBody className='flex flex-row justify-between items-start'>
 
                     {/* ฝั่งซ้าย */}
-                    <MemberList />
+                    <MemberList setIsPrivateChat={setIsPrivateChat} />
 
                     {/* ฝั่งขวา */}
-                    <MemberChat />
+                    <MemberChat isPrivateChat={isPrivateChat} />
 
                 </ModalBody>
             </ModalContent>

@@ -1,18 +1,19 @@
 import { Button, Input, Tab, Tabs, useDisclosure } from '@heroui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import CreateGroupChat from './CreateGroupChat';
 
-function MemberList() {
+function MemberList({ setIsPrivateChat }) {
 
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
+    const [isOpenModalAddMember, setIsOpenModalAddMember] = useState(false)
 
     return (
         <div className='w-9/12'>
             <Input placeholder='ค้นหาผู้ใช้' className='w-full' size='sm' />
             <div className='flex flex-row justify-between items-start py-6'>
                 <div>
-                    <Tabs aria-label="Options" radius='full' size='sm'>
+                    <Tabs aria-label="Options" radius='full' size='sm' onSelectionChange={(key) => setIsPrivateChat(key === "singleChat")}>
                         <Tab key="singleChat" title="แชทส่วนตัว">
                             <span className='text-sm text-slate-500'>Member List</span>
                         </Tab>
@@ -26,9 +27,18 @@ function MemberList() {
                 </div>
             </div>
 
-            <CreateGroupChat isOpen={isOpen} onOpenChange={onOpenChange} />
+            {
+                isOpen && (
+                    <CreateGroupChat
+                        isOpen={isOpen}
+                        onOpenChange={() => { onOpenChange(); setIsOpenModalAddMember(false) }}
+                        isOpenModalAddMember={isOpenModalAddMember}
+                        setIsOpenModalAddMember={setIsOpenModalAddMember}
+                    />
+                )
+            }
 
-        </div>
+        </div >
     )
 }
 
