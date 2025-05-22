@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import "./styles/App.css";
@@ -6,8 +6,9 @@ import DefaultLayout from "./layouts/default";
 import { useAppContext } from "./contexts/AppContext";
 import { CircularProgress } from "@heroui/react";
 import { Toaster } from "sonner";
+import FloatingButton from "./pages/Chat/FloatingButton";
 
-const Management = lazy(() => import("./pages/Management/Management")); 
+const Management = lazy(() => import("./pages/Management/Management"));
 const Setting = lazy(() => import("./pages/Setting/Setting"));
 const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
@@ -16,8 +17,6 @@ const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
 const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
 const Page403 = lazy(() => import("./pages/page403"));
 const Page404 = lazy(() => import("./pages/Page404"));
-
-
 
 function ProtectedRoute({ children }) {
   const navigate = useNavigate();
@@ -28,13 +27,13 @@ function ProtectedRoute({ children }) {
     if (!isUserLoading) {
       if (!currentUser) {
         navigate("/login", { replace: true, state: { from: location } });
-      }else{
+      } else {
         const route = routes.find(route => route.path === location.pathname);
-        if(!route){
+        if (!route) {
           console.log("ไม่พบหน้าที่คุณกำลังค้นหา");
           return navigate("/notfound", { replace: true });
         }
-        if(!accessCheck.haveAny(route.access)){
+        if (!accessCheck.haveAny(route.access)) {
           console.log("ไม่มีสิทธิ์เข้าถึงหน้านี้");
           return navigate("/forbidden", { replace: true });
         }
@@ -51,26 +50,27 @@ function ProtectedRoute({ children }) {
 }
 
 const routes = [
-    { path: "/home", component: <Home />, title: "หน้าแรก", access: [] },
-    { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [] },
-    { path: "/management", component: <Management />, title: "การจัดการ", access: [] },
-    {
-      path: "/ExpenseReport",
-      component: <ExpenseReport />,
-      title: "ค่าใช้จ่าย",
-      access: []
-    },
-    { path: "/Commission", component: <Commission />, title: "คอมมิชชัน", access: [] },
-    {
-      path: "/Dashboard-CEO",
-      component: <DashboardCEO />,
-      title: "แดชบอร์ดผู้บริหาร",
-      access: []
-    },
+  { path: "/home", component: <Home />, title: "หน้าแรก", access: [] },
+  { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [] },
+  { path: "/management", component: <Management />, title: "การจัดการ", access: [] },
+  {
+    path: "/ExpenseReport",
+    component: <ExpenseReport />,
+    title: "ค่าใช้จ่าย",
+    access: []
+  },
+  { path: "/Commission", component: <Commission />, title: "คอมมิชชัน", access: [] },
+  {
+    path: "/Dashboard-CEO",
+    component: <DashboardCEO />,
+    title: "แดชบอร์ดผู้บริหาร",
+    access: []
+  },
 ];
 
 function App() {
   const { isUserLoading } = useAppContext();
+  const location = useLocation();
 
   if (isUserLoading) {
     return (
@@ -108,6 +108,11 @@ function App() {
           }
         />
       </Routes>
+
+      {/* เช็คว่าอยู่หน้า Login หรือเปล่า ถ้าไม่ใช่ก็ให้แสดงปุ่ม */}
+      {location.pathname !== "/" && location.pathname !== "/login" && (
+        <FloatingButton />
+      )}
     </Suspense>
   );
 }

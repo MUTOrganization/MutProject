@@ -5,6 +5,8 @@ import Contents from '../components/OthersCostComponent/Contents'
 import WithDraw from '../components/OthersCostComponent/WithDraw';
 import { useAppContext } from '../../../contexts/AppContext';
 import { endOfMonth, startOfMonth, today } from '@internationalized/date';
+import expensesService from "@/services/expensesService";
+import { formatDateObject } from "@/utils/dateUtils";
 
 export const Data = createContext();
 
@@ -15,37 +17,76 @@ function TabsOthersCost() {
   const { agent } = useAppContext();
   const { selectedAgent } = agent;
 
-  const currentMonthStart = startOfMonth(today());
-  const currentMonthEnd = endOfMonth(today());
+  const [isAction, setIsAction] = useState(false)
+  const [searchText, setSearchText] = useState('')
 
+  // Fetch Data
+  const [typeData, setTypeData] = useState([])
+  const [data, setData] = useState([])
+
+  // Select Type
+  const [typeValue, setTypeValue] = useState("ทั้งหมด")
+
+  // Loading
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Date
+  const startDate = startOfMonth(today())
+  const endDate = endOfMonth(today())
+  const [expensesDate, setExpensesDate] = useState(today())
   const [dateRange, setDateRange] = useState({
-    start: currentMonthStart,
-    end: currentMonthEnd,
+    start: startDate,
+    end: endDate,
   });
 
-  const [isAdd, setIsAdd] = useState(false)
-  const [isEdit, setIsEdit] = useState(false)
-  const [search, setSearch] = useState('')
-  const [data, setData] = useState([])
-  const [typeData, setTypeData] = useState([])
-  const [isManageType, setIsManageType] = useState(false)
-  const [isAction, setIsAction] = useState(false)
+  // Fetch ExpensesData
+  const getDataOtherExpenses = async () => {
+    setIsLoading(true)
+    try {
+      const res = await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(dateRange.start), formatDateObject(dateRange.end))
+      setData(res);
+      setIsLoading(false)
+    } catch (error) {
+      console.error('ไม่สามารถดึงข้อมูลได้:', error);
+    }
+  }
 
-  // WithDraw
-  const [searchWithDraw, setSearchWithDraw] = useState('')
-  const [searchDateWithDraw, setSearchDateWithDraw] = useState('')
-  const [searchDepartment, setSearchDepartment] = useState('ทั้งหมด')
+  useEffect(() => {
+    getDataOtherExpenses();
+  }, [selectedAgent, dateRange])
+
+  const filterByDateRange = (itemDate) => {
+    if (!dateRange || !dateRange.start || !dateRange.end) {
+      return true;
+    }
+
+    const startDate = new Date(dateRange.start.year, dateRange.start.month - 1, dateRange.start.day);
+    const endDate = new Date(dateRange.end.year, dateRange.end.month - 1, dateRange.end.day);
+    const dateTarget = new Date(itemDate);
+    return dateTarget >= startDate && dateTarget <= endDate;
+  };
+
+  const filterData = data?.filter(item => {
+    const matchesType = typeValue === 'ทั้งหมด' || item.expensesType.typeName === typeValue;
+    const matchesDateRange = filterByDateRange(item.expensesDate);
+    const martchText = item.remarks.toLowerCase().includes(searchText?.toLowerCase())
+    const matchisActvive = item?.expensesType?.status === true
+
+    return matchesDateRange && matchesType && martchText && matchisActvive
+  });
+
+
 
   return (
     <div className='body-container'>
       <Data.Provider value={{
-        isAdd, setIsAdd, isEdit, setIsEdit, search, setSearch, dateRange, setDateRange, data, setData, searchWithDraw, setSearchWithDraw, isAction, setIsAction,
-        searchDateWithDraw, setSearchDateWithDraw, searchDepartment, setSearchDepartment, currentUser, selectedAgent, typeData, setTypeData, isManageType, setIsManageType
+        dateRange, setDateRange, data, setData, isAction, setIsAction, currentUser, selectedAgent, typeData, setTypeData,
+        typeValue, setTypeValue, getDataOtherExpenses, typeValue, filterData
       }}>
-        <ControlBar />
-        <Contents />
+        <ControlBar expensesDate={expensesDate} setExpensesDate={setExpensesDate} setSearchText={setSearchText} searchText={searchText} />
+        <Contents isLoading={isLoading} />
       </Data.Provider>
-    </div>
+    </div >
   )
 }
 
