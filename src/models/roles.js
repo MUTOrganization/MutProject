@@ -12,6 +12,10 @@ export default class Role {
         this.level = data.level;
         /** @type {boolean} */
         this.isHq = data.isHq;
+        /** @type {Date} */
+        this.createdDate = new Date(data.createdDate);
+        /** @type {Date} */
+        this.updatedDate = new Date(data.updatedDate);
         /** @type {Department} */
         this.department = data.department;
         /** @type {Array<User>} */

@@ -6,7 +6,6 @@ import { Accordion, AccordionItem, CircularProgress } from "@heroui/react";
 import { useAppContext } from "../../contexts/AppContext";
 
 const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));
-const Permission = lazy(() => import("./Pages/Permission"));
 const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
 const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
 const MasterAccess = lazy(() => import("./Pages/accessManage/MasterAccess"));
@@ -102,6 +101,7 @@ function Management() {
         {/* Mobile View */}
         <div className="grid max-h-screen lg:hidden mb-4">
           <Accordion
+            aria-label="Menu"
             showDivider={false}
             className="p-2 flex flex-col gap-1 w-full max-w-screen"
             variant="shadow"

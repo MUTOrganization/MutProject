@@ -11,6 +11,10 @@ export default class Agent {
         this.code = data.code;
         /** @type {string} */
         this.businessType = data.businessType;
+        /** @type {Date} */
+        this.createdDate = new Date(data.createdDate);
+        /** @type {Date} */
+        this.updatedDate = new Date(data.updatedDate);
         /** @type {Array<Department>} */
         this.departments = data.departments;
     }

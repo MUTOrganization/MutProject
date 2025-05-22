@@ -19,6 +19,10 @@ export default class User {
         this.probStatus = data.probStatus;
         /** @type {Array<number>} */
         this.access = data.access;
+        /** @type {Date} */
+        this.createdDate = new Date(data.createdDate);
+        /** @type {Date} */
+        this.updatedDate = new Date(data.updatedDate);
         /** @type {Role} */
         this.role = data.role;
         /** @type {Department} */
