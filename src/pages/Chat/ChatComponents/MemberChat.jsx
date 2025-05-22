@@ -24,7 +24,7 @@ function MemberChat({ isPrivateChat }) {
         <>
             <div className='w-full h-full'>
                 {/* Controller Chat For Private Chat && Group Chat */}
-                {isPrivateChat ? (
+                {isPrivateChat === 'singleChat' ? (
                     <header className='flex flex-row justify-between items-center border-1 border-slate-200 py-2 px-4 rounded-md shadow-md'>
                         <span className='text-slate-500'>MemberName</span>
                         <Tooltip content='บล็อค'>

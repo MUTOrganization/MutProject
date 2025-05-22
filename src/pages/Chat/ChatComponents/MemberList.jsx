@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import CreateGroupChat from './CreateGroupChat';
 
-function MemberList({ setIsPrivateChat }) {
+function MemberList({ setIsPrivateChat, isPrivateChat }) {
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const [isOpenModalAddMember, setIsOpenModalAddMember] = useState(false)
@@ -13,7 +13,7 @@ function MemberList({ setIsPrivateChat }) {
             <Input placeholder='ค้นหาผู้ใช้' className='w-full' size='sm' />
             <div className='flex flex-row justify-between items-start py-6'>
                 <div>
-                    <Tabs aria-label="Options" radius='full' size='sm' onSelectionChange={(key) => setIsPrivateChat(key === "singleChat")}>
+                    <Tabs aria-label="Options" radius='full' size='sm' selectedKey={isPrivateChat} onSelectionChange={setIsPrivateChat}>
                         <Tab key="singleChat" title="แชทส่วนตัว">
                             <span className='text-sm text-slate-500'>Member List</span>
                         </Tab>

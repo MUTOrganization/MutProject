@@ -3,7 +3,7 @@ import api from "@/configs/api";
 const TypeExpensesURL = 'otherExpenses/manageExpenses'
 const ExpensesDetailsURL = 'otherExpenses'
 
-// Expenses Type
+// Expenses Type ---------------------------------------------------------------------
 async function addExpensesType(action, agentId, typeName) {
     const res = await api.post(TypeExpensesURL, {
         action,
@@ -41,7 +41,7 @@ async function getExpensesType(agentId) {
     return res.data
 }
 
-// ExpensesDetails
+// ExpensesDetails ---------------------------------------------------------------------
 async function getExpensesDetails(agentId, startDate, endDate) {
     const res = await api.get(`${ExpensesDetailsURL}/getExpensesDetails`, {
         params: {
