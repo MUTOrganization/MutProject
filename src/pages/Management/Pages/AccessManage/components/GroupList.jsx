@@ -65,7 +65,7 @@ function GroupList({ groupList, groupSelected, setGroupSelected, isLoading, isFe
                 {groupList.length > 0 ? groupList.map((group) => {
                     const isSelected = groupSelected && group.accessGroupId === groupSelected.accessGroupId;
                     return (
-                        <Skeleton isLoaded={!isLoading} className="rounded-xl">
+                        <Skeleton key={group.accessGroupId} isLoaded={!isLoading} className="rounded-xl">
                             <div
                                 key={group.accessGroupId}
                                 onClick={() => handleSelectGroup(group)}
