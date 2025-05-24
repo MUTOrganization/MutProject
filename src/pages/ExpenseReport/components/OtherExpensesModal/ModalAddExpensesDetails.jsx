@@ -1,16 +1,17 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
 import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Select, SelectItem } from "@heroui/react";
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
+import { formatNumber } from "@/component/FormatNumber";
 
 function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate }) {
-
+    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
+        
     const { typeValue, setTypeValue } = useContext(Data)
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size="xl">
+        <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" className="overflow-hidden">
             <ModalContent>
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
@@ -22,11 +23,9 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                 onChange={(e) => setExpensesDate(e)}
                             />
                         </div>
-
                         <div className='relative'>
-                            <div className='flex justify-end mb-3 bg-red-300'>
-                                <select name="" id="" className="select select-sm select-bordered">
-                                    <option value="">ประเภท</option>
+                            <div className='flex justify-end mb-3'>
+                                <select onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
                                     {typeData?.filter(e => e.status === true).map((item) => (
                                         <option value={item.expensesTypeId}>{item.typeName}</option>
                                     ))}
@@ -45,22 +44,22 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                     {selectedData.list.map((item, index) => (
                                         <>
                                             <TableRow key={index}>
-                                                <TableCell >
-                                                    <input
+                                                <TableCell className="w-5/12" >
+                                                    <Input maxLength={50} className="shadow-sm"
                                                         type="text"
-                                                        maxLength={50}
                                                         value={item.name}
                                                         disabled={isEnable}
                                                         onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
-                                                        className='input input-sm input-bordered focus:outline-none text-sm h-9 px-2'
                                                         placeholder="รายการ"
+                                                        size="sm"
                                                     />
                                                 </TableCell>
-                                                <TableCell>
-                                                    <input
+                                                <TableCell className="w-2/12">
+                                                    <Input
                                                         type="text"
-                                                        maxLength={50}
+                                                        maxLength={6}
                                                         value={item.qty}
+                                                        size="sm"
                                                         disabled={isEnable}
                                                         onChange={(e) => {
                                                             const value = e.target.value;
@@ -68,7 +67,6 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                                 handleExpenseChange(index, 'qty', value);
                                                             }
                                                         }}
-                                                        className='input input-sm input-bordered focus:outline-none w-full text-sm h-9'
                                                         placeholder="0"
                                                         onKeyDown={(e) => {
                                                             if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
@@ -78,8 +76,8 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                         pattern="[0-9]*"
                                                     />
                                                 </TableCell>
-                                                <TableCell className=''>
-                                                    <input
+                                                <TableCell className='w-3/12'>
+                                                    <Input
                                                         type="text"
                                                         maxLength={10}
                                                         value={item.price}
@@ -91,7 +89,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                             }
                                                         }}
                                                         placeholder='0.00'
-                                                        className='input input-sm input-bordered h-9 focus:outline-none text-sm w-full ps-3'
+                                                        size="sm"
                                                         onKeyDown={(e) => {
                                                             if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                                                                 e.preventDefault();
@@ -102,7 +100,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                 </TableCell>
                                                 <TableCell className=''>
                                                     <div className='w-full'>
-                                                        {item.totalAmount || '0.00'}
+                                                        {formatNumber(item.totalAmount) || '0.00'}
 
                                                     </div>
                                                 </TableCell>
@@ -136,10 +134,10 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
 
                         <div className="other w-full">
                             <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
-                                <label className="text-sm text-slate-500">หมายเหตุ (ถ้ามี)</label>
+                                <label className="text-sm text-slate-500">หมายเหตุ</label>
                                 <Textarea
                                     labelPlacement="outside"
-                                    placeholder="Enter your description"
+                                    placeholder="กรุณากรอกหมายเหตุ"
                                     className="max-w-full"
                                     isDisabled={isEnable}
                                     value={selectedData.remark}

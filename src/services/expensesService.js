@@ -3,7 +3,7 @@ import api from "@/configs/api";
 const TypeExpensesURL = 'otherExpenses/manageExpenses'
 const ExpensesDetailsURL = 'otherExpenses'
 
-// Expenses Type
+// Expenses Type ---------------------------------------------------------------------
 async function addExpensesType(action, agentId, typeName) {
     const res = await api.post(TypeExpensesURL, {
         action,
@@ -41,7 +41,7 @@ async function getExpensesType(agentId) {
     return res.data
 }
 
-// ExpensesDetails
+// ExpensesDetails ---------------------------------------------------------------------
 async function getExpensesDetails(agentId, startDate, endDate) {
     const res = await api.get(`${ExpensesDetailsURL}/getExpensesDetails`, {
         params: {
@@ -53,10 +53,29 @@ async function getExpensesDetails(agentId, startDate, endDate) {
     return res.data
 }
 
-async function addExpensesDetails(remark, note, expensesDate, details, typeId) {
+async function addExpensesDetails(remark, expensesDate, details, typeId) {
     const res = await api.post(`${ExpensesDetailsURL}/addExpensesDetails`, {
         remark,
-        note,
+        expensesDate,
+        details,
+        typeId
+    })
+    return res.data
+}
+
+async function deleteExpensesDetails(expensesId) {
+    const res = await api.delete(`${ExpensesDetailsURL}/deleteExpenses`, {
+        params: {
+            expensesId
+        }
+    })
+    return res.data
+}
+
+async function editExpensesDetail(expensesId, remark, expensesDate, details, typeId) {
+    const res = await api.post(`${ExpensesDetailsURL}/editExpenses`, {
+        expensesId,
+        remark,
         expensesDate,
         details,
         typeId
@@ -65,4 +84,4 @@ async function addExpensesDetails(remark, note, expensesDate, details, typeId) {
 }
 
 
-export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails }
+export default { addExpensesType, getExpensesType, ChangeExpensestypeStatus, editExpensesType, getExpensesDetails, addExpensesDetails, deleteExpensesDetails, editExpensesDetail }

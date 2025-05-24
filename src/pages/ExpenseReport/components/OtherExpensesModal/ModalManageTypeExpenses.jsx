@@ -1,14 +1,14 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
-import { Button } from "@heroui/react"
+import { Button, Tooltip } from "@heroui/react"
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/table"
 import React, { useContext, useEffect, useState } from 'react'
-import { FaBan, FaEdit, FaTrash } from 'react-icons/fa'
+import { FaBan, FaCheck, FaEdit, FaTrash } from 'react-icons/fa'
 import ModalActionType from './ModalActionType'
 import { URLS } from '@/config'
 import fetchProtectedData from '@/utils/fetchData'
 import { Data } from '../../TabsExpense/TabsOthersCost'
 
-function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData }) {
+function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
 
     const { typeData } = useContext(Data);
 
@@ -35,7 +35,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData
     }
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size='2xl'>
+        <Modal isOpen={isOpen} onOpenChange={onClose} size='2xl' className="overflow-hidden">
             <ModalContent className='space-y-5'>
                 <ModalHeader className='text-slate-600'>จัดการประเภทค่าใช้จ่าย</ModalHeader>
                 <ModalBody className=''>
@@ -66,7 +66,9 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData
                                     <TableCell className='text-center'>
                                         <div className='flex justify-center space-x-4'>
                                             <span onClick={() => handleOpenModal('edit', data.typeName, data.expensesTypeId, data.status)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaEdit size={16} className='text-yellow-500' /></span>
-                                            <span onClick={() => handleOpenModal('close', data.typeName, data.expensesTypeId, data.status)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'><FaBan size={16} className='text-red-400' /></span>
+                                            <Tooltip content={data?.status ? 'ปิดการใช้งาน' : 'เปิดการใช้งาน'} placement="right">
+                                                <span onClick={() => handleOpenModal('close', data.typeName, data.expensesTypeId, data.status)} className='cursor-pointer hover:scale-150 transition ease-in duration-150'>{data?.status ? <FaBan size={16} className='text-red-400' /> : <FaCheck size={16} className='text-green-400' />}</span>
+                                            </Tooltip>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -76,7 +78,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData
                     <hr />
                 </ModalBody>
                 <ModalFooter>
-                    <Button size='sm' color="danger" variant="light" onPress={() => { setIsManageType(true); onClose(); }}>
+                    <Button size='sm' color="danger" variant="light" onPress={() => { onClose(); }}>
                         Close
                     </Button>
                 </ModalFooter>
@@ -91,6 +93,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, setIsManageType, getTypeData
                     id={id}
                     setIsCloseType={setIsCloseType}
                     isCloseType={isCloseType}
+                    typeData={typeData}
                     getTypeData={getTypeData}
                 />
             )}

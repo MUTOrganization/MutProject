@@ -1,24 +1,41 @@
 import React, { useContext, useState } from 'react'
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Textarea, Table, TableHeader, SelectItem , TableColumn, Select ,TableBody, TableRow, TableCell } from "@heroui/react";
+import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Textarea, Table, TableHeader, SelectItem, TableColumn, Select, TableBody, TableRow, TableCell, Input, DatePicker } from "@heroui/react";
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { URLS } from '@/config';
 import fetchProtectedData from '@/utils/fetchData';
 import { useAppContext } from '@/contexts/AppContext';
 import { toast, Toaster } from 'sonner';
+import expensesService from '@/services/expensesService';
+import { formatDateObject } from '@/utils/dateUtils';
+import { toastError } from '@/component/Alert';
+import { Data } from '../../TabsExpense/TabsOthersCost';
+import { fromDate } from '@internationalized/date';
 
 
 
-function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
+function ModalEdid({ isOpen, onClose, data, typeData }) {
     const { currentUser } = useAppContext();
-    const [list, setList] = useState(data.lists)
-    const [date, setdate] = useState(new Date(data.create_Date).toISOString().split('T')[0])
-    const [department, setDepartment] = useState(data.department)
-    const [description, setDescription] = useState(data.descriptions)
-    const [remark, setRemark] = useState(data.remark)
-    const [selectType, setSelectType] = useState('')
+    const { getDataOtherExpenses } = useContext(Data)
+
+    const initializeListWithTotal = (details = []) => {
+        return details.map(item => {
+            const qty = parseFloat(item.qty) || 1;
+            const price = parseFloat(item.price) || 0;
+            return {
+                ...item,
+                totalAmount: (qty * price).toFixed(2)
+            };
+        });
+    };
+
+    // New Data
+    const [list, setList] = useState(() => initializeListWithTotal(data.details));
+    const [newRemarks, setNewRemarks] = useState(data.remarks)
+    const [newDate, setNewDate] = useState(fromDate(new Date(data?.expensesDate)))
+    const [selectType, setSelectType] = useState(data?.expensesTypeId)
 
     const handleAddWithDraw = () => {
-        setList(prev => [...prev, { list: null, qty: null, price: null, totalAmount: null }])
+        setList(prev => [...prev, { name: null, qty: null, price: null, totalAmount: null }])
     }
 
     const handleDeleteWithDraw = (index) => {
@@ -26,31 +43,21 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
     }
 
     const handleEdit = async () => {
-        const url = `${URLS.OTHEREXPENSES}/editExpenses`
         try {
-            const res = await fetchProtectedData.post(url, {
-                id: data.id,
-                user: data.create_By,
-                lists: list,
-                date: date,
-                department: department,
-                description: description,
-                remark: remark,
-                user_update: currentUser.userName
-            })
+            await expensesService.editExpensesDetail(data.expensesId, newRemarks, formatDateObject(newDate), list, selectType)
+            await getDataOtherExpenses()
             console.log('EditData success')
-        } catch (error) {
-            console.log('Error'.error)
-        } finally {
-            setIsEdit(true)
             toast.success('แก้ไขข้อมูลสำเร็จ')
+        } catch (error) {
+            console.log('Error', error)
+            toast.error('แก้ไขข้อมูลไม่สำเร็จ')
         }
     }
 
     const isDisabled = list.some(e =>
-        !e.list || e.list.trim() === '' ||
+        !e.name || e.name.trim() === '' ||
         // !e.qty || e.qty.trim() === '' ||
-        !e.price || e.price.trim() === ''
+        !e.price || String(e.price).trim() === ''
     );
 
     const handleChange = (selectedKey) => {
@@ -59,10 +66,12 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
         setSelectType(findValueById?.id)
     };
 
+    const sumTotal = list.reduce((sum, item) => sum + parseFloat(item.totalAmount || 0), 0);
+
     return (
         <div>
             <Modal isOpen={isOpen} onOpenChange={onClose} isDismissable={false} isKeyboardDismissDisabled={true}>
-                <ModalContent className='max-w-2xl'>
+                <ModalContent className='max-w-3xl'>
                     <ModalHeader>
                         <div className='flex flex-col w-full'>
                             <span className='text-xl'>แก้ไขข้อมูล</span>
@@ -86,25 +95,18 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                             <div className='flex flex-row'>
                                 <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
                                     <label className="text-sm text-slate-500">วันที่กรอก</label>
-                                    <input value={date} onChange={(e) => setdate(e.target.value)} type="date" className='input input-sm focus:outline-none w-full border-1 border-slate-200 px-2 rounded-md text-sm h-9' />
+                                    <DatePicker value={newDate} onChange={(e) => setNewDate(e)} granularity="day" />
                                 </div>
                             </div>
 
                             <div className='flex justify-end mb-3'>
-                                <Select
-                                    label='เลือกประเภท'
-                                    // placeholder="ประเภท"
-                                    color="primary"
-                                    className="w-48"
-                                    size="sm"
-                                    onChange={handleChange}
-                                >
-                                    {typeData.map((item) => (
-                                        <SelectItem key={item.id} value={item.typeExpenses}>
-                                            {item.typeExpenses}
-                                        </SelectItem>
-                                    ))}
-                                </Select>
+                                <div className='flex justify-end mb-3'>
+                                    <select value={selectType} onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
+                                        {typeData?.filter(e => e.status === true).map((item) => (
+                                            <option value={item.expensesTypeId}>{item.typeName}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div className='row-3'>
@@ -118,37 +120,41 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                                             <TableColumn className='font-medium'></TableColumn>
                                         </TableHeader>
 
-                                        <TableBody className='text-sm bg-slate-100 '>
+                                        <TableBody className='text-sm bg-slate-100'>
                                             {list.map((item, index) => (
-                                                <TableRow key={index} className=''>
-                                                    <TableCell className='w-4/12'>
-                                                        <input
-                                                            value={item.list}
+                                                <TableRow key={index} className='text-slate-500'>
+                                                    <TableCell className='w-5/12'>
+                                                        <Input
+                                                            value={item.name}
                                                             onChange={(e) => {
                                                                 const updatedList = [...list];
-                                                                updatedList[index].list = e.target.value;
+                                                                updatedList[index].name = e.target.value;
                                                                 setList(updatedList);
                                                             }}
                                                             type="text"
-                                                            className='input input-sm input-bordered focus:outline-none w-full'
                                                             maxLength={45}
+                                                            size='sm'
+                                                            placeholder='รายการ'
                                                         />
                                                     </TableCell>
                                                     <TableCell className='w-2/12'>
-                                                        <input
+                                                        <Input
                                                             value={item.qty}
                                                             onChange={(e) => {
                                                                 const updatedList = [...list];
                                                                 updatedList[index].qty = e.target.value;
-                                                                updatedList[index].totalAmount = updatedList[index].qty
-                                                                    ? (updatedList[index].qty * updatedList[index].price || 0).toFixed(2)
-                                                                    : updatedList[index].price || 0;
+
+                                                                const qty = parseFloat(updatedList[index].qty) || 1;
+                                                                const price = parseFloat(updatedList[index].price) || 0;
+                                                                updatedList[index].totalAmount = (qty * price).toFixed(2);
 
                                                                 setList(updatedList);
                                                             }}
                                                             type="text"
                                                             className='input input-sm input-bordered focus:outline-none w-full'
-                                                            maxLength={45}
+                                                            maxLength={6}
+                                                            placeholder='0'
+                                                            size='sm'
                                                             onKeyDown={(e) => {
                                                                 if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
                                                                     e.preventDefault();
@@ -158,20 +164,21 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                                                         />
                                                     </TableCell>
                                                     <TableCell className='w-3/12'>
-                                                        <input
+                                                        <Input
                                                             value={item.price}
+                                                            placeholder='0.00'
                                                             onChange={(e) => {
                                                                 const updatedList = [...list];
                                                                 updatedList[index].price = e.target.value;
 
-                                                                updatedList[index].totalAmount = updatedList[index].qty
-                                                                    ? (updatedList[index].qty * updatedList[index].price || 0).toFixed(2)
-                                                                    : updatedList[index].price || 0;
+                                                                const qty = parseFloat(updatedList[index].qty) || 1;
+                                                                const price = parseFloat(updatedList[index].price) || 0;
+                                                                updatedList[index].totalAmount = (qty * price).toFixed(2);
 
                                                                 setList(updatedList);
                                                             }}
                                                             type="text"
-                                                            className='input input-sm input-bordered focus:outline-none w-full'
+                                                            size='sm'
                                                             maxLength={45}
                                                             onKeyDown={(e) => {
                                                                 if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
@@ -182,8 +189,12 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <span>{item.totalAmount || '0.00'}</span>
+                                                        {Number(item.totalAmount || 0).toLocaleString('th-TH', {
+                                                            minimumFractionDigits: 2,
+                                                            maximumFractionDigits: 2
+                                                        })}
                                                     </TableCell>
+
                                                     <TableCell>
                                                         <FaTrash
                                                             size={16}
@@ -195,7 +206,7 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                                             ))}
                                             <TableRow>
                                                 <TableCell>
-                                                    <div className='flex flex-row items-center space-x-1 justify-start mr-1'>
+                                                    <div className='flex flex-row items-center space-x-1 justify-start mr-1 py-2'>
                                                         <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={handleAddWithDraw}>
                                                             <span><FaPlusCircle className='text-blue-500' /></span>
                                                             <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
@@ -210,18 +221,18 @@ function ModalEdid({ isOpen, onClose, data, setIsEdit , typeData }) {
                                         </TableBody>
                                     </Table>
                                 </div>
-                                <div className='text-end text-sm py-2 text-slate-500'>
-                                    <span>ยอดรวม {new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-                                        data.lists.reduce((sum, entry) => sum + parseFloat(entry.totalAmount || 0), 0)
-                                    )} บาท</span>
+                                <div className='text-end text-sm py-3 text-slate-500 space-x-4'>
+                                    <span>ยอดรวม</span>
+                                    <span className='text-red-500 font-bold'>{sumTotal.toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</span>
+                                    <span>บาท</span>
                                 </div>
                             </div>
 
                             <div className='row-4 flex flex-col gap-2'>
-                                <label className="text-sm text-slate-500">หมายเหตุ (ถ้ามี)</label>
+                                <label className="text-sm text-slate-500">หมายเหตุ</label>
                                 <Textarea
-                                    onChange={(e) => setRemark(e.target.value)}
-                                    value={remark}
+                                    onChange={(e) => setNewRemarks(e.target.value)}
+                                    value={newRemarks}
                                     labelPlacement="outside"
                                     placeholder="Enter your description"
                                     className="max-w-full"
