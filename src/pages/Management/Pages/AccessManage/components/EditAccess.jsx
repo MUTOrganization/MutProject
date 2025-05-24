@@ -36,8 +36,6 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
             accessGroupId: groupSelected.accessGroupId
         }
 
-        console.log(payload);
-
         await updateAccess(payload)
             .then(() => {
                 toastSuccess("แก้ไขสิทธิ์สำเร็จ");
