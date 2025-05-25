@@ -21,6 +21,7 @@ function ExpensesChart({ expensesData, setSelectExpensesTypeFromChart, selectExp
             }
         },
         labels,
+        title: { text: 'Expenses PIE Chart', align: 'left' },
         legend: {
             position: 'right',
             fontSize: '14px'

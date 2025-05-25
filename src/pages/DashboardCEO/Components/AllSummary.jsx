@@ -89,6 +89,7 @@ function AllSummary({ expensesData, commissionData, isLoading }) {
                     <span className='text-slate-600 font-semibold'>500</span>
                 </div>
             </div>
+
             <div className='bg-white rounded-lg px-4 py-5 h-28 w-full relative  border-3 border-slate-50'>
                 <header className='text-start text-lg text-slate-500 mb-3 absolute top-4'>ออเดอร์</header>
                 <div className='mt-4 flex flex-row justify-center items-start py-4'>

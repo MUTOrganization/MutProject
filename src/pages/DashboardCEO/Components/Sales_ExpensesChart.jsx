@@ -31,6 +31,7 @@ function Sales_ExpensesChart({ commissionData, expensesData }) {
                 borderRadiusApplication: 'end'
             }
         },
+        title: { text: 'Sales Chart', align: 'left' },
         dataLabels: {
             enabled: false
         },
@@ -58,7 +59,7 @@ function Sales_ExpensesChart({ commissionData, expensesData }) {
         fill: {
             opacity: 1
         },
-        colors: ['#00BFFF', '#90EE90', '#FF0000']
+        colors: ['#00BFFF', '#90EE90', '#FF6B6B']
     }
 
     return (
