@@ -29,8 +29,8 @@ function GroupListBox({ children, title = '', HeaderRightContent, selectedItem, 
 
     
     return (
-        <div className="size-full overflow-y-auto scrollbar-hide border border-gray-200 bg-white rounded-xl p-3 shadow-lg transition-all duration-200">
-            <div className="mb-5 flex items-center justify-between sticky top-0 z-10 bg-white p-3 rounded-xl border-b border-gray-100 shadow-sm">
+        <div className="size-full overflow-y-auto scrollbar-hide border border-gray-200 bg-white rounded-xl p-0 shadow-lg transition-all duration-200">
+            <div className="mb-5 flex items-center justify-between sticky top-0 z-10 bg-white px-6 pt-6 pb-3 rounded-xl border-b border-gray-100 shadow-sm">
                 <h2 className="text-xl font-bold text-gray-800 tracking-tight">{title}</h2>
                 {HeaderRightContent && (
                 <div className="">
@@ -40,7 +40,7 @@ function GroupListBox({ children, title = '', HeaderRightContent, selectedItem, 
             </div>
             
             {/* รายการหมวดหมู่สิทธิ์ */}
-            <div className="space-y-4">
+            <div className="space-y-4 pb-3 px-3">
                 {!isLoading ? 
                 enhancedChildren.length > 0 ? (
                     enhancedChildren

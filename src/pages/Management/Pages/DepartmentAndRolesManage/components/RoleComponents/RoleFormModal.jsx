@@ -1,23 +1,42 @@
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
+import roleService from "@/services/roleService";
 import { Button, Input } from "@heroui/react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from "@nextui-org/modal";
 import { Select, SelectItem } from "@nextui-org/select"
 import { useEffect, useState } from "react";
 
-// import Select from "react-select"
-
-export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole, selectedDepartment, roleList, onSubmit = () => {}, isLoading = false }) {
+export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole, selectedDepartment, roleList, onSubmit = () => {} }) {
     const [editingRole, setEditingRole] = useState({
         roleName: '',
-        roleLevelAttachType: 'lower', // 
-        attachRole: 1, // id ของ ตำแหน่งที่เลือก
     });
 
+    const [roleLevelAttachType, setRoleLevelAttachType] = useState('lower');
+    const [attachRoleId, setAttachRoleId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const isEdit = selectedRole ? true : false;
+
     useEffect(() => {
-        setEditingRole({
-            roleName: selectedRole?.roleName ?? '',
-            roleLevel: selectedRole?.roleLevel ?? 1,
-        });
+        if(selectedRole){
+            setEditingRole({
+                roleName: selectedRole.roleName,
+            });
+        }else{
+            setEditingRole({
+                roleName: '',
+            });
+        }
     }, [selectedRole]);
+
+    useEffect(() => {
+        if(roleList.length > 0){
+            setRoleLevelAttachType('lower');
+            setAttachRoleId(roleList[roleList.length - 1].roleId);
+        }else{
+            setRoleLevelAttachType('lower');
+            setAttachRoleId(null);
+        }
+    },[roleList])
 
     function handleInputChange(key, value){
         setEditingRole({
@@ -26,10 +45,34 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
         });
     }
 
-    function handleSubmit(){
+    async function handleSubmit(){
+        try{
+            setIsLoading(true);
+            
+            if(isEdit){
+                await roleService.updateRole(selectedRole.roleId, editingRole.roleName);
+            }else{
+                const roleAttach = roleList.find(role => String(role.roleId) === String(attachRoleId))
+                const roleLevel = roleAttach ? roleLevelAttachType === 'lower' ? roleAttach.roleLevel + 1 : roleAttach.roleLevel - 1 : 1;
+                await roleService.createRole(selectedDepartment.departmentId, editingRole.roleName, roleLevel);
+            }
+            toastSuccess('สำเร็จ', `${isEdit ? 'แก้ไข' : 'สร้าง'}ตำแหน่งเรียบร้อย`);
+            onSubmit();
+            onClose();
+        }catch(error){
+            console.log(error);
+            if(error?.response?.data?.isDuplicate){
+                toastWarning(`ไม่สามารถ${isEdit ? 'แก้ไข' : 'สร้าง'}ตำแหน่งได้`, 'มีชื่อตำแหน่งนี้อยู่ในระบบแล้ว');
+                return;
+            }
+            toastError('เกิดข้อผิดพลาด', `ไม่สามารถ${isEdit ? 'แก้ไข' : 'สร้าง'}ตำแหน่งได้`);
+        }finally{
+            setIsLoading(false);
+        }
+
         onSubmit(editingRole);
     }
-    console.log(roleList);
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} aria-label="role-form-modal">
             <ModalContent>
@@ -47,23 +90,36 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
                             />
                         </div>
                         {
-                            roleList.length > 0 && 
+                            (!isEdit && roleList.length > 0) && 
                             <div className="mt-8">
                                 <label className="ms-2 text-sm text-primary">ระดับตำแหน่ง</label>
                                 <div className="flex gap-2">
-                                    {/* <Select
-                                        options={[{value: 'lower', label: 'ต่ำกว่า'}, {value: 'higher', label: 'สูงกว่า'}]}
-                                        value={editingRole.roleLevelAttachType}
-                                        onChange={(e) => handleInputChange('roleLevelAttachType', e.value)}
-                                    /> */}
                                     <Select
                                         aria-label="role-level-attach-type"
-                                        placeholder="กรุณาเลือกระดับตำแหน่ง"
-                                        selectedKeys={[editingRole.roleLevelAttachType]}
-                                        onValueChange={(e) => handleInputChange('roleLevelAttachType', e)}
+                                        variant="bordered"
+                                        disallowEmptySelection
+                                        className="w-32"
+                                        selectedKeys={[roleLevelAttachType]}
+                                        onSelectionChange={(e) => setRoleLevelAttachType(Array.from(e)[0])}
                                     >
-                                        <SelectItem value="lower">ต่ำกว่า</SelectItem>
-                                        <SelectItem value="higher">สูงกว่า</SelectItem>
+                                        <SelectItem key="lower">ต่ำกว่า</SelectItem>
+                                        <SelectItem key="higher">สูงกว่า</SelectItem>
+                                    </Select>
+                                    <Select
+                                        aria-label="role-attach"
+                                        variant="bordered"
+                                        disallowEmptySelection
+                                        className="w-32"
+                                        selectedKeys={attachRoleId ? [String(attachRoleId)] : []}
+                                        onSelectionChange={(e) => setAttachRoleId(Array.from(e)[0])}
+                                    >
+                                        {
+                                            roleList.map(role => {
+                                                return (
+                                                    <SelectItem key={role.roleId}>{role.roleName}</SelectItem>
+                                                )
+                                            })
+                                        }
                                     </Select>
                                 </div>
                             </div>

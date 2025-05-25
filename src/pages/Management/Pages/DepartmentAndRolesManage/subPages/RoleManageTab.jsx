@@ -8,6 +8,9 @@ import HqChip from "@/component/HqChip";
 import { Delete, Edit, PlusIcon, SortDesc } from "lucide-react";
 import RoleFormModal from "../components/RoleComponents/RoleFormModal";
 import Role from "@/models/roles";
+import RoleDeleteModal from "../components/RoleComponents/RoleDeleteModal";
+import RoleSortingModal from "../components/RoleComponents/RoleSortingModal";
+import RoleAccessBox from "../components/RoleComponents/RoleAccessBox";
 
 export default function RoleManageTab() {
     const { currentUser } = useAppContext()
@@ -20,6 +23,8 @@ export default function RoleManageTab() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isSortModalOpen, setIsSortModalOpen] = useState(false);
 
     async function fetchDepartmentList(){
         try{
@@ -27,14 +32,23 @@ export default function RoleManageTab() {
             const data = await departmentService.getDepartments(currentUser.agent.agentId);
             data.sort((a, b) => a.isHq ? -1 : 1);
             setDepartmentList(data);
-            if(selectedDepartment === null && data.length > 0){
-                setSelectedDepartment(data[0]);
+            if(data.length > 0){
+                if(selectedDepartment === null){
+                    setSelectedDepartment(data[0]);
+                }else{
+                    const foundDepartment = data.find(d => String(d.departmentId) === String(selectedDepartment.departmentId));
+                    if(foundDepartment){
+                        setSelectedDepartment(foundDepartment);
+                    }
+                }
             }
         }catch(err){
             console.error(err);
             toastError('ไม่สามารถดึงข้อมูลแผนกได้');
         }finally{
-            setIsLoading(false);
+            setTimeout(() => {
+                setIsLoading(false);
+            }, 200)
         }
     }
 
@@ -42,10 +56,13 @@ export default function RoleManageTab() {
         fetchDepartmentList();
     }, [])
 
+    useEffect(() => {
+        setSelectedRole(null);
+    }, [selectedDepartment])
 
     const roleList = useMemo(() => {
         return selectedDepartment?.roles || [];
-    }, [selectedDepartment])
+    }, [selectedDepartment, departmentList])
 
     function handleSelectDepartment(departmentId){
         const foundDepartment = departmentList.find(d => String(d.departmentId) === departmentId);
@@ -66,8 +83,23 @@ export default function RoleManageTab() {
         setIsFormModalOpen(true);
     }
 
+    function handleEditClick(roleId){
+        setSelectedRole(roleList.find(r => String(r.roleId) === String(roleId)));
+        setIsFormModalOpen(true);
+    }
+
+    function handleDeleteClick(roleId){
+        setSelectedRole(roleList.find(r => String(r.roleId) === String(roleId)));
+        setIsDeleteModalOpen(true);
+    }
+
+    function handleSortRoleClick(){
+        setIsSortModalOpen(true);
+    }
+
+
     return (
-        <div className="">
+        <div className="max-h-[720px] overflow-auto scrollbar-hide">
             <div className="flex mb-4 mt-2">
                 <div className="w-full max-w-[280px]">
                     <Select
@@ -92,8 +124,8 @@ export default function RoleManageTab() {
                     </Select>
                 </div>
             </div>
-            <div className="flex h-[600px]">
-                <div className="max-w-[320px] grow">
+            <div className="flex max-md:flex-col md:h-[600px] space-x-8 max-md:space-x-0 max-md:space-y-8">
+                <div className="w-[320px] max-md:w-full max-md:h-[400px]">
                     <GroupListBox 
                         title="ตำแหน่ง" 
                         selectedItem={String(selectedRole?.roleId)} 
@@ -109,7 +141,8 @@ export default function RoleManageTab() {
                                         variant="light"
                                         color="primary"
                                         size="sm"
-                                        isDisabled={!selectedDepartment}
+                                        onPress={() => handleSortRoleClick()}
+                                        isDisabled={!selectedDepartment || roleList.length <= 1}
                                     >
                                         <SortDesc size={20} />
                                     </Button>
@@ -137,10 +170,10 @@ export default function RoleManageTab() {
                                             <div className="text-sm font-medium">{role.roleName}</div>
                                         </div>
                                         <div className="flex items-center transition-all duration-200 opacity-0 group-hover:opacity-100">
-                                            <Button isIconOnly variant="light" color="danger" size="sm">
+                                            <Button isIconOnly variant="light" color="danger" size="sm" onPress={() => handleDeleteClick(role.roleId)}>
                                                 <Delete size={14} />
                                             </Button>
-                                            <Button isIconOnly variant="light" color="primary" size="sm">
+                                            <Button isIconOnly variant="light" color="primary" size="sm" onPress={() => handleEditClick(role.roleId)}>
                                                 <Edit size={14} />
                                             </Button>
                                         </div>
@@ -150,7 +183,13 @@ export default function RoleManageTab() {
                         })}
                     </GroupListBox>
                 </div>
+                <div className="grow max-md:w-full max-md:h-[600px] p-1 overflow-auto scrollbar-hide">
+                    <RoleAccessBox selectedRole={selectedRole} />
+                </div>
             </div>
+
+
+
             <RoleFormModal
                 isOpen={isFormModalOpen}
                 onClose={() => setIsFormModalOpen(false)}
@@ -159,7 +198,24 @@ export default function RoleManageTab() {
                 roleList={roleList}
                 isLoading={isLoading}
                 onSubmit={() => {
-                    
+                    fetchDepartmentList();
+                }}
+            />
+            <RoleDeleteModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                selectedRole={selectedRole}
+                onSubmit={() => {
+                    fetchDepartmentList();
+                }}
+            />
+            <RoleSortingModal
+                isOpen={isSortModalOpen}
+                onClose={() => setIsSortModalOpen(false)}
+                selectedDepartment={selectedDepartment}
+                roleList={roleList}
+                onSubmit={() => {
+                    fetchDepartmentList();
                 }}
             />
         </div>
