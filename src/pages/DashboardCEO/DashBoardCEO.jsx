@@ -10,6 +10,7 @@ import commissionService from '@/services/commissionService';
 import { formatDateObject } from '@/utils/dateUtils';
 import Sales_ExpensesChart from './Components/Sales_ExpensesChart';
 import ExpensesChart from './Components/ExpensesChart';
+import ExpensesDetails from './Components/ExpensesDetails';
 
 function DashboardCEO() {
 
@@ -27,6 +28,7 @@ function DashboardCEO() {
 
     // Other State
     const [selectAgent, setSelectAgent] = useState(null)
+    const [selectExpensesTypeFromChart, setSelectExpensesTypeFromChart] = useState(null)
 
     // Date Data
     const startDate = startOfYear(today())
@@ -67,7 +69,7 @@ function DashboardCEO() {
     useEffect(() => {
         fetchAllUser()
     }, [])
-    
+
     useEffect(() => {
         if (allUser.length > 0) {
             fetchAllData()
@@ -91,10 +93,10 @@ function DashboardCEO() {
                         <Sales_ExpensesChart commissionData={commissionData} expensesData={expensesData} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-                        <ExpensesChart expensesData={expensesData} />
+                        <ExpensesChart expensesData={expensesData} setSelectExpensesTypeFromChart={setSelectExpensesTypeFromChart} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-
+                        <ExpensesDetails expensesData={expensesData} expensesType={expensesType} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                 </div>
             </div>

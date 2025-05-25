@@ -57,7 +57,8 @@ function Sales_ExpensesChart({ commissionData, expensesData }) {
         },
         fill: {
             opacity: 1
-        }
+        },
+        colors: ['#00BFFF', '#90EE90', '#FF0000']
     }
 
     return (
