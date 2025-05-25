@@ -9,7 +9,7 @@ export default class Role {
         /** @type {string} */
         this.roleName = data.roleName;
         /** @type {number} */
-        this.level = data.level;
+        this.roleLevel = data.roleLevel;
         /** @type {boolean} */
         this.isHq = data.isHq;
         /** @type {Date} */

@@ -72,7 +72,7 @@ function GroupListItem({ children, onClick, isSelected }) {
     return (
         <div
             onClick={onClick}
-            className={`
+            className={` 
             p-4 rounded-xl cursor-pointer border 
             transition-all duration-200 group
             flex items-center justify-between
@@ -87,7 +87,7 @@ function GroupListItem({ children, onClick, isSelected }) {
                     : undefined
             }}
         >
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 {children}
             </div>
             <div className={`flex flex-col items-end gap-1 transition-opacity ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
