@@ -75,7 +75,7 @@ function DashboardCEO() {
             fetchAllData()
         }
     }, [date, allUser])
-
+    
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>

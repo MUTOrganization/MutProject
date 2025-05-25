@@ -20,8 +20,8 @@ function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDat
     }, [])
 
     return (
-        <div className='w-full bg-white rounded-md p-4'>
-            <div>
+        <div className='w-full bg-white rounded-md p-4 flex flex-row justify-start items-center space-x-4'>
+            <div className={`${dateMode === 'ปี' ? 'w-2/12' : ''}`}>
                 <DateSelector
                     value={{ start: date.start, end: date.end }}
                     onChange={(value) => setDate({ start: value.start, end: value.end })}
@@ -31,10 +31,11 @@ function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDat
                     isShowDay={false}
                 />
             </div>
-
-            {currentUser.agent.agentId === 1 && (
-                <AgentSelector />
-            )}
+            <div className=''>
+                {currentUser.agent.agentId === 1 && (
+                    <AgentSelector />
+                )}
+            </div>
         </div>
     )
 }
