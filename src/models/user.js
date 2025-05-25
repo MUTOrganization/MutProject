@@ -29,6 +29,8 @@ export default class User {
         this.department = data.department;
         /** @type {Agent} */
         this.agent = data.agent;
+        /** @type {import('@/configs/types/rolebase').ROLES} */
+        this.baseRole = data.baseRole || '';
     }
 
 }

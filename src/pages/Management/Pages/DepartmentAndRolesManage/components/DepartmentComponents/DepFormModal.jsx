@@ -46,7 +46,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
             onSubmit();
             onClose();
         }catch(error){
-            if(error.response.status === 400){
+            if(error?.response?.data?.isDuplicate){
                 toastWarning('ไม่สามารถสร้างแผนกได้', 'มีชื่อแผนกนี้อยู่ในระบบแล้ว');
                 return;
             }

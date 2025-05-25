@@ -1,4 +1,6 @@
 import api from "@/configs/api";
+import User from "@/models/user";
+
 
 async function login(username, password) {
     const url = 'auth/login';
@@ -17,7 +19,7 @@ async function logout() {
 async function getUserData() {
     const url = 'auth/getUserData';
     const res = await api.post(url)
-    return res.data
+    return new User(res.data)
 }
 
 export default {

@@ -11,9 +11,9 @@ async function getDepartments(agentId, status) {
             status
         }
     })
-    // console.log(response.data.map(data => new Department(data)));
     /** @type {Array<Department>} */
-    return response.data.map(data => new Department(data));
+    const result = response.data.map(data => new Department(data));
+    return result;
 }
 
 async function createDepartment(agentId, departmentName, isHq = false){
