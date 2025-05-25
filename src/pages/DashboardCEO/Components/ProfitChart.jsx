@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
-import groupProfitByMonth from '../GroupProfitByMonth'
+import GroupProfitByMonth from '../GroupProfitByMonth'
+
 
 function ProfitChart({ commissionData, expensesData }) {
 
@@ -17,6 +18,7 @@ function ProfitChart({ commissionData, expensesData }) {
         },
         dataLabels: { enabled: false },
         stroke: { curve: 'straight' },
+        colors: ['#800080'],
         title: { text: 'Profit Chart', align: 'left' },
         xaxis: {
             categories: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
@@ -37,7 +39,7 @@ function ProfitChart({ commissionData, expensesData }) {
     })
 
     useEffect(() => {
-        const profitData = groupProfitByMonth(commissionData, expensesData)
+        const profitData = GroupProfitByMonth.groupProfitByMonth(commissionData, expensesData)
 
         setSeries([{
             name: 'กำไรสุทธิ',

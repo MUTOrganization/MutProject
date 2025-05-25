@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import Controller from './Controller'
 import AllSummary from './Components/AllSummary'
 import { useAppContext } from '@/contexts/AppContext'
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
+import { endOfMonth, endOfYear, startOfMonth, startOfYear, today } from '@internationalized/date';
 import ProfitChart from './Components/ProfitChart';
 import userService from '@/services/userService';
 import expensesService from '@/services/expensesService';
 import commissionService from '@/services/commissionService';
 import { formatDateObject } from '@/utils/dateUtils';
+import Sales_ExpensesChart from './Components/Sales_ExpensesChart';
+import ExpensesChart from './Components/ExpensesChart';
 
 function DashboardCEO() {
 
@@ -17,6 +19,7 @@ function DashboardCEO() {
     const [allUser, setAllUser] = useState([])
     const [expensesData, setExpensesData] = useState([])
     const [commissionData, setCommissionData] = useState([])
+    const [expensesType, setExpensesType] = useState([])
     const [agentList, setAgentList] = useState(null)
 
     // Loading Data
@@ -26,8 +29,8 @@ function DashboardCEO() {
     const [selectAgent, setSelectAgent] = useState(null)
 
     // Date Data
-    const startDate = startOfMonth(today())
-    const endDate = endOfMonth(today())
+    const startDate = startOfYear(today())
+    const endDate = endOfYear(today())
     const [date, setDate] = useState({
         start: startDate,
         end: endDate
@@ -42,16 +45,18 @@ function DashboardCEO() {
             console.log('Cannot Get All User', err)
         }
     }
-    
+
     const fetchAllData = async () => {
         setIsLoading(true)
         const Selectusers = allUser.map(item => item.username)
         try {
-            const [expenses, commission] = await Promise.all([
+            const [expenses, expensesType, commission] = await Promise.all([
                 await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(date.start), formatDateObject(date.end)),
+                await expensesService.getExpensesType(currentUser.agent.agentId),
                 await commissionService.getCommission(currentUser.agent.agentId, Selectusers, formatDateObject(date.start), formatDateObject(date.end))
             ])
             setExpensesData(expenses)
+            setExpensesType(expensesType)
             setCommissionData(commission)
             setIsLoading(false)
         } catch (err) {
@@ -62,7 +67,7 @@ function DashboardCEO() {
     useEffect(() => {
         fetchAllUser()
     }, [])
-
+    
     useEffect(() => {
         if (allUser.length > 0) {
             fetchAllData()
@@ -83,10 +88,10 @@ function DashboardCEO() {
                         <ProfitChart commissionData={commissionData} expensesData={expensesData} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-                        2
+                        <Sales_ExpensesChart commissionData={commissionData} expensesData={expensesData} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-
+                        <ExpensesChart expensesData={expensesData} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
 

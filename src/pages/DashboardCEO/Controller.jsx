@@ -21,7 +21,6 @@ function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDat
 
     return (
         <div className='w-full bg-white rounded-md p-4'>
-
             <div>
                 <DateSelector
                     value={{ start: date.start, end: date.end }}
