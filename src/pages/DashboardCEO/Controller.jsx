@@ -32,7 +32,7 @@ function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDat
                 />
             </div>
             <div className=''>
-                {currentUser.agent.agentId === 1 && (
+                {currentUser.baseRole === 'SUPER_ADMIN' && (
                     <AgentSelector />
                 )}
             </div>

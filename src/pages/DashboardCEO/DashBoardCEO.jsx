@@ -20,7 +20,6 @@ function DashboardCEO() {
     const [allUser, setAllUser] = useState([])
     const [expensesData, setExpensesData] = useState([])
     const [commissionData, setCommissionData] = useState([])
-    const [expensesType, setExpensesType] = useState([])
     const [agentList, setAgentList] = useState(null)
 
     // Loading Data
@@ -52,13 +51,11 @@ function DashboardCEO() {
         setIsLoading(true)
         const Selectusers = allUser.map(item => item.username)
         try {
-            const [expenses, expensesType, commission] = await Promise.all([
+            const [expenses, commission] = await Promise.all([
                 await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(date.start), formatDateObject(date.end)),
-                await expensesService.getExpensesType(currentUser.agent.agentId),
                 await commissionService.getCommission(currentUser.agent.agentId, Selectusers, formatDateObject(date.start), formatDateObject(date.end))
             ])
             setExpensesData(expenses)
-            setExpensesType(expensesType)
             setCommissionData(commission)
             setIsLoading(false)
         } catch (err) {
@@ -75,14 +72,14 @@ function DashboardCEO() {
             fetchAllData()
         }
     }, [date, allUser])
-    
+
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>
                 <Controller setAgentList={setAgentList} currentUser={currentUser} date={date} setDate={setDate} dateMode={dateMode} setDateMode={setDateMode} />
             </div>
             <div className='w-full'>
-                <AllSummary expensesData={expensesData} commissionData={commissionData} isLoading={isLoading} />
+                <AllSummary expensesData={expensesData} commissionData={commissionData} isLoading={isLoading} currentUser={currentUser} date={date} dateMode={dateMode} allUser={allUser} />
 
                 {/* Chart Body */}
                 <div className='w-full mt-4 grid grid-cols-2 gap-4'>
@@ -96,7 +93,7 @@ function DashboardCEO() {
                         <ExpensesChart expensesData={expensesData} setSelectExpensesTypeFromChart={setSelectExpensesTypeFromChart} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-                        <ExpensesDetails expensesData={expensesData} expensesType={expensesType} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
+                        <ExpensesDetails expensesData={expensesData} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                 </div>
             </div>

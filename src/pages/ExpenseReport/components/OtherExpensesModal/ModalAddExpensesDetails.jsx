@@ -1,5 +1,5 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
-import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Select, SelectItem } from "@heroui/react";
+import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, Select, SelectItem, DatePicker } from "@heroui/react";
 import React, { useContext, useRef } from 'react'
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
@@ -7,11 +7,11 @@ import { formatNumber } from "@/component/FormatNumber";
 
 function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
     handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
-        
+
     const { typeValue, setTypeValue } = useContext(Data)
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" className="overflow-hidden">
+        <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent>
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
@@ -21,6 +21,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                             <DatePicker
                                 value={expensesDate}
                                 onChange={(e) => setExpensesDate(e)}
+                                granularity="day"
                             />
                         </div>
                         <div className='relative'>
