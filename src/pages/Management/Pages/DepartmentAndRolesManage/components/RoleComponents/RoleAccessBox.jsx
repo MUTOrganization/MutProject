@@ -77,6 +77,10 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allow
         }
     }
 
+    const haveAccess = useMemo(() => {
+        const accessMap = new Map(accessList.map(e => [e.accessId, e]));
+        return roleAccessList.filter(e => accessMap.has(e.accessId));
+    }, [roleAccessList, accessList])
     return (
         <div className="size-full">
             <Card shadow="sm" className="size-full p-4">
@@ -86,8 +90,8 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allow
                     <div className="flex font-bold border-b py-2 items-center justify-between">
                         <div className="flex items-center gap-2">
                             <div>จัดการสิทธิ์ของตำแหน่ง {selectedRole?.roleName}</div>
-                            <Tooltip content={`มีสิทธิ์ ${roleAccessList.length} จาก ${accessList.length} สิทธิ์`}>
-                                <span className="text-sm text-gray-500">({roleAccessList.length} / {accessList.length})</span>
+                            <Tooltip content={`มีสิทธิ์ ${haveAccess.length} จาก ${accessList.length} สิทธิ์`}>
+                                <span className="text-sm text-gray-500">({haveAccess.length} / {accessList.length})</span>
                             </Tooltip>
                         </div>
                         {
