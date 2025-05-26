@@ -1,174 +1,238 @@
+import { toastError } from "@/component/Alert";
+import { GroupListBox, GroupListItem } from "@/component/GroupListBox"
+import Agent from "@/models/agent";
+import agentService from "@/services/agentService";
 import { useEffect, useState } from "react";
-import { useAppContext } from "@/contexts/AppContext";
-import { Card, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
-import { HfGroups, HfPerson } from "@/component/Icons";
-import SearchBox from "@/component/SearchBox";
-import AccessManageBox from "../components/AccessManageBox";
-import { URLS } from "@/config";
-import { toastError, toastSuccess } from "@/component/Alert";
-import fetchProtectedData from "@/utils/fetchData";
+import AgentAccessManageBox from "../components/AgentAccessComponents/AgentAccessManageBox";
 
 export default function AgentAccessManagePage() {
-    const { currentUser, agent } = useAppContext();
-    const [displayAgents, setDisplayAgents] = useState([]);
-
+    /** @type {[Agent[]]} */
+    const [agentList, setAgentList] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState(null);
-    const [selectedAgents, setSelectedAgents] = useState([]);
-
-    const [loadSubmit, setLoadSubmit] = useState(false);
-
-    const [mode, setMode] = useState('0');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setDisplayAgents(agent.agentList);
-    }, [agent.agentList])
+        setIsLoading(true);
+        agentService.getAgent('A').then((data) => {
+                setAgentList(data);
+        }).catch((err) => {
+            console.error(err);
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลตัวแทนได้');
+        }).finally(() => {
+            setIsLoading(false);
+        })
+    }, []);
 
-    function handleSelectAgent1(id) {
-        if (selectedAgent?.id == id) return;
-        const _agent = agent.agentList.find(e => e.id == id)
-        if (_agent) {
-            setSelectedAgent(_agent);
-        }
-    }
-    function handleSelectAgent2(ids) {
-        if (JSON.stringify(ids) === JSON.stringify(['a', 'l', 'l'])) {
-            setSelectedAgents([...displayAgents]);
-            return;
-        }
-        setSelectedAgents(ids.map(id => agent.agentList.find(e => e.id == id)));
+    function handleSelectAgent(agentId){
+        setSelectedAgent(agentList.find(e => e.agentId == agentId));
     }
 
-    async function handleSubmit(_selectedAccess) {
-        if (mode == '0' && !selectedAgent) {
-            toastError('ไม่สามารถแก้ไขสิทธิ์', 'กรุณาเลือกตัวแทน');
-            return;
-        }
-        if (mode == '1' && selectedAgents.length <= 0) {
-            toastError('ไม่สามารถแก้ไขสิทธิ์', 'กรุณาเลือกตัวแทน');
-            return;
-        }
-        try {
-            setLoadSubmit(true);
-            const response = await fetchProtectedData.post(URLS.agent.editAccess, {
-                agents: mode == '0' ? [selectedAgent.id] : selectedAgents.map(e => e.id),
-                access: _selectedAccess.map(e => e.accessCode),
-                createBy: currentUser.userName
-            })
-            toastSuccess('สำเร็จ', 'แก้ไขสิทธิ์สำเร็จ');
-            if (mode == '1') {
-                setMode('0');
-                setSelectedAgents([]);
-            }
-            return true
-
-        } catch (err) {
-            console.error('error save agent access');
-            toastError('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง');
-            return false
-        } finally {
-            setLoadSubmit(false)
-        }
-
-    }
     return (
         <div className="w-full h-full">
-            <div className="size-full xl:flex overflow-auto">
-                <div className="w-full max-xl:mb-10 xl:max-w-[450px] pb-4">
-                    <div className="w-full flex justify-between px-4">
-                        <div className="flex mb-3">
-                            <div className="">
-                                <SearchBox
-                                    size="sm"
-                                    data={agent.agentList}
-                                    searchRules={['code', 'name']}
-                                    placeholder="ค้นหาตัวแทน"
-                                    onChange={(data) => setDisplayAgents(data)}
-                                />
-                            </div>
-                        </div>
-                        <div className="pb-4">
-                            <RadioGroup
-                                className=""
-                                color="primary"
-                                value={mode}
-                                orientation="horizontal"
-                                onChange={(e) => setMode(e.target.value)}
-                            >
-                                <div className="w-full flex justify-start space-x-10">
-                                    <div className="">
-                                        {/* แก้ไขสิทธิ์ตัวแทน */}
-                                        <Radio value='0' className=""><HfPerson /></Radio>
+             <div className="flex max-md:flex-col md:h-[600px] space-x-8 max-md:space-x-0 max-md:space-y-8">
+                <div className="w-[320px] max-md:w-full max-md:h-[400px]">
+                    <GroupListBox 
+                        title="ตัวแทน" 
+                        selectedItem={String(selectedAgent?.agentId)} 
+                        onSelectItem={(id) => handleSelectAgent(id)} 
+                        isLoading={isLoading} 
+                        emptyText="ไม่พบตัวแทน"
+                    >
+                        {agentList.map(agent => {
+                            const isSelected = selectedAgent?.agentId == agent.agentId;
+                            return (
+                                <GroupListItem key={agent.agentId}>
+                                    <div className="flex items-center justify-between w-full">
+                                        <div className="flex flex-col gap-2">
+                                            <div className={`text-md font-semibold ${isSelected ? "text-teal-700" : "text-gray-900"} group-hover:text-primary-600`}>{agent.name}</div>
+                                            <div className={`text-sm ${isSelected ? "text-teal-700" : "text-gray-500"}`}>{agent.code}</div>
+                                        </div>
                                     </div>
-                                    <div className="">
-                                        {/* แก้ไขสิทธิ์ให้หลายตัวแทน */}
-                                        <Radio value='1'><HfGroups /></Radio>
-                                    </div>
-                                </div>
-                            </RadioGroup>
-                        </div>
-                    </div>
-                    <Card className="m-4 p-4" shadow="sm">
-                        <Table aria-label="agent-table"
-                            className={`${mode == '1' && 'hidden'} h-[550px] overflow-auto scrollbar-hide`}
-                            color="primary"
-                            isHeaderSticky
-                            removeWrapper
-                            selectionMode="single"
-                            onSelectionChange={(e) => handleSelectAgent1(Array.from(e)[0])}
-                            selectedKeys={[selectedAgent?.id.toString()]}
-                        >
-                            <TableHeader className="">
-                                <TableColumn>รหัสตัวแทน</TableColumn>
-                                <TableColumn>ชื่อตัวแทน</TableColumn>
-                            </TableHeader>
-                            <TableBody items={displayAgents.filter(e => e.id != 1)} emptyContent={"No agents found."}>
-                                {(agent) => (
-                                    <TableRow key={agent.id}>
-                                        <TableCell>
-                                            <div className="py-2">
-                                                {agent.code}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="my-2">
-                                                {agent.name}
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-
-                                )}
-                            </TableBody>
-                        </Table>
-
-                        <Table aria-label="agent-table"
-                            className={`${mode == '0' && 'hidden'} h-[550px] overflow-auto scrollbar-hide`}
-                            color="primary"
-                            isHeaderSticky
-                            removeWrapper
-                            selectionMode="multiple"
-                            onSelectionChange={(e) => handleSelectAgent2(Array.from(e))}
-                            selectedKeys={selectedAgents.filter(e => e).map(e => e.id.toString())}
-
-                        >
-                            <TableHeader className="">
-                                <TableColumn>รหัสตัวแทน</TableColumn>
-                                <TableColumn>ชื่อตัวแทน</TableColumn>
-                            </TableHeader>
-                            <TableBody items={displayAgents.filter(e => e.id != 1)} emptyContent={"ไม่พบรายการ"}>
-                                {(agent) => (
-                                    <TableRow key={agent.id}>
-                                        <TableCell>{agent.code}</TableCell>
-                                        <TableCell>{agent.name}</TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </Card>
+                                </GroupListItem>
+                            )
+                        })}
+                    </GroupListBox>
                 </div>
-                <div className="flex-1 h-[600px] overflow-auto pb-4">
-                    <AccessManageBox agent={selectedAgent} mode={mode} onSave={handleSubmit} loadSubmit={loadSubmit} />
+                <div className="flex-1">
+                    <AgentAccessManageBox selectedAgent={selectedAgent} allowEdit={true} />
                 </div>
             </div>
         </div>
     )
 }
+
+
+// import { useEffect, useState } from "react";
+// import { useAppContext } from "@/contexts/AppContext";
+// import { Card, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+// import { HfGroups, HfPerson } from "@/component/Icons";
+// import SearchBox from "@/component/SearchBox";
+// import AccessManageBox from "../components/AccessManageBox";
+// import { URLS } from "@/config";
+// import { toastError, toastSuccess } from "@/component/Alert";
+// import fetchProtectedData from "@/utils/fetchData";
+
+// export default function AgentAccessManagePage() {
+//     const { currentUser, agent } = useAppContext();
+//     const [displayAgents, setDisplayAgents] = useState([]);
+
+//     const [selectedAgent, setSelectedAgent] = useState(null);
+//     const [selectedAgents, setSelectedAgents] = useState([]);
+
+//     const [loadSubmit, setLoadSubmit] = useState(false);
+
+//     const [mode, setMode] = useState('0');
+
+//     useEffect(() => {
+//         setDisplayAgents(agent.agentList);
+//     }, [agent.agentList])
+
+//     function handleSelectAgent1(id) {
+//         if (selectedAgent?.id == id) return;
+//         const _agent = agent.agentList.find(e => e.id == id)
+//         if (_agent) {
+//             setSelectedAgent(_agent);
+//         }
+//     }
+//     function handleSelectAgent2(ids) {
+//         if (JSON.stringify(ids) === JSON.stringify(['a', 'l', 'l'])) {
+//             setSelectedAgents([...displayAgents]);
+//             return;
+//         }
+//         setSelectedAgents(ids.map(id => agent.agentList.find(e => e.id == id)));
+//     }
+
+//     async function handleSubmit(_selectedAccess) {
+//         if (mode == '0' && !selectedAgent) {
+//             toastError('ไม่สามารถแก้ไขสิทธิ์', 'กรุณาเลือกตัวแทน');
+//             return;
+//         }
+//         if (mode == '1' && selectedAgents.length <= 0) {
+//             toastError('ไม่สามารถแก้ไขสิทธิ์', 'กรุณาเลือกตัวแทน');
+//             return;
+//         }
+//         try {
+//             setLoadSubmit(true);
+//             const response = await fetchProtectedData.post(URLS.agent.editAccess, {
+//                 agents: mode == '0' ? [selectedAgent.id] : selectedAgents.map(e => e.id),
+//                 access: _selectedAccess.map(e => e.accessCode),
+//                 createBy: currentUser.userName
+//             })
+//             toastSuccess('สำเร็จ', 'แก้ไขสิทธิ์สำเร็จ');
+//             if (mode == '1') {
+//                 setMode('0');
+//                 setSelectedAgents([]);
+//             }
+//             return true
+
+//         } catch (err) {
+//             console.error('error save agent access');
+//             toastError('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง');
+//             return false
+//         } finally {
+//             setLoadSubmit(false)
+//         }
+
+//     }
+//     return (
+//         <div className="w-full h-full">
+//             <div className="size-full xl:flex overflow-auto">
+//                 <div className="w-full max-xl:mb-10 xl:max-w-[450px] pb-4">
+//                     <div className="w-full flex justify-between px-4">
+//                         <div className="flex mb-3">
+//                             <div className="">
+//                                 <SearchBox
+//                                     size="sm"
+//                                     data={agent.agentList}
+//                                     searchRules={['code', 'name']}
+//                                     placeholder="ค้นหาตัวแทน"
+//                                     onChange={(data) => setDisplayAgents(data)}
+//                                 />
+//                             </div>
+//                         </div>
+//                         <div className="pb-4">
+//                             <RadioGroup
+//                                 className=""
+//                                 color="primary"
+//                                 value={mode}
+//                                 orientation="horizontal"
+//                                 onChange={(e) => setMode(e.target.value)}
+//                             >
+//                                 <div className="w-full flex justify-start space-x-10">
+//                                     <div className="">
+//                                         {/* แก้ไขสิทธิ์ตัวแทน */}
+//                                         <Radio value='0' className=""><HfPerson /></Radio>
+//                                     </div>
+//                                     <div className="">
+//                                         {/* แก้ไขสิทธิ์ให้หลายตัวแทน */}
+//                                         <Radio value='1'><HfGroups /></Radio>
+//                                     </div>
+//                                 </div>
+//                             </RadioGroup>
+//                         </div>
+//                     </div>
+//                     <Card className="m-4 p-4" shadow="sm">
+//                         <Table aria-label="agent-table"
+//                             className={`${mode == '1' && 'hidden'} h-[550px] overflow-auto scrollbar-hide`}
+//                             color="primary"
+//                             isHeaderSticky
+//                             removeWrapper
+//                             selectionMode="single"
+//                             onSelectionChange={(e) => handleSelectAgent1(Array.from(e)[0])}
+//                             selectedKeys={[selectedAgent?.id.toString()]}
+//                         >
+//                             <TableHeader className="">
+//                                 <TableColumn>รหัสตัวแทน</TableColumn>
+//                                 <TableColumn>ชื่อตัวแทน</TableColumn>
+//                             </TableHeader>
+//                             <TableBody items={displayAgents.filter(e => e.id != 1)} emptyContent={"No agents found."}>
+//                                 {(agent) => (
+//                                     <TableRow key={agent.id}>
+//                                         <TableCell>
+//                                             <div className="py-2">
+//                                                 {agent.code}
+//                                             </div>
+//                                         </TableCell>
+//                                         <TableCell>
+//                                             <div className="my-2">
+//                                                 {agent.name}
+//                                             </div>
+//                                         </TableCell>
+//                                     </TableRow>
+
+//                                 )}
+//                             </TableBody>
+//                         </Table>
+
+//                         <Table aria-label="agent-table"
+//                             className={`${mode == '0' && 'hidden'} h-[550px] overflow-auto scrollbar-hide`}
+//                             color="primary"
+//                             isHeaderSticky
+//                             removeWrapper
+//                             selectionMode="multiple"
+//                             onSelectionChange={(e) => handleSelectAgent2(Array.from(e))}
+//                             selectedKeys={selectedAgents.filter(e => e).map(e => e.id.toString())}
+
+//                         >
+//                             <TableHeader className="">
+//                                 <TableColumn>รหัสตัวแทน</TableColumn>
+//                                 <TableColumn>ชื่อตัวแทน</TableColumn>
+//                             </TableHeader>
+//                             <TableBody items={displayAgents.filter(e => e.id != 1)} emptyContent={"ไม่พบรายการ"}>
+//                                 {(agent) => (
+//                                     <TableRow key={agent.id}>
+//                                         <TableCell>{agent.code}</TableCell>
+//                                         <TableCell>{agent.name}</TableCell>
+//                                     </TableRow>
+//                                 )}
+//                             </TableBody>
+//                         </Table>
+//                     </Card>
+//                 </div>
+//                 <div className="flex-1 h-[600px] overflow-auto pb-4">
+//                     <AccessManageBox agent={selectedAgent} mode={mode} onSave={handleSubmit} loadSubmit={loadSubmit} />
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }

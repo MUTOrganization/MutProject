@@ -34,9 +34,25 @@ export async function deleteAgent(agentId) {
 }
 
 
+/**
+ * อัพเดตสิทธิ์ตัวแทน
+ * @param {string} agentId รหัสตัวแทน
+ * @param {string[]} accessIds รหัสสิทธิ์
+ * @returns {Promise<{insertedCount: number, deletedCount: number}>}
+ */
+export async function updateAgentAccess(agentId, accessIds) {
+    const res = await api.put(`/agentAccess/updateAgent`, { 
+        agentId,
+        accessIdList: accessIds
+    })
+    return res.data
+}
+
+
 export default {
     getAgent,
     addAgent,
-    deleteAgent
+    deleteAgent,
+    updateAgentAccess
 }
 

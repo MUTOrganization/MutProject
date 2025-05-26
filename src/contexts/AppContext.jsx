@@ -34,9 +34,9 @@ export default function AppContextProvider({ children }) {
     const [selectedAgent, setSelectedAgent] = useState(null);
 
     const userAccessMap = useMemo(() => {
+        console.log(currentUser);
         return currentUser ? new Map(currentUser.access?.map(e => [e, true])) : new Map();
     },[currentUser])
-    console.log(currentUser);
 
     useEffect(() => {
         setIsUserLoading(true);
@@ -66,8 +66,15 @@ export default function AppContextProvider({ children }) {
     async function login(username, password) {
         try {
             const data = await authService.login(username, password)
-            setCurrentUser(new User(data.userData));
-            const agent = data.userData.agent;
+            const userData = data.userData;
+            const _userAccessMap = new Map(userData.access?.map(e => [e, true]))
+            if(haveOne(_userAccessMap, ACCESS.General_superadmin)) userData.baseRole = 'SUPER_ADMIN';
+            else if(haveOne(_userAccessMap, ACCESS.General_admin)) userData.baseRole = 'ADMIN';
+            else if(haveOne(_userAccessMap, ACCESS.General_executive)) userData.baseRole = 'EXECUTIVE';
+            else if(haveOne(_userAccessMap, ACCESS.General_manager)) userData.baseRole = 'MANAGER';
+            else if(haveOne(_userAccessMap, ACCESS.General_staff)) userData.baseRole = 'STAFF';
+            setCurrentUser(new User(userData));
+            const agent = userData.agent;
             setSelectedAgent(new Agent(agent));
             return "success";
         } catch (err) {

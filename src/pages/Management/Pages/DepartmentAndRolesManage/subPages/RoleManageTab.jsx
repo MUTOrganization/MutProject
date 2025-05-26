@@ -194,7 +194,7 @@ export default function RoleManageTab() {
                     </GroupListBox>
                 </div>
                 <div className="grow max-md:w-full max-md:h-[600px] p-1 overflow-auto scrollbar-hide">
-                    <RoleAccessBox selectedRole={selectedRole} allowEdit={isAllowEdit} />
+                    <RoleAccessBox selectedRole={selectedRole} allowEdit={isAllowEdit}  />
                 </div>
             </div>
 
