@@ -25,7 +25,7 @@ function AllSummary({ expensesData, commissionData, isLoading }) {
                 <div className='subBox1'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>กำไรสุทธิ</header>
                     <div className='mt-3'>
-                        <div className='text-2xl'>{formatNumber(Math.abs(totalSales - expensesNetAmount))}</div>
+                        <div className='text-2xl text-blue-500 font-bold'>{formatNumber(Math.abs(totalSales - expensesNetAmount))}</div>
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@ function AllSummary({ expensesData, commissionData, isLoading }) {
                 <div className='subBox2'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ยอดขาย</header>
                     <div className='mt-3'>
-                        <div className='text-2xl'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : formatNumber(totalSales)}</div>
+                        <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : formatNumber(totalSales)}</div>
                     </div>
                 </div>
 
@@ -43,7 +43,7 @@ function AllSummary({ expensesData, commissionData, isLoading }) {
                 <div className='subBox1 w-28'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ค่าใช้จ่ายรวม</header>
                     <div className='mt-4 flex flex-col justify-center items-start py-4'>
-                        <div className='text-2xl'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : formatNumber(expensesNetAmount)}</div>
+                        <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : formatNumber(expensesNetAmount)}</div>
                         <div className='text-sm text-slate-500'></div>
                     </div>
                 </div>
