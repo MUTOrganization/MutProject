@@ -62,51 +62,49 @@ function GroupList({ groupList, groupSelected, setGroupSelected, isLoading, isFe
 
             {/* รายการหมวดหมู่สิทธิ์ */}
             <div className="space-y-4">
-                {groupList.length > 0 ? groupList.map((group) => {
+                {groupList.length > 0 && !isLoading ? groupList.map((group) => {
                     const isSelected = groupSelected && group.accessGroupId === groupSelected.accessGroupId;
                     return (
-                        <Skeleton key={group.accessGroupId} isLoaded={!isLoading} className="rounded-xl">
-                            <div
-                                key={group.accessGroupId}
-                                onClick={() => handleSelectGroup(group)}
-                                className={`
-                                p-4 rounded-xl cursor-pointer border 
-                                transition-all duration-200 group
-                                flex items-center justify-between
-                                ${isSelected
-                                        ? " border-blue-400 border-2 shadow-lg scale-[1.02]"
-                                        : "bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md"
-                                    }
-                            `}
-                                style={{
-                                    boxShadow: isSelected
-                                        ? "0 4px 16px 0 rgba(34,211,238,0.10)"
-                                        : undefined
-                                }}
-                            >
-                                <div className="flex flex-col">
-                                    <h3 className={`font-semibold text-md ${isSelected ? "text-teal-700" : "text-gray-900"} group-hover:text-primary-600`}>
-                                        {group.groupName}
-                                    </h3>
-                                    <p className={`text-xs ${isSelected ? "text-teal-600" : "text-gray-500"} mt-1`}>
-                                        {group.description}
-                                    </p>
-                                </div>
-                                <div className={`flex flex-col items-end gap-1 transition-opacity ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
-                                    <div className="flex gap-1">
-                                        {/* <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50">
-                                            <EditIcon className="w-4 h-4" />
-                                        </Button> */}
-                                        <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50" onPress={() => handleDelGroup(group)}>
-                                            <DeleteIcon className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                    {isSelected && (
-                                        <ChevronsRight className="w-7 h-7 text-blue-700" />
-                                    )}
-                                </div>
+                        <div
+                            key={group.accessGroupId}
+                            onClick={() => handleSelectGroup(group)}
+                            className={`
+                        p-4 rounded-xl cursor-pointer border 
+                        transition-all duration-200 group
+                        flex items-center justify-between
+                        ${isSelected
+                                    ? " border-blue-400 border-2 shadow-lg scale-[1.02]"
+                                    : "bg-white border-gray-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md"
+                                }
+                    `}
+                            style={{
+                                boxShadow: isSelected
+                                    ? "0 4px 16px 0 rgba(34,211,238,0.10)"
+                                    : undefined
+                            }}
+                        >
+                            <div className="flex flex-col">
+                                <h3 className={`font-semibold text-md ${isSelected ? "text-teal-700" : "text-gray-900"} group-hover:text-primary-600`}>
+                                    {group.groupName}
+                                </h3>
+                                <p className={`text-xs ${isSelected ? "text-teal-600" : "text-gray-500"} mt-1`}>
+                                    {group.description}
+                                </p>
                             </div>
-                        </Skeleton>
+                            <div className={`flex flex-col items-end gap-1 transition-opacity ${isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
+                                <div className="flex gap-1">
+                                    {/* <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50">
+                                    <EditIcon className="w-4 h-4" />
+                                </Button> */}
+                                    <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50" onPress={() => handleDelGroup(group)}>
+                                        <DeleteIcon className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                                {isSelected && (
+                                    <ChevronsRight className="w-7 h-7 text-blue-700" />
+                                )}
+                            </div>
+                        </div>
                     );
                 }) : (
                     <div className="flex flex-col items-center justify-center h-full gap-3 py-8">
