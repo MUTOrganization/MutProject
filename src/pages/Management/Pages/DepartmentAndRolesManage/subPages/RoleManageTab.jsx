@@ -97,6 +97,12 @@ export default function RoleManageTab() {
         setIsSortModalOpen(true);
     }
 
+    const isAllowEdit = useMemo(() => {
+        if(selectedDepartment?.isHq){
+            if(currentUser.baseRole === "SUPER_ADMIN") return true;
+            else return false;
+        }else return true
+    }, [selectedDepartment, currentUser])
 
     return (
         <div className="max-h-[720px] overflow-auto scrollbar-hide">
@@ -132,9 +138,8 @@ export default function RoleManageTab() {
                         onSelectItem={(id) => handleSelectRole(id)} 
                         isLoading={isLoading} 
                         emptyText="ไม่พบตำแหน่ง"
-                        HeaderRightContent={  (selectedDepartment?.isHq && currentUser.baseRole !== "SUPER_ADMIN")
-                            ? null
-                            : <div className="flex items-center gap-2">
+                        HeaderRightContent={  isAllowEdit
+                            ? <div className="flex items-center gap-2">
                                 <Tooltip content="เปลี่ยนลำดับตำแหน่ง">
                                     <Button
                                         isIconOnly
@@ -160,6 +165,7 @@ export default function RoleManageTab() {
                                     </Button>
                                 </Tooltip>
                             </div>
+                            : null
                         }
                     >
                         {roleList.map(role => {
@@ -169,14 +175,18 @@ export default function RoleManageTab() {
                                         <div className="flex items-center gap-2">
                                             <div className="text-sm font-medium">{role.roleName}</div>
                                         </div>
-                                        <div className="flex items-center transition-all duration-200 opacity-0 group-hover:opacity-100">
-                                            <Button isIconOnly variant="light" color="danger" size="sm" onPress={() => handleDeleteClick(role.roleId)}>
-                                                <Delete size={14} />
-                                            </Button>
-                                            <Button isIconOnly variant="light" color="primary" size="sm" onPress={() => handleEditClick(role.roleId)}>
-                                                <Edit size={14} />
-                                            </Button>
-                                        </div>
+                                        {
+                                            isAllowEdit && (
+                                                <div className="flex items-center transition-all duration-200 opacity-0 group-hover:opacity-100">
+                                                    <Button isIconOnly variant="light" color="danger" size="sm" onPress={() => handleDeleteClick(role.roleId)}>
+                                                        <Delete size={14} />
+                                                    </Button>
+                                                    <Button isIconOnly variant="light" color="primary" size="sm" onPress={() => handleEditClick(role.roleId)}>
+                                                        <Edit size={14} />
+                                                    </Button>
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </GroupListItem>
                             )
@@ -184,7 +194,7 @@ export default function RoleManageTab() {
                     </GroupListBox>
                 </div>
                 <div className="grow max-md:w-full max-md:h-[600px] p-1 overflow-auto scrollbar-hide">
-                    <RoleAccessBox selectedRole={selectedRole} />
+                    <RoleAccessBox selectedRole={selectedRole} allowEdit={isAllowEdit} />
                 </div>
             </div>
 

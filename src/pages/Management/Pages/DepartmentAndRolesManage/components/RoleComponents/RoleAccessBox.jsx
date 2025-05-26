@@ -5,7 +5,7 @@ import { groupArray } from "@/utils/arrayFunc";
 import { toastError, toastSuccess } from "@/component/Alert";
 import roleService from "@/services/roleService";
 
-export default function RoleAccessBox({ selectedRole, onSubmit = () => {} }) {
+export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allowEdit }) {
     const [accessList, setAccessList] = useState([]);
     const [roleAccessList, setRoleAccessList] = useState([]);
     const [editAccessList, setEditAccessList] = useState(new Set());
@@ -90,9 +90,13 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {} }) {
                                 <span className="text-sm text-gray-500">({roleAccessList.length} / {accessList.length})</span>
                             </Tooltip>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button size="sm" color="primary" onPress={handleSubmit} isLoading={isSubmitting}>บันทึก</Button>
-                        </div>
+                        {
+                            allowEdit && (
+                                <div className="flex items-center gap-2">
+                                    <Button size="sm" color="primary" onPress={handleSubmit} isLoading={isSubmitting}>บันทึก</Button>
+                                </div>
+                            )
+                        }
                     </div>
                     <div className="flex flex-col pt-4 max-h-[500px] max-md:h-[500px] overflow-y-auto scrollbar-hide relative">
                     {
@@ -106,6 +110,7 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {} }) {
                                         return (
                                             <div key={access.accessId}>
                                                 <Checkbox
+                                                    isDisabled={!allowEdit}
                                                     isSelected={editAccessList.has(access.accessId)}
                                                     onChange={() => handleCheckAccess(access.accessId)}
                                                 >
