@@ -105,7 +105,7 @@ function AgentPage() {
 
 
     return (
-        <div className="w-full h-full p-2 bg-white rounded-lg shadow-sm">
+        <div className="w-full h-full  bg-white rounded-lg shadow-sm">
             {/* ส่วนหัว */}
             <h2 className="text-2xl font-semibold text-gray-800">จัดการตัวแทน</h2>
             <div className="m-3 flex items-center justify-between mb-6 max-md:flex-col max-md:gap-4">
@@ -175,6 +175,7 @@ function AgentPage() {
                 <AddAgentModal
                     isOpen={openAddAgent}
                     onClose={handleCloseAddAgent}
+                    fetchAgentList={fetchAgentList}
                 />
             )}
 
@@ -193,6 +194,7 @@ function AgentPage() {
                     isOpen={openDeleteAgent}
                     onClose={handleCloseDeleteAgent}
                     selectedAgent={selectedAgent}
+                    fetchAgentList={fetchAgentList}
                 />
             )}
 

@@ -18,12 +18,25 @@ export async function getAgent(type = 'A,C,H') {
  * @returns {Promise<Object>}
  */
 export async function addAgent(body) {
-    const res = await api.post('/agents', body)
+    const res = await api.post('/agents/create', body)
     return res.data
 }
 
+
+/**
+ * ลบตัวแทน
+ * @param {string} id รหัสตัวแทน
+ * @returns {Promise<Object>}
+ */
+export async function deleteAgent(agentId) {
+    const res = await api.delete(`/agents/delete/${agentId}`)
+    return res.data
+}
+
+
 export default {
     getAgent,
-    addAgent
+    addAgent,
+    deleteAgent
 }
 

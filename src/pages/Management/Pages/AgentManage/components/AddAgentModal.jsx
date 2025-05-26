@@ -3,9 +3,9 @@ import { Modal, ModalBody, ModalContent, ModalHeader, Input, Button, ModalFooter
 import { useState } from "react";
 import { PlusIcon } from "@/component/Icons";
 import { MessageCircleQuestion } from "lucide-react";
-import { toastWarning } from "@/component/Alert";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
 
-function AddAgentModal({ isOpen, onClose }) {
+function AddAgentModal({ isOpen, onClose, fetchAgentList }) {
     const [code, setCode] = useState('')
     const [name, setName] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -32,14 +32,23 @@ function AddAgentModal({ isOpen, onClose }) {
             return
         }
 
-        await agentService.addAgent({
+        const payload = {
+            name: name,
             code: code,
-            name: name
-        }).then((res) => {
-            console.log(res)
+        }
+
+
+        await agentService.addAgent(payload).then((res) => {
+            toastSuccess('เพิ่มตัวแทนสำเร็จ')
             onClose()
+            fetchAgentList()
         }).catch((err) => {
-            console.log(err)
+            if (err.status === 400) {
+                setError('รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว', 'กรุณากรอกรหัสตัวแทนและชื่อตัวแทนใหม่')
+                toastWarning('ไม่สามารถเพิ่มตัวแทนได้', 'รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว')
+            } else {
+                toastError('ไม่สามารถเพิ่มตัวแทนได้', 'เนื่องจากมีข้อผิดพลาดทางระบบ')
+            }
         }).finally(() => {
             setIsLoading(false)
         })
@@ -99,6 +108,7 @@ function AddAgentModal({ isOpen, onClose }) {
                             variant="bordered"
                             labelPlacement="outside"
                             placeholder="กรุณากรอกรหัสตัวแทน"
+                            onFocus={() => setError('')}
                             isRequired
                             classNames={{
                                 label: "text-gray-700 font-medium",
@@ -113,6 +123,7 @@ function AddAgentModal({ isOpen, onClose }) {
                             variant="bordered"
                             labelPlacement="outside"
                             placeholder="กรุณากรอกชื่อตัวแทน"
+                            onFocus={() => setError('')}
                             isRequired
                             classNames={{
                                 label: "text-gray-700 font-medium",
