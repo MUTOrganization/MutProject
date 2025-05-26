@@ -32,14 +32,15 @@ export async function addAgent(name, code) {
  * แก้ไขตัวแทน
  * @param {string} name ชื่อตัวแทน
  * @param {string} code รหัสตัวแทน
+ * @param {string} agentId รหัสตัวแทน
  * @returns {Promise<Object>}
  */
-export async function editAgent(name, code) {
+export async function editAgent(name, code, agentId) {
     const payload = {
         name,
-        code
+        code,
     }
-    const res = await api.put('/agents/edit', payload)
+    const res = await api.put(`/agents/edit/${agentId}`, payload)
     return res.data
 }
 

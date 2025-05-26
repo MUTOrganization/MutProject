@@ -185,6 +185,7 @@ function AgentPage() {
                     isOpen={openEditAgent}
                     onClose={handleCloseEditAgent}
                     selectedAgent={selectedAgent}
+                    fetchAgentList={fetchAgentList}
                 />
             )}
 
@@ -258,9 +259,11 @@ function AgentPage() {
                                     <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50" onPress={() => handleEditAgent(item)}>
                                         <EditIcon className="w-4 h-4" />
                                     </Button>
-                                    <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50" onPress={() => handleDeleteAgent(item)}>
-                                        <TrashIcon className="w-4 h-4" />
-                                    </Button>
+                                    {item.status && (
+                                        <Button size="sm" isIconOnly variant="light" color="danger" className="hover:bg-danger-50" onPress={() => handleDeleteAgent(item)}>
+                                            <TrashIcon className="w-4 h-4" />
+                                        </Button>
+                                    )}
                                 </TableCell>
                             </TableRow>
                         )}
