@@ -4,17 +4,11 @@ import { useAppContext } from "../../../../contexts/AppContext";
 import { ACCESS } from "../../../../configs/accessids";
 import departmentService from "@/services/departmentService";
 
-const DepartmentManageTab = lazy(() => import('./subPages/DepartmentManage'))
+const DepartmentManageTab = lazy(() => import('./subPages/DepartmentManageTab'))
 const RoleManageTab = lazy(() => import('./subPages/RoleManageTab'))
 export default function DepartmentAndRoleManage(){
     const [activateTab, setActivateTab] = useState(sessionStorage.getItem('depAndRoleTabs')??"department");
     const {currentUser, accessCheck, agent: { selectedAgent }} = useAppContext()
-
-    useEffect(() => {
-        console.log(selectedAgent);
-        console.log(currentUser);
-        departmentService.getDepartments(selectedAgent.id)
-    },[selectedAgent])
 
     const allowTabs = useMemo(() => {
         return {
@@ -31,7 +25,7 @@ export default function DepartmentAndRoleManage(){
         <section className="w-full">
             <Card className="flex sm:p-4 max-h-[calc(100vh-120px)] max-w-screen-2xl overflow-hidden" shadow="none" radius="sm">
                 <Tabs
-                aria-label="Options"
+                aria-label="department-and-role-manage-tabs"
                 color="primary"
                 variant="underlined"
                 classNames={{
@@ -48,6 +42,7 @@ export default function DepartmentAndRoleManage(){
                         allowTabs.department &&
                         <Tab
                             key="department"
+                            aria-label="department-tab"
                             title={
                             <div className="flex items-center space-x-2">
                                 <span>จัดการแผนก</span>
@@ -63,6 +58,7 @@ export default function DepartmentAndRoleManage(){
                         allowTabs.role &&
                         <Tab
                             key="role"
+                            aria-label="role-tab"
                             title={
                             <div className="flex items-center space-x-2">
                                 <span>จัดการตำแหน่ง</span>

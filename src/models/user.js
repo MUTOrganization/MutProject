@@ -19,12 +19,18 @@ export default class User {
         this.probStatus = data.probStatus;
         /** @type {Array<number>} */
         this.access = data.access;
+        /** @type {Date} */
+        this.createdDate = new Date(data.createdDate);
+        /** @type {Date} */
+        this.updatedDate = new Date(data.updatedDate);
         /** @type {Role} */
         this.role = data.role;
         /** @type {Department} */
         this.department = data.department;
         /** @type {Agent} */
         this.agent = data.agent;
+        /** @type {import('@/configs/types/rolebase').ROLES} */
+        this.baseRole = data.baseRole || '';
     }
 
 }

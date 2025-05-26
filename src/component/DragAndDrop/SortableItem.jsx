@@ -7,11 +7,14 @@ export function SortableItem({id, children}){
         setNodeRef,
         transform,
         transition,
-    } = useSortable({id});
+        isDragging
+    } = useSortable({id: id});
 
     const style = {
         transform: CSS.Transform.toString(transform),
-        transition
+        transition,
+        zIndex: isDragging ? 999 : undefined,
+        position: isDragging ? 'relative' : undefined,
     };
 
     return (

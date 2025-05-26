@@ -42,16 +42,25 @@ export const CustomFormatDateTime = (date = dayjs(), format = 'YYYY-MM-DD HH:mm:
 /**
  * 
  * @param {Date} dateStr วันที่ ที่ต้องการแปลง
- * @param {'date' | 'datetime'} type รูปแบบที่ต้องการ ค่าเริ่มต้น YYYY-MM-DD HH:mm:ss'
+ * @param {'date' | 'datetime' | 'time'} type รูปแบบที่ต้องการ ค่าเริ่มต้น YYYY-MM-DD HH:mm:ss'
  * @returns
  */
 export const formatDateThai = (dateStr, type = 'date') => {
     if(dayjs(dateStr).isValid()){
+      if(type === 'date'){
         return dayjs(dateStr)
             .add(543, 'year')
             .locale('th')
-            .format(type === 'datetime' ? 'D MMMM YYYY HH:mm' : 'D MMMM YYYY') 
-            + (type === 'datetime' ? ' น.' : '');
+            .format('D MMMM YYYY');
+      }else if(type === 'time'){
+        return dayjs(dateStr).format('HH:mm');
+      }else{
+        return dayjs(dateStr)
+            .add(543, 'year')
+            .locale('th')
+            .format('D MMMM YYYY HH:mm') 
+            + ' น.';
+      }
     }
     return 'Invalid Date';
 }

@@ -36,6 +36,13 @@ export async function getAccess(safe) {
     return res.data
 }
 
+export async function getAccessByRoleId(roleId, controllor) {
+    const res = await api.get(`/access/getAccessByRole/${roleId}`, {
+        signal: controllor?.signal
+    })
+    return res.data
+}
+
 
 export async function createAccess({  accessName , accessCode , description , accessGroupId }) {
     const res = await api.post(`/access/create`, {

@@ -3,6 +3,7 @@ import authService from "@/services/authService";
 import { SESSION_STORAGE_KEYS } from "@/configs/sessionStorageKeys";
 import Agent from "@/models/agent";
 import User from "@/models/user";
+import { ACCESS } from "@/configs/accessids";
 
 const AppContext = createContext({
     /** @type {import('@/models/user').default} */
@@ -35,10 +36,17 @@ export default function AppContextProvider({ children }) {
     const userAccessMap = useMemo(() => {
         return currentUser ? new Map(currentUser.access?.map(e => [e, true])) : new Map();
     },[currentUser])
+    console.log(currentUser);
 
     useEffect(() => {
         setIsUserLoading(true);
         authService.getUserData().then((data) => {
+            const _userAccessMap = new Map(data.access?.map(e => [e, true]))
+            if(haveOne(_userAccessMap, ACCESS.General_superadmin)) data.baseRole = 'SUPER_ADMIN';
+            else if(haveOne(_userAccessMap, ACCESS.General_admin)) data.baseRole = 'ADMIN';
+            else if(haveOne(_userAccessMap, ACCESS.General_executive)) data.baseRole = 'EXECUTIVE';
+            else if(haveOne(_userAccessMap, ACCESS.General_manager)) data.baseRole = 'MANAGER';
+            else if(haveOne(_userAccessMap, ACCESS.General_staff)) data.baseRole = 'STAFF';
             setCurrentUser(new User(data));
             const agent = data.agent;
             setSelectedAgent(new Agent(agent));
