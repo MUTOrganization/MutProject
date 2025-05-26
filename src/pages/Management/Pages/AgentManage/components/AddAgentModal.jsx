@@ -32,13 +32,8 @@ function AddAgentModal({ isOpen, onClose, fetchAgentList }) {
             return
         }
 
-        const payload = {
-            name: name,
-            code: code,
-        }
 
-
-        await agentService.addAgent(payload).then((res) => {
+        await agentService.addAgent(name, code).then((res) => {
             toastSuccess('เพิ่มตัวแทนสำเร็จ')
             onClose()
             fetchAgentList()

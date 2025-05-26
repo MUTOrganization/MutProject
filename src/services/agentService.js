@@ -14,14 +14,35 @@ export async function getAgent(type = 'A,C,H') {
 
 /**
  * เพิ่มตัวแทน
- * @param {object {code: string, name: string}} body ข้อมูลตัวแทน
+ * @param {string} name ชื่อตัวแทน
+ * @param {string} code รหัสตัวแทน
  * @returns {Promise<Object>}
  */
-export async function addAgent(body) {
-    const res = await api.post('/agents/create', body)
+export async function addAgent(name, code) {
+    const payload = {
+        name,
+        code
+    }
+    const res = await api.post('/agents/create', payload)
     return res.data
 }
 
+
+/**
+ * แก้ไขตัวแทน
+ * @param {string} name ชื่อตัวแทน
+ * @param {string} code รหัสตัวแทน
+ * @param {string} agentId รหัสตัวแทน
+ * @returns {Promise<Object>}
+ */
+export async function editAgent(name, code, agentId) {
+    const payload = {
+        name,
+        code,
+    }
+    const res = await api.put(`/agents/edit/${agentId}`, payload)
+    return res.data
+}
 
 /**
  * ลบตัวแทน
@@ -52,6 +73,7 @@ export async function updateAgentAccess(agentId, accessIds) {
 export default {
     getAgent,
     addAgent,
+    editAgent,
     deleteAgent,
     updateAgentAccess
 }
