@@ -6,68 +6,81 @@ import { ACCESS } from "../../../../configs/accessids";
 const UserProbationManageTab = lazy(() => import('./subPages/UserProbationManage'))
 const UserRoleManageTab = lazy(() => import('./subPages/UserRoleTab'))
 const UserStartWorkDateManage = lazy(() => import('./subPages/UserStartWorkDateManage'))
-export default function UserManage(){
-    const [activateTab, setActivateTab] = useState(sessionStorage.getItem('userManageTabs')??"role");
-    const {accessCheck} = useAppContext()
+const UserManageTab = lazy(() => import('./subPages/UserManageTab'))
+export default function UserManage() {
+    const [activateTab, setActivateTab] = useState(sessionStorage.getItem('userManageTabs') ?? "role");
+    const { accessCheck } = useAppContext()
 
     const tabsDic = {
-        "role": <UserRoleManageTab/>,
+        "user": <UserManageTab />,
+        "role": <UserRoleManageTab />,
         "probation": <UserProbationManageTab />,
         "workStartDate": <UserStartWorkDateManage />
     }
-    return(
+    return (
         <section className="w-full">
             <Card className="flex sm:p-4 max-h-[calc(100vh-120px)] max-w-screen-2xl overflow-hidden" shadow="none" radius="sm">
                 <Tabs
-                aria-label="Options"
-                color="primary"
-                variant="underlined"
-                classNames={{
-                    tabList:
-                    "gap-6 w-full relative rounded-none p-0 border-b border-divider max-sm:mx-4",
-                    cursor: "w-full bg-[#22d3ee]",
-                    tab: "max-w-fit px-0 h-12",
-                    tabContent: "group-data-[selected=true]:text-[#06b6d4]",
-                }}
-                selectedKey={activateTab}
-                onSelectionChange={(key) => {
-                    setActivateTab(key);
-                    sessionStorage.setItem('userManageTabs', key)
-                }}
+                    aria-label="Options"
+                    color="primary"
+                    variant="underlined"
+                    classNames={{
+                        tabList:
+                            "gap-6 w-full relative rounded-none p-0 border-b border-divider max-sm:mx-4",
+                        cursor: "w-full bg-[#22d3ee]",
+                        tab: "max-w-fit px-0 h-12",
+                        tabContent: "group-data-[selected=true]:text-[#06b6d4]",
+                    }}
+                    selectedKey={activateTab}
+                    onSelectionChange={(key) => {
+                        setActivateTab(key);
+                        sessionStorage.setItem('userManageTabs', key)
+                    }}
                 >
+                    {
+                        accessCheck.haveAny([]) &&
+                        <Tab
+                            key="user"
+                            title={
+                                <div className="flex items-center space-x-2">
+                                    <span>จัดการพนักงาน</span>
+                                </div>
+                            }
+                        />
+                    }
                     {
                         accessCheck.haveAny(['FIX']) &&
                         <Tab
-                        key="role"
-                        title={
-                            <div className="flex items-center space-x-2">
-                                <span>จัดการตำแหน่ง</span>
-                            </div>
+                            key="role"
+                            title={
+                                <div className="flex items-center space-x-2">
+                                    <span>จัดการตำแหน่ง</span>
+                                </div>
                             }
-                            />
-                        }
-                        {
-                            accessCheck.haveAny(['FIX']) &&
-                            <Tab
-                                key="probation"
-                                title={
+                        />
+                    }
+                    {
+                        accessCheck.haveAny(['FIX']) &&
+                        <Tab
+                            key="probation"
+                            title={
                                 <div className="flex items-center space-x-2">
                                     <span>จัดการสถานะการทดลองงาน</span>
                                 </div>
-                                }
-                            />
-                        }
-                        {
-                            accessCheck.haveAny([]) && 
-                            <Tab
-                                key="workStartDate"
-                                title={
-                                    <div className="flex items-center space-x-2">
-                                        <span>จัดการวันเริ่มทำงาน</span>
-                                    </div>
-                                }
-                            />
-                        }
+                            }
+                        />
+                    }
+                    {
+                        accessCheck.haveAny([]) &&
+                        <Tab
+                            key="workStartDate"
+                            title={
+                                <div className="flex items-center space-x-2">
+                                    <span>จัดการวันเริ่มทำงาน</span>
+                                </div>
+                            }
+                        />
+                    }
 
                 </Tabs>
                 <CardBody>
