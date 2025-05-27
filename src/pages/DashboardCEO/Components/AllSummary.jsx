@@ -77,8 +77,8 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                     <div className='mt-8'>
                         <div className='text-2xl text-blue-500 font-bold'>{summary.profit}</div>
                     </div>
-                    <span className={`text-sm font-semibold ${profitCompare.color}`}>
-                        {profitCompare.icon} {profitCompare.percent}
+                    <span className={`text-sm font-semibold ${profitCompare?.ProfitValue?.color}`}>
+                        {profitCompare?.ProfitValue?.icon} {profitCompare?.ProfitValue?.percent}
                     </span>
                 </div>
 
@@ -90,7 +90,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                         <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.sales}</div>
                     </div>
                     <span>
-                        {!isPercentLoading || !isLoading ? <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData, 'ยอดขาย')}</span> : ''}
+                        {!isPercentLoading || !isLoading ? <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span> : ''}
                     </span>
 
                 </div>
@@ -99,9 +99,11 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
 
                 <div className='subBox1 w-28'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ค่าใช้จ่ายรวม</header>
-                    <div className='mt-4 flex flex-col justify-center items-start py-4'>
+                    <div className='mt-8 flex flex-col justify-center items-start py-4'>
                         <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.netExpense}</div>
-                        <div className='text-sm text-slate-500'></div>
+                        <span className={`text-sm font-semibold ${profitCompare?.percentNetExpenses?.color}`}>
+                            {profitCompare?.percentNetExpenses?.icon} {profitCompare?.percentNetExpenses?.percent}
+                        </span>
                     </div>
                 </div>
             </div>

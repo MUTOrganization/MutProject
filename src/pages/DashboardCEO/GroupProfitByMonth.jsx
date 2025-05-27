@@ -131,6 +131,10 @@ export const getPrevPercentSales = (prevData, currentData) => {
     )
 }
 
+export const getPrevPercentNetExpenses = (prevCommission = [], currenCommission = [], prevExpenses = [], currentExpenses = []) => {
+    const prevCom = prevCommission.reduce((sum, item) => sum + (item.commission || 0), 0)
+}
+
 export const getPrevPercentProfit = (
     prevCommissionData = [],
     currentCommissionData = [],
@@ -159,17 +163,31 @@ export const getPrevPercentProfit = (
     if (prevProfit === 0) return { percent: '0.00%', icon: null, color: 'gray' }
 
     const percent = ((currentProfit - prevProfit) / Math.abs(prevProfit)) * 100
+    let percentNetExpenses
+    if ((prevExpenses + prevCommission) === 0) {
+        percentNetExpenses = '0.00%'
+    } else {
+        percentNetExpenses = (((currentExpenses + currentCommission) - (prevExpenses + prevCommission)) / (prevExpenses + prevCommission) * 100).toFixed(2) + '%'
+    }
     const isUp = percent > 0
 
+    const isPercentExpensesUp = percentNetExpenses > 0
+    const isPercentExpensesZero = percentNetExpenses === '0.00%'
+
     return {
-        percent: `${percent.toFixed(2)}%`,
-        icon: isUp ? '▲' : '▼',
-        color: isUp ? 'text-green-500' : 'text-red-500',
-        raw: percent,
+        ProfitValue: {
+            percent: `${percent.toFixed(2)}%`,
+            icon: isUp ? '▲' : '▼',
+            color: isUp ? 'text-green-500' : 'text-red-500',
+        },
+        percentNetExpenses: {
+            percent: percentNetExpenses,
+            icon: isPercentExpensesZero ? '' : isPercentExpensesUp ? '▲' : '▼',
+            color: isPercentExpensesZero ? 'text-slate-400' : (isPercentExpensesUp ? 'text-green-500' : 'text-red-500'),
+        }
+
     }
 }
-
-
 
 export default {
     groupProfitByMonth,
@@ -177,5 +195,6 @@ export default {
     groupExpensesByType,
     getPrevPercentSales,
     Summary,
-    getPrevPercentProfit
+    getPrevPercentProfit,
+    getPrevPercentNetExpenses
 }
