@@ -3,10 +3,11 @@ import Role from "@/models/roles";
 
 const roleURL = 'roles'
 
-async function getRolesByDepartmentId(departmentId) {
+async function getRolesByDepartmentId(agentId, departmentId) {
     const url = `${roleURL}/getAll`
     const response = await api.get(url, {
         params: {
+            agentId,
             departmentId
         }
     })
@@ -89,7 +90,7 @@ async function deleteRole(roleId) {
  * @param {Number} roleId 
  * @param {Array<Number>} accessIdList 
  */
-async function updateRoleAccess(roleId, accessIdList){
+async function updateRoleAccess(roleId, accessIdList) {
     const url = `roleAccess/update`
     await api.put(url, {
         roleId,
@@ -102,7 +103,7 @@ async function updateRoleAccess(roleId, accessIdList){
  * @param {Number} roleId 
  * @param {Array<Number>} accessIdList 
  */
-async function updateRoleAccessHq(roleId, accessIdList){
+async function updateRoleAccessHq(roleId, accessIdList) {
     const url = `roleAccess/updateHq`
     await api.put(url, {
         roleId,
@@ -111,7 +112,7 @@ async function updateRoleAccessHq(roleId, accessIdList){
 }
 
 
-export default { 
+export default {
     getRolesByDepartmentId,
     createRole,
     updateRole,
@@ -120,4 +121,4 @@ export default {
     updateRoleLevelHq,
     updateRoleAccess,
     updateRoleAccessHq
- }
+}

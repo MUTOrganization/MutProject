@@ -1,6 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import fetchProtectedData from '@/utils/fetchData'
-import { URLS } from '@/config';
 import {
     Spinner,
     Table,

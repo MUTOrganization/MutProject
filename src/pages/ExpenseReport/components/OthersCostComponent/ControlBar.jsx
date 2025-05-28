@@ -1,8 +1,6 @@
 import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
-import { URLS } from '@/config';
-import fetchProtectedData from '@/utils/fetchData';
 import DateSelector from '../../../../component/DateSelector';
 import AgentSelector from '../../../../component/AgentSelector';
 import ModalTypeExpenses from '../OtherExpensesModal/ModalTypeExpenses';

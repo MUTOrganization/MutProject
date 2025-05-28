@@ -8,7 +8,7 @@ const UserRoleManageTab = lazy(() => import('./subPages/UserRoleTab'))
 const UserStartWorkDateManage = lazy(() => import('./subPages/UserStartWorkDateManage'))
 const UserManageTab = lazy(() => import('./subPages/UserManageTab'))
 export default function UserManage() {
-    const [activateTab, setActivateTab] = useState(sessionStorage.getItem('userManageTabs') ?? "role");
+    const [activateTab, setActivateTab] = useState(sessionStorage.getItem('userManageTabs') ?? "user");
     const { accessCheck } = useAppContext()
 
     const tabsDic = {
