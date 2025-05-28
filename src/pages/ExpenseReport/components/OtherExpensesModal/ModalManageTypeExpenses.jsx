@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import React, { useContext, useEffect, useState } from 'react'
 import { FaBan, FaCheck, FaEdit, FaTrash } from 'react-icons/fa'
 import ModalActionType from './ModalActionType'
-import { URLS } from '@/config'
 import fetchProtectedData from '@/utils/fetchData'
 import { Data } from '../../TabsExpense/TabsOthersCost'
 

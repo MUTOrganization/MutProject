@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
 import { Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, ModalFooter } from "@heroui/react";
-import { URLS } from '@/config';
-import fetchProtectedData from '@/utils/fetchData';
 import { toast, Toaster } from 'sonner';
 import expensesService from '@/services/expensesService';
 import { Data } from '../../TabsExpense/TabsOthersCost';

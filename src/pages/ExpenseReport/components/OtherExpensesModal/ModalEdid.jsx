@@ -1,8 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Textarea, Table, TableHeader, SelectItem, TableColumn, Select, TableBody, TableRow, TableCell, Input, DatePicker } from "@heroui/react";
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
-import { URLS } from '@/config';
-import fetchProtectedData from '@/utils/fetchData';
 import { useAppContext } from '@/contexts/AppContext';
 import { toast, Toaster } from 'sonner';
 import expensesService from '@/services/expensesService';
@@ -10,8 +8,6 @@ import { formatDateObject } from '@/utils/dateUtils';
 import { toastError } from '@/component/Alert';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { fromDate } from '@internationalized/date';
-
-
 
 function ModalEdid({ isOpen, onClose, data, typeData }) {
     const { currentUser } = useAppContext();
