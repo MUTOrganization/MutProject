@@ -2,6 +2,7 @@ import { useDisclosure } from '@heroui/react';
 import React, { useEffect, useState } from 'react'
 import { FaFacebookMessenger } from 'react-icons/fa'
 import ChatBody from './ChatBody';
+import { MessageSquare, MessageSquareText } from 'lucide-react';
 
 function FloatingButton() {
 
@@ -21,8 +22,8 @@ function FloatingButton() {
     return (
         <>
             <div className='fixed bottom-8 right-8 z-50'>
-                <button onClick={onOpen} className="bg-blue-600 text-white rounded-full shadow-xl hover:bg-blue-700 p-6">
-                    <FaFacebookMessenger className='text-2xl' />
+                <button onClick={onOpen} className="bg-blue-600 text-white rounded-full shadow-xl hover:bg-blue-700 p-4">
+                    <MessageSquareText size={30} />
                 </button>
             </div>
             {isPrivateChat !== null && (

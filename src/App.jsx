@@ -7,6 +7,9 @@ import { useAppContext } from "./contexts/AppContext";
 import { CircularProgress } from "@heroui/react";
 import { Toaster } from "sonner";
 import FloatingButton from "./pages/Chat/FloatingButton";
+import { SocketProvider } from "./contexts/SocketContext";
+
+
 
 const Management = lazy(() => import("./pages/Management/Management"));
 const Setting = lazy(() => import("./pages/Setting/Setting"));
@@ -90,29 +93,27 @@ function App() {
         <Route path="/*"
           element={
             <ProtectedRoute>
-              <Routes>
-                {routes.map((route) => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={
-                      <DefaultLayout title={route.title}>
-                        {route.component}
-                      </DefaultLayout>
-                    }
-                  />
-                ))}
-              </Routes>
+              <SocketProvider>
+                <Routes>
+                  {routes.map((route) => (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      element={
+                        <DefaultLayout title={route.title}>
+                          {route.component}
+                        </DefaultLayout>
+                      }
+                    />
+                  ))}
+                </Routes>
+              </SocketProvider>
+              <FloatingButton />
               <Toaster richColors />
             </ProtectedRoute>
           }
         />
       </Routes>
-
-      {/* เช็คว่าอยู่หน้า Login หรือเปล่า ถ้าไม่ใช่ก็ให้แสดงปุ่ม */}
-      {location.pathname !== "/" && location.pathname !== "/login" && (
-        <FloatingButton />
-      )}
     </Suspense>
   );
 }
