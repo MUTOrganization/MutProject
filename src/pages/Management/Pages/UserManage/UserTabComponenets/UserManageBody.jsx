@@ -5,9 +5,12 @@ import React, { useEffect, useState } from 'react'
 import { FaEdit, FaPencilAlt, FaPlus, FaPlusCircle, FaPlusSquare, FaRegEdit, FaTrashAlt, FaUserEdit } from 'react-icons/fa'
 import AddEmployee from '../UserTabModal/AddEmployee'
 import roleService from '@/services/roleService'
+import CloseStatus from '../UserTabModal/CloseStatus'
 
 function UserManageBody({ userList, isLoading, fetchData }) {
     const [isOpenAddmployeeModal, setIsOpenAddmployeeModal] = useState(false)
+    const [isOpenCloseStatusModal, setIsOpenCloseStatusModal] = useState(false)
+    const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
         { key: 'dep/role', label: 'แผนก / ตำแหน่ง' },
@@ -63,7 +66,7 @@ function UserManageBody({ userList, isLoading, fetchData }) {
                                 <div className='flex flex-row justify-center items-center w-full space-x-1'>
                                     <span className='px-3 py-1 rounded-lg bg-slate-200 text-slate-600 cursor-pointer hover:bg-slate-300 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
                                     <div className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
-                                    <div className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaTrashAlt className='text-red-500 font-bold text-sm' /></span></div>
+                                    <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaTrashAlt className='text-red-500 font-bold text-sm' /></span></div>
                                 </div>
                             </TableCell>
                         </TableRow>
@@ -75,6 +78,15 @@ function UserManageBody({ userList, isLoading, fetchData }) {
                 <AddEmployee
                     isOpen={isOpenAddmployeeModal}
                     onClose={() => setIsOpenAddmployeeModal(false)}
+                    fetchData={fetchData}
+                />
+            )}
+
+            {isOpenCloseStatusModal && (
+                <CloseStatus
+                    isOpen={isOpenCloseStatusModal}
+                    onClose={() => setIsOpenCloseStatusModal(false)}
+                    selectUserData={selectUserData}
                     fetchData={fetchData}
                 />
             )}

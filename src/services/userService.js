@@ -35,7 +35,14 @@ async function createUser(username, name, nickname, password, displayImgUrl, rol
     })
 }
 
+async function changeStatus(username) {
+    const url = `users/changeStatus/${username}`
+    const res = await api.patch(url)
+    return res.data
+}
+
 export default {
     getAllUser,
-    createUser
+    createUser,
+    changeStatus
 }

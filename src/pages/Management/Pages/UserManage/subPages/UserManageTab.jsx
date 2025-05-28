@@ -19,7 +19,7 @@ function UserManageTab() {
         setIsLoading(true)
         try {
             const [allUser] = await Promise.all([
-                await userService.getAllUser(currentUser.agent.agentId)
+                await userService.getAllUser(currentUser.agent.agentId, 'all')
             ])
             setAllUser(allUser)
             setIsLoading(false)
