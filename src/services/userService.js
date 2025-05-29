@@ -33,6 +33,7 @@ async function createUser(username, name, nickname, password, displayImgUrl, rol
         displayImgUrl,
         roleId
     })
+    return res.data
 }
 
 async function changeStatus(username) {
@@ -56,9 +57,19 @@ async function updateUser(userData, usernameList) {
     return res.data
 }
 
+async function changePassword(username, password) {
+    const url = 'users/changePassword'
+    const res = await api.put(url, {
+        username,
+        password
+    })
+    return res.data
+}
+
 export default {
     getAllUser,
     createUser,
     changeStatus,
-    updateUser
+    updateUser,
+    changePassword
 }

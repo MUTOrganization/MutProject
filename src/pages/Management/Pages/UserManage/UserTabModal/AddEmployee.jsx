@@ -8,9 +8,12 @@ import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-function AddEmployee({ isOpen, onClose, fetchData, roleId, departmentId }) {
-
+function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSuperAdmin, selector }) {
     const { currentUser } = useAppContext()
+
+    // Fetch Role
+    const [roleData, setRoleData] = useState([])
+
     const [userData, setUserData] = useState({
         username: '',
         name: '',
@@ -18,16 +21,32 @@ function AddEmployee({ isOpen, onClose, fetchData, roleId, departmentId }) {
         password: '',
         roleId: null
     })
-
     // Other State
     const [selectDepartment, setSelectDepartment] = useState(null)
 
+    // Get Current Role
+    const fetchRole = async () => {
+        try {
+            const res = await roleService.getRolesByDepartmentId(isSuperAdmin ? selector.agent : currentUser.agent.agentId, Number(selectDepartment))
+            setRoleData(res)
+        } catch (err) {
+            console.log('Can not Fetch Role At Add Employee Modal', err)
+        }
+    }
+
+    useEffect(() => {
+        fetchRole()
+    }, [selectDepartment])
+
     const AddEmployee = async () => {
+        if (userList?.find(u => u.username === userData.username)) {
+            toast.error('รหัสพนักงานนี้มีอยู่ในระบบแล้ว')
+            return
+        }
         try {
             await userService.createUser(userData.username, userData.name, userData.nickname, userData.password, null, userData.roleId)
-            await fetchData()
-            onClose()
             toast.success('สำเร็จเพิ่มพนักงาน')
+            fetchData()
         } catch (err) {
             console.log('Can not Add Employee', err)
             toast.error('ไม่สำเร็จเพิ่มพนักงาน')
@@ -63,7 +82,7 @@ function AddEmployee({ isOpen, onClose, fetchData, roleId, departmentId }) {
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>ตำแหน่ง</span>
                             <Select isRequired aria-label='ตำแหน่ง' placeholder='ตำแหน่ง' isDisabled={selectDepartment === null} value={userData.roleId} onChange={(e) => setUserData(prev => ({ ...prev, roleId: Number(e.target.value) }))}>
-                                {roleId?.filter(a => a?.department?.departmentId === selectDepartment).map(role => (
+                                {roleData?.map(role => (
                                     <SelectItem key={role?.roleId} value={role?.roleId} className='text-xs text-slate-500'>
                                         {role?.roleName}
                                     </SelectItem>
@@ -73,7 +92,7 @@ function AddEmployee({ isOpen, onClose, fetchData, roleId, departmentId }) {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color='primary' size='sm' className='px-6' isDisabled={isDisabled} onPress={AddEmployee}>ยืนยัน</Button>
+                    <Button color='primary' size='sm' className='px-6' isDisabled={isDisabled} onPress={() => { AddEmployee(); onClose() }}>ยืนยัน</Button>
                     <Button size='sm' onPress={() => onClose()}>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>

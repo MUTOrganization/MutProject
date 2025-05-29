@@ -1,28 +1,49 @@
 import { useAppContext } from '@/contexts/AppContext';
+import { Autocomplete, AutocompleteItem } from '@heroui/react';
 import { Select, SelectItem } from '@nextui-org/select'
-import React from 'react'
+import React, { useEffect } from 'react'
 
-function UserManageControllerBar() {
-
+function UserManageControllerBar({ agentId, departmentId, roleId, selector, setSelector }) {
     const { currentUser } = useAppContext();
 
     const isSuperAdmin = currentUser.baseRole === 'SUPER_ADMIN';
     const isAdmin = currentUser.baseRole === 'ADMIN';
     const isManager = currentUser.baseRole === 'MANAGER';
 
+    const probitem = [
+        { key: 1, value: 'ผ่านการทดลองงาน' },
+        { key: 2, value: 'ไม่ผ่านการทดลองงาน' },
+    ]
+
+    const statusitem = [
+        { key: 1, value: 'ใช้งานอยู่' },
+        { key: 2, value: 'ปิดการใช้งาน' },
+    ]
+
     return (
         <div className='my-4 flex flex-row justify-start items-center space-x-4'>
             {isSuperAdmin && (
                 <div className='w-2/12'>
-                    <Select
+                    <Autocomplete
                         aria-label='ตัวแทน'
                         variant='bordered'
+                        label='ตัวแทน'
                         placeholder='เลือกตัวแทน'
+                        onSelectionChange={(value) =>
+                            setSelector((prev) => ({
+                                ...prev,
+                                agent: value || null,
+                                department: null,
+                                role: null,
+                            }))
+                        }
+                        selectedKey={`${selector.agent}`}
+                        allowsEmptyCollection={false}
                     >
-                        <SelectItem>
-                            <span>ทั้งหมด</span>
-                        </SelectItem>
-                    </Select>
+                        {agentId.map(item => (
+                            <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
+                        ))}
+                    </Autocomplete>
                 </div>
             )}
 
@@ -31,11 +52,15 @@ function UserManageControllerBar() {
                     <Select
                         aria-label='แผนก'
                         variant='bordered'
-                        placeholder='แผนก'
+                        label='แผนก'
+                        placeholder='ทั้งหมด'
+                        onChange={(e) => setSelector(prev => ({ ...prev, department: Number(e.target.value) || null }))}
+                        value={selector.department || null}
+                        isDisabled={selector.agent === null}
                     >
-                        <SelectItem>
-                            <span>ทั้งหมด</span>
-                        </SelectItem>
+                        {departmentId.map(item => (
+                            <SelectItem key={item.departmentId} value={item.departmentId}>{item.departmentName}</SelectItem>
+                        ))}
                     </Select>
                 </div>
             )}
@@ -44,37 +69,46 @@ function UserManageControllerBar() {
                 <div className='w-48'>
                     <Select
                         aria-label='ตำแหน่ง'
-                        placeholder='ตำแหน่ง'
+                        label='ตำแหน่ง'
+                        placeholder='ทั้งหมด'
                         variant='bordered'
+                        onChange={(e) => setSelector(prev => ({ ...prev, role: Number(e.target.value) || null }))}
+                        value={selector.role || null}
+                        isDisabled={selector.department === null || selector.agent === null}
                     >
-                        <SelectItem>
-                            <span>ทั้งหมด</span>
-                        </SelectItem>
+                        {/* <SelectItem key='ทั้งหมด' value='ทั้งหมด'>ทั้งหมด</SelectItem> */}
+                        {roleId.map(item => (
+                            <SelectItem key={item.roleId} value={item.roleId}>{item.roleName}</SelectItem>
+                        ))}
                     </Select>
                 </div>
             )}
 
             <div className='w-48'>
                 <Select
-                    aria-label='สถานะการใช้งาน'
+                    aria-label='สถานะการทดลองงาน'
                     variant='bordered'
-                    placeholder='สถานะการใช้งาน'
+                    placeholder='สถานะการทดลองงาน'
+                    onChange={(e) => setSelector(prev => ({ ...prev, probStatus: Number(e.target.value) === 1 ? true : Number(e.target.value) === 2 ? false : null }))}
+                    value={selector.probStatus || null}
                 >
-                    <SelectItem>
-                        <span>ทั้งหมด</span>
-                    </SelectItem>
+                    {probitem.map(item => (
+                        <SelectItem key={item.key} value={item.key}>{item.value}</SelectItem>
+                    ))}
                 </Select>
             </div>
 
             <div className='w-2/12'>
                 <Select
-                    aria-label='สถานะการทดลองงาน'
-                    placeholder='สถานะการทดลองงาน'
+                    aria-label='สถานะการใช้งาน'
                     variant='bordered'
+                    placeholder='สถานะการใช้งาน'
+                    onChange={(e) => setSelector(prev => ({ ...prev, status: Number(e.target.value) === 1 ? true : Number(e.target.value) === 2 ? false : null }))}
+                    value={selector.status || null}
                 >
-                    <SelectItem>
-                        <span>ทั้งหมด</span>
-                    </SelectItem>
+                    {statusitem.map(item => (
+                        <SelectItem key={item.key} value={item.key}>{item.value}</SelectItem>
+                    ))}
                 </Select>
             </div>
         </div>

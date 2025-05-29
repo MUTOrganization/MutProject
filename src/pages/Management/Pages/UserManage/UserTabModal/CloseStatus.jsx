@@ -9,9 +9,8 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
     const closeStatus = async () => {
         try {
             await userService.changeStatus(selectUserData.username)
-            await fetchData()
             toast.success('ปิดการใช้งานผู้ใช้งานเรียบร้อย')
-            onClose()
+            fetchData()
         } catch (err) {
             console.log('Cannot Change Status User!', err)
             toast.error('ไม่สามารถปิดการใช้งานผู้ใช้งานได้')
@@ -30,7 +29,7 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button onPress={closeStatus} className='px-6 py-1' size='sm' color='primary'>ยืนยัน</Button>
+                    <Button onPress={() => { closeStatus(); onClose() }} className='px-6 py-1' size='sm' color='primary'>ยืนยัน</Button>
                     <Button onPress={() => onClose()} className='px-6 py-1' size='sm'>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>

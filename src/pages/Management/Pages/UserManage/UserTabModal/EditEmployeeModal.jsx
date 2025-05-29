@@ -1,21 +1,24 @@
+import { useAppContext } from '@/contexts/AppContext'
+import roleService from '@/services/roleService'
 import userService from '@/services/userService'
 import { Button, Input } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from '@nextui-org/select'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, roleId, departmentId }) {
-    console.log(selectUserData)
-    const [selectDepartment, setSelectDepartment] = useState(
-        selectUserData?.role?.department?.departmentId || null
-    );
+function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departmentId, isSuperAdmin, selector }) {
+    const { currentUser } = useAppContext()
+    const [selectDepartment, setSelectDepartment] = useState(selectUserData?.role?.department?.departmentId || null);
+
+    // Fetch Data
+    const [roleData, setRoleData] = useState([])
 
     const [userData, setUserData] = useState({
         name: selectUserData.name,
         nickname: selectUserData.nickname,
         probStatus: selectUserData.probStatus ? '1' : '0',
-        roleId: selectUserData.role.roleId,
+        roleId: selectUserData.role.roleId || null,
     })
 
     const probItem = [
@@ -23,17 +26,31 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, roleId,
         { key: '0', value: 'ไม่ผ่านการทดลองงาน' }
     ]
 
+    const fetchRole = async () => {
+        try {
+            const res = await roleService.getRolesByDepartmentId(isSuperAdmin ? selector.agent : currentUser.agent.agentId, Number(selectDepartment))
+            setRoleData(res)
+        } catch (err) {
+            console.log('Can not Fetch Role At Add Employee Modal', err)
+        }
+    }
+
+    useEffect(() => {
+        fetchRole()
+    }, [selectDepartment])
+
     const handleUpdate = async () => {
         try {
             await userService.updateUser(userData, [selectUserData.username])
             toast.success('บันทึกข้อมูลพนักงานเรียบร้อย')
+            fetchData()
         } catch (err) {
             console.log(err)
             toast.error('บันทึกข้อมูลพนักงานไม่สำเร็จ')
         }
     }
+    const isDisabled = userData.name === '' || userData.nickname === '' || userData.roleId === null
 
-    console.log(userData)
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
@@ -54,8 +71,8 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, roleId,
                         </div>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>ตำแหน่ง</span>
-                            <Select aria-label='ตำแหน่ง' size='sm' defaultSelectedKeys={[String(userData.roleId)]} onChange={(e) => setUserData(prev => ({ ...prev, roleId: Number(e.target.value) }))}>
-                                {roleId.filter(a => a?.department?.departmentId === selectDepartment).map((role) => (
+                            <Select aria-label='ตำแหน่ง' size='sm' defaultSelectedKeys={[String(userData.roleId)]} onChange={(e) => setUserData(prev => ({ ...prev, roleId: Number(e.target.value) || null }))}>
+                                {roleData?.map((role) => (
                                     <SelectItem key={role.roleId} value={role.roleId}>{role.roleName}</SelectItem>
                                 ))}
                             </Select>
@@ -68,8 +85,8 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, roleId,
                     </Select>
                 </ModalBody>
                 <ModalFooter className='my-2'>
-                    <Button size='sm' color='primary' className='px-6' onPress={handleUpdate}>บันทึก</Button>
-                    <Button size='sm' className='px-6'>ยกเลิก</Button>
+                    <Button size='sm' color='primary' isDisabled={isDisabled} className='px-6' onPress={() => { handleUpdate(); onClose() }}>บันทึก</Button>
+                    <Button size='sm' className='px-6' onPress={onClose}>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>
