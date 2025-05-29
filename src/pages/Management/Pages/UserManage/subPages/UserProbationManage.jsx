@@ -1,7 +1,6 @@
 import { Accordion, AccordionItem, Avatar, Button, Card, CardHeader, Checkbox, Listbox, ListboxItem, ListboxSection, select, Select, SelectItem, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { useEffect, useState } from "react";
 import fetchProtectedData from "../../../../../../utils/fetchData";
-import { URLS } from "../../../../../config";
 import { useAppContext } from "../../../../../contexts/AppContext";
 import AgentSelector from "../../../../../component/AgentSelector";
 import { toastError, toastSuccess } from "../../../../../component/Alert";

@@ -2,7 +2,6 @@ import { Button, Card, DateInput, DatePicker, Divider, Listbox, ListboxItem, Sel
 import { useAppContext } from "../../../../../contexts/AppContext"
 import { toastError, toastSuccess, toastWarning } from "../../../../../component/Alert";
 import fetchProtectedData from "@/utils/fetchData";
-import { URLS } from "../../../../../config";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowDownStreamlineUltimateIcon, DeleteIcon } from "../../../../../component/Icons";
 import SearchBox from "../../../../../component/SearchBox";

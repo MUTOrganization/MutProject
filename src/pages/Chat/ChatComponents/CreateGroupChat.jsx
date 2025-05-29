@@ -1,11 +1,12 @@
-import { Avatar, Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea } from '@heroui/react'
-import React, { useRef } from 'react'
+import { Avatar, Button, Input, Textarea } from '@heroui/react'
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
+import React, { useRef, useState } from 'react'
 import { FaMinus, FaPencilAlt, FaPlus } from 'react-icons/fa'
 import AddMember from './AddMember';
 import Select from 'react-select'
 
-function CreateGroupChat({ isOpen, onOpenChange, isOpenModalAddMember, setIsOpenModalAddMember }) {
-
+function CreateGroupChat({ isOpen, onClose }) {
+    const [isOpenModalAddMember, setIsOpenModalAddMember] = useState(false)
     const fileInputRef = useRef(null);
 
     const handleIconClick = () => {
@@ -26,7 +27,7 @@ function CreateGroupChat({ isOpen, onOpenChange, isOpenModalAddMember, setIsOpen
 
     return (
         <>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} >
+            <Modal isOpen={isOpen} onClose={onClose} >
                 <ModalContent className={`${isOpenModalAddMember ? 'max-w-7xl' : 'max-w-3xl'} transition-all duration-200`}>
                     <ModalHeader className='text-slate-600'>สร้างกลุ่มแชท</ModalHeader>
                     <ModalBody className={`${isOpenModalAddMember ? 'flex flex-row justify-between items-start' : 'w-full'}`}>
@@ -36,7 +37,7 @@ function CreateGroupChat({ isOpen, onOpenChange, isOpenModalAddMember, setIsOpen
                                 <div className='relative w-3/12'>
                                     <Avatar name="Image" className="w-28 h-28 text-large bg-slate-100" />
                                     <div onClick={handleIconClick} className='rounded-full absolute bottom-0 right-6 bg-blue-200 p-2 cursor-pointer'>
-                                        <FaPencilAlt className='text-black text-blue-500' />
+                                        <FaPencilAlt className='text-black' />
                                     </div>
                                 </div>
 
@@ -91,7 +92,7 @@ function CreateGroupChat({ isOpen, onOpenChange, isOpenModalAddMember, setIsOpen
                                         options={options}
                                         className='w-36 text-sm'
                                     />
-                                    <span className='px-6 py-1 rounded-md bg-blue-500 text-white text-sm cursor-pointer transition-all duration-300 hover:bg-blue-600 hover:bg-blue-600'>เชิญ</span>
+                                    <span className='px-6 py-1 rounded-md bg-blue-500 text-white text-sm cursor-pointer transition-all duration-300 hover:bg-blue-600'>เชิญ</span>
                                 </div>
                             </div>
                         )}
@@ -99,7 +100,7 @@ function CreateGroupChat({ isOpen, onOpenChange, isOpenModalAddMember, setIsOpen
                     <hr />
                     <ModalFooter>
                         <Button size='sm' color='success' className='text-white px-8'>ยืนยัน</Button>
-                        <Button size='sm' className='px-8' onPress={onOpenChange}>ยกเลิก</Button>
+                        <Button size='sm' className='px-8' onPress={onClose}>ยกเลิก</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal >

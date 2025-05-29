@@ -2,7 +2,6 @@ import { Button, Card, Checkbox, Chip, CircularProgress, Input, Select, SelectIt
 import { useAppContext } from "../../../../../contexts/AppContext"
 import { useCallback, useEffect, useMemo, useState } from "react";
 import fetchProtectedData from "@/utils/fetchData";
-import { URLS } from "../../../../../config";
 import { groupArray, moveToLastOfArray } from "@/utils/arrayFunc";
 import { SearchMatchScore } from "@/utils/search";
 import { getProfileColor, getUserName } from "@/utils/util";

@@ -8,6 +8,7 @@ import { CircularProgress } from "@heroui/react";
 import { Toaster } from "sonner";
 import FloatingButton from "./pages/Chat/FloatingButton";
 import { SocketProvider } from "./contexts/SocketContext";
+import ChatContextProvider from "./pages/Chat/ChatContext";
 
 
 
@@ -107,8 +108,10 @@ function App() {
                     />
                   ))}
                 </Routes>
+                <ChatContextProvider>
+                  <FloatingButton />
+                </ChatContextProvider>
               </SocketProvider>
-              <FloatingButton />
               <Toaster richColors />
             </ProtectedRoute>
           }
