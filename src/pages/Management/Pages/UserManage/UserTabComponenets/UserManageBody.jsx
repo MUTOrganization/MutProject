@@ -2,14 +2,18 @@ import UserProfileAvatar from '@/component/UserProfileAvatar'
 import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
-import { FaEdit, FaPencilAlt, FaPlus, FaPlusCircle, FaPlusSquare, FaRegEdit, FaTrashAlt, FaUserEdit } from 'react-icons/fa'
+import { FaBan, FaEdit, FaPencilAlt, FaPlus, FaPlusCircle, FaPlusSquare, FaRegEdit, FaTrashAlt, FaUserEdit } from 'react-icons/fa'
 import AddEmployee from '../UserTabModal/AddEmployee'
 import roleService from '@/services/roleService'
 import CloseStatus from '../UserTabModal/CloseStatus'
+import EditEmployeeModal from '../UserTabModal/EditEmployeeModal'
 
-function UserManageBody({ userList, isLoading, fetchData }) {
+function UserManageBody({ userList, isLoading, fetchData, roleId, departmentId }) {
+    // Open Modal
     const [isOpenAddmployeeModal, setIsOpenAddmployeeModal] = useState(false)
     const [isOpenCloseStatusModal, setIsOpenCloseStatusModal] = useState(false)
+    const [isOpenUpdateUserModal, setIsOpenUpdateUserModal] = useState(false)
+
     const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
@@ -63,10 +67,10 @@ function UserManageBody({ userList, isLoading, fetchData }) {
                                 </div>
                             </TableCell>
                             <TableCell className='w-2/12'>
-                                <div className='flex flex-row justify-center items-center w-full space-x-1'>
+                                <div className='flex flex-row justify-center items-center w-full'>
                                     <span className='px-3 py-1 rounded-lg bg-slate-200 text-slate-600 cursor-pointer hover:bg-slate-300 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
-                                    <div className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
-                                    <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaTrashAlt className='text-red-500 font-bold text-sm' /></span></div>
+                                    <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
+                                    <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaBan className='text-red-500 font-bold text-sm' /></span></div>
                                 </div>
                             </TableCell>
                         </TableRow>
@@ -74,14 +78,30 @@ function UserManageBody({ userList, isLoading, fetchData }) {
                 </TableBody>
             </Table>
 
+            {/* Add User */}
             {isOpenAddmployeeModal && (
                 <AddEmployee
                     isOpen={isOpenAddmployeeModal}
                     onClose={() => setIsOpenAddmployeeModal(false)}
                     fetchData={fetchData}
+                    roleId={roleId}
+                    departmentId={departmentId}
                 />
             )}
 
+            {/* Update User */}
+            {isOpenUpdateUserModal && (
+                <EditEmployeeModal
+                    isOpen={isOpenUpdateUserModal}
+                    onClose={() => setIsOpenUpdateUserModal(false)}
+                    selectUserData={selectUserData}
+                    fetchData={fetchData}
+                    roleId={roleId}
+                    departmentId={departmentId}
+                />
+            )}
+
+            {/* Change Status */}
             {isOpenCloseStatusModal && (
                 <CloseStatus
                     isOpen={isOpenCloseStatusModal}
@@ -90,6 +110,7 @@ function UserManageBody({ userList, isLoading, fetchData }) {
                     fetchData={fetchData}
                 />
             )}
+
         </div>
     )
 }

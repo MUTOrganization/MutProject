@@ -8,18 +8,9 @@ import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-function AddEmployee({ isOpen, onClose, fetchData }) {
+function AddEmployee({ isOpen, onClose, fetchData, roleId, departmentId }) {
 
     const { currentUser } = useAppContext()
-
-    // Fetch Role Data
-    const [roleId, setRoleId] = useState([])
-    const [departmentId, setDepartmentId] = useState([])
-
-    // Other State
-    const [selectDepartment, setSelectDepartment] = useState(null)
-    const [selectRole, setSelectRole] = useState(null)
-
     const [userData, setUserData] = useState({
         username: '',
         name: '',
@@ -28,18 +19,8 @@ function AddEmployee({ isOpen, onClose, fetchData }) {
         roleId: null
     })
 
-    const fetchRoles = async () => {
-        try {
-            const [roles, departments] = await Promise.all([
-                await roleService.getRolesByDepartmentId(currentUser.agent.agentId),
-                await departmentService.getDepartments(currentUser.agent.agentId)
-            ])
-            setRoleId(roles)
-            setDepartmentId(departments)
-        } catch (err) {
-            console.log('Can not Get Roles in AddEmployee Modal', err)
-        }
-    }
+    // Other State
+    const [selectDepartment, setSelectDepartment] = useState(null)
 
     const AddEmployee = async () => {
         try {
@@ -55,10 +36,6 @@ function AddEmployee({ isOpen, onClose, fetchData }) {
 
     const isDisabled = userData.username === '' || userData.name === '' || userData.nickname === '' || userData.password === '' || userData.roleId === null
 
-    useEffect(() => {
-        fetchRoles()
-    }, [])
-    console.log(userData)
     return (
         <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
             <ModalContent>
