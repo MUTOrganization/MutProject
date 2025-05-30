@@ -19,7 +19,7 @@ export default function UserManage() {
     }
     return (
         <section className="w-full">
-            <Card className="flex sm:p-4 max-h-[calc(100vh-120px)] max-w-screen-2xl overflow-hidden" shadow="none" radius="sm">
+            <Card className="flex sm:p-4" shadow="none" radius="sm">
                 <Tabs
                     aria-label="Options"
                     color="primary"

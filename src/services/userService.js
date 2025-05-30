@@ -33,6 +33,7 @@ async function createUser(username, name, nickname, password, displayImgUrl, rol
         displayImgUrl,
         roleId
     })
+    return res.data
 }
 
 async function changeStatus(username) {
@@ -41,8 +42,34 @@ async function changeStatus(username) {
     return res.data
 }
 
+async function updateUser(userData, usernameList) {
+    const url = 'users/update'
+    const filteredData = Object.fromEntries(
+        Object.entries(userData).filter(([_, v]) => v != null && v !== '')
+    );
+
+    const body = {
+        username: usernameList,
+        ...filteredData
+    };
+
+    const res = await api.put(url, body)
+    return res.data
+}
+
+async function changePassword(username, password) {
+    const url = 'users/changePassword'
+    const res = await api.put(url, {
+        username,
+        password
+    })
+    return res.data
+}
+
 export default {
     getAllUser,
     createUser,
-    changeStatus
+    changeStatus,
+    updateUser,
+    changePassword
 }

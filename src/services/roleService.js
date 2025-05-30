@@ -4,6 +4,7 @@ import Role from "@/models/roles";
 const roleURL = 'roles'
 
 async function getRolesByDepartmentId(agentId, departmentId) {
+   
     const url = `${roleURL}/getAll`
     const response = await api.get(url, {
         params: {
