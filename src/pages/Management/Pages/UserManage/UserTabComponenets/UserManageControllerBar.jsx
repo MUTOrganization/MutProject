@@ -28,7 +28,7 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         aria-label='ตัวแทน'
                         variant='bordered'
                         label='ตัวแทน'
-                        disableClearable={true}
+                        // disableClearable={true}
                         placeholder='เลือกตัวแทน'
                         onSelectionChange={(value) =>
                             setSelector((prev) => ({

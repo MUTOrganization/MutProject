@@ -9,7 +9,7 @@ import CloseStatus from '../UserTabModal/CloseStatus'
 import EditEmployeeModal from '../UserTabModal/EditEmployeeModal'
 import ChangePassword from '../UserTabModal/ChangePassword'
 
-function UserManageBody({ isLoadingRole, userList, isLoading, fetchData, roleId, departmentId, isSuperAdmin, selector }) {
+function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperAdmin, selector }) {
     // Open Modal
     const [isOpenAddmployeeModal, setIsOpenAddmployeeModal] = useState(false)
     const [isOpenCloseStatusModal, setIsOpenCloseStatusModal] = useState(false)
@@ -19,7 +19,7 @@ function UserManageBody({ isLoadingRole, userList, isLoading, fetchData, roleId,
     const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
-        { key: 'dep/role', label: 'แผนก / ตำแหน่ง' },
+        { key: 'dep/role', label: 'แผนก | ตำแหน่ง' },
         { key: 'probStatus', label: 'สถานะการทดลองงาน' },
         { key: 'status', label: 'สถานะการใช้งาน' },
         { key: 'startWork', label: 'วันที่เริ่มทำงาน' },
@@ -63,7 +63,7 @@ function UserManageBody({ isLoadingRole, userList, isLoading, fetchData, roleId,
                                 </div>
 
                             </TableCell>
-                            <TableCell>{user.department.departmentName} / {user.role.roleName}</TableCell>
+                            <TableCell><span className='text-slate-500 font-bold'>{user.department.departmentName}</span> | <span className='text-slate-500'>{user.role.roleName}</span></TableCell>
                             <TableCell>
                                 <span className={`${user.probStatus ? 'text-blue-500 bg-blue-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.probStatus ? 'ผ่านการทดลองงาน' : 'ยังไม่ผ่านการทดลองงาน'}</span>
                             </TableCell>
@@ -71,9 +71,8 @@ function UserManageBody({ isLoadingRole, userList, isLoading, fetchData, roleId,
                                 <span className={`${user.status ? 'text-green-500 bg-green-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.status ? 'ใช้งานอยู่' : 'ปิดการใช้งาน'}</span>
                             </TableCell>
                             <TableCell>
-                                <div className='flex flex-row justify-start items-center space-x-2'>
+                                <div className='flex flex-row justify-start items-center'>
                                     <span>{new Date(user.hireDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
-                                    <span className='cursor-pointer'><FaEdit className='text-blue-500 font-bold text-sm' /></span>
                                 </div>
                             </TableCell>
                             <TableCell className='w-2/12'>

@@ -29,14 +29,11 @@ function UserManageTab() {
         probStatus: null,
         status: null,
     })
-    const prevAgent = useRef(selector.agent);
 
     // Role Check
     const isSuperAdmin = currentUser.baseRole === 'SUPER_ADMIN'
     const isAdmin = currentUser.baseRole === 'ADMIN'
     const isManager = currentUser.baseRole === 'MANAGER'
-
-
 
     const fetchData = async () => {
         setIsLoading(true)
@@ -81,12 +78,11 @@ function UserManageTab() {
             return ''
         }
     }
+    console.log(selector.agent)
 
     useEffect(() => {
         fetchRole()
-        console.log('Data : ', isLoading)
-
-    }, [selector.agent])
+    }, [selector.agent, selector.department])
 
     useEffect(() => {
         if (agentId.length > 0 && selector.agent === null) {
@@ -99,13 +95,11 @@ function UserManageTab() {
         }
     }, [agentId])
 
-    console.log(allUser)
     useEffect(() => {
         if (selector.agent !== null) {
             fetchData()
         }
-        console.log('Data : ', isLoading)
-    }, [selector.agent, selector.department, selector.role, selector.status, selector.probStatus])
+    }, [selector.agent])
 
 
 
