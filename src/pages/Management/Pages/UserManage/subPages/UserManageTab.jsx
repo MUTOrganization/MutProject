@@ -19,6 +19,7 @@ function UserManageTab() {
 
     // Other Stage
     const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingRole, setIsLoadingRole] = useState(false)
 
     // Selector
     const [selector, setSelector] = useState({
@@ -35,6 +36,8 @@ function UserManageTab() {
     const isAdmin = currentUser.baseRole === 'ADMIN'
     const isManager = currentUser.baseRole === 'MANAGER'
 
+
+
     const fetchData = async () => {
         setIsLoading(true)
         try {
@@ -50,10 +53,10 @@ function UserManageTab() {
 
     const fetchRole = async () => {
         try {
-            const [roles, departments, agent] = await Promise.all([
+            const [agent, roles, departments] = await Promise.all([
+                await agentService.getAgent(),
                 await roleService.getRolesByDepartmentId(selectAgentParams(), selectAgentParamsRoleDepId()),
-                await departmentService.getDepartments(selectAgentParams()),
-                await agentService.getAgent()
+                await departmentService.getDepartments(selectAgentParams())
             ])
             setRoleId(roles)
             setDepartmentId(departments)
@@ -65,7 +68,7 @@ function UserManageTab() {
 
     const selectAgentParams = () => {
         if (isSuperAdmin) {
-            return selector.agent === null ? '' : Number(selector.agent)
+            return Number(selector.agent)
         } else {
             return currentUser.agent.agentId
         }
@@ -78,7 +81,13 @@ function UserManageTab() {
             return ''
         }
     }
-    console.log(selector.agent)
+
+    useEffect(() => {
+        fetchRole()
+        console.log('Data : ', isLoading)
+
+    }, [selector.agent])
+
     useEffect(() => {
         if (agentId.length > 0 && selector.agent === null) {
             setSelector(prev => ({
@@ -90,14 +99,21 @@ function UserManageTab() {
         }
     }, [agentId])
 
+    console.log(allUser)
     useEffect(() => {
-        fetchData()
-        fetchRole()
-    }, [selector])
+        if (selector.agent !== null) {
+            fetchData()
+        }
+        console.log('Data : ', isLoading)
+    }, [selector.agent, selector.department, selector.role, selector.status, selector.probStatus])
+
 
 
     const filterUser = () => {
         let userList = allUser
+        if (isManager) {
+            userList = userList.filter(user => user?.department?.departmentId === currentUser?.department?.departmentId)
+        }
         if (selector.department !== null) {
             userList = userList.filter(user => user.department.departmentId === Number(selector.department))
         }
@@ -116,7 +132,7 @@ function UserManageTab() {
     return (
         <div className='flex flex-col space-y-4'>
             <UserManageControllerBar agentId={agentId} departmentId={departmentId} roleId={roleId} selector={selector} setSelector={setSelector} />
-            <UserManageBody userList={filterUser()} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
+            <UserManageBody isLoadingRole={isLoadingRole} userList={filterUser()} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
         </div>
     )
 }

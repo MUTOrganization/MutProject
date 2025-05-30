@@ -9,7 +9,7 @@ import { toast } from 'sonner'
 
 function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departmentId, isSuperAdmin, selector }) {
     const { currentUser } = useAppContext()
-    const [selectDepartment, setSelectDepartment] = useState(selectUserData?.role?.department?.departmentId || null);
+    const [selectDepartment, setSelectDepartment] = useState(selectUserData?.department?.departmentId || null);
 
     // Fetch Data
     const [roleData, setRoleData] = useState([])
@@ -20,12 +20,13 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         probStatus: selectUserData.probStatus ? '1' : '0',
         roleId: selectUserData.role.roleId || null,
     })
-
+    console.log(selectDepartment)
     const probItem = [
         { key: '1', value: 'ผ่านการทดลองงาน' },
         { key: '0', value: 'ไม่ผ่านการทดลองงาน' }
     ]
 
+    // Fetch Current Role
     const fetchRole = async () => {
         try {
             const res = await roleService.getRolesByDepartmentId(isSuperAdmin ? selector.agent : currentUser.agent.agentId, Number(selectDepartment))

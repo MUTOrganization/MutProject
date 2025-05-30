@@ -9,7 +9,7 @@ import CloseStatus from '../UserTabModal/CloseStatus'
 import EditEmployeeModal from '../UserTabModal/EditEmployeeModal'
 import ChangePassword from '../UserTabModal/ChangePassword'
 
-function UserManageBody({ userList, isLoading, fetchData, roleId, departmentId, isSuperAdmin, selector }) {
+function UserManageBody({ isLoadingRole, userList, isLoading, fetchData, roleId, departmentId, isSuperAdmin, selector }) {
     // Open Modal
     const [isOpenAddmployeeModal, setIsOpenAddmployeeModal] = useState(false)
     const [isOpenCloseStatusModal, setIsOpenCloseStatusModal] = useState(false)

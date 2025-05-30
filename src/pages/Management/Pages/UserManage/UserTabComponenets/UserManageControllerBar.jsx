@@ -28,6 +28,7 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         aria-label='ตัวแทน'
                         variant='bordered'
                         label='ตัวแทน'
+                        disableClearable={true}
                         placeholder='เลือกตัวแทน'
                         onSelectionChange={(value) =>
                             setSelector((prev) => ({
@@ -38,7 +39,6 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                             }))
                         }
                         selectedKey={`${selector.agent}`}
-                        allowsEmptyCollection={false}
                     >
                         {agentId.map(item => (
                             <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
@@ -65,7 +65,7 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                 </div>
             )}
 
-            {isManager || isAdmin || isSuperAdmin && (
+            {(isManager || isAdmin || isSuperAdmin) && (
                 <div className='w-48'>
                     <Select
                         aria-label='ตำแหน่ง'
@@ -74,12 +74,17 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         variant='bordered'
                         onChange={(e) => setSelector(prev => ({ ...prev, role: Number(e.target.value) || null }))}
                         value={selector.role || null}
-                        isDisabled={selector.department === null || selector.agent === null}
+                        isDisabled={isSuperAdmin && selector.department === null || selector.agent === null}
                     >
-                        {/* <SelectItem key='ทั้งหมด' value='ทั้งหมด'>ทั้งหมด</SelectItem> */}
-                        {roleId.map(item => (
-                            <SelectItem key={item.roleId} value={item.roleId}>{item.roleName}</SelectItem>
-                        ))}
+                        {isManager ? (
+                            roleId.filter(r => r?.department?.departmentId === currentUser?.department?.departmentId).map(item => (
+                                <SelectItem key={item.roleId} value={item.roleId}>{item.roleName}</SelectItem>
+                            ))
+                        ) : (
+                            roleId.map(item => (
+                                <SelectItem key={item.roleId} value={item.roleId}>{item.roleName}</SelectItem>
+                            ))
+                        )}
                     </Select>
                 </div>
             )}
