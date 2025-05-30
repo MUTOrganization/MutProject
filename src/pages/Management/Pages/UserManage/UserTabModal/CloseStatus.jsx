@@ -2,6 +2,7 @@ import userService from '@/services/userService'
 import { Button } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import React from 'react'
+import { FaExclamationCircle } from 'react-icons/fa'
 import { toast } from 'sonner'
 
 function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
@@ -20,17 +21,19 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
-                <ModalHeader className='text-slate-500'>ยืนยันการปิดการใช้งานผู้ใช้งาน</ModalHeader>
+                <ModalHeader className='text-slate-500'>{selectUserData.status ? 'ปิดการใช้งานผู้ใช้งาน' : 'เปิดการใช้งานผู้ใช้งาน'}</ModalHeader>
                 <ModalBody className='text-center'>
-                    <div className='space-x-2 flex flex-row justify-center items-center bg-slate-100 py-6 shadow-sm rounded-lg'>
-                        <span className='text-slate-600'>ต้องการปิดการใช้งานผู้ใช้งาน</span>
-                        <span className='font-bold text-red-500'>{selectUserData.username}</span>
-                        <span className='text-slate-600'>หรือไม่ ?</span>
+                    <div className='text-center mx-auto'>
+                        <div className='p-5 bg-red-200 rounded-full'><FaExclamationCircle className='text-red-500 text-5xl' /></div>
                     </div>
+                    <div className='text-red-400'>หากปิดการใช้งานแล้วจะไม่สามารถกู้คืนข้อมูลได้!</div>
+                    <div className='font-bold text-slate-500 bg-slate-100 rounded-lg w-5/12 mx-auto py-2'>{selectUserData.username.toUpperCase()}</div>
+                    <div className='text-slate-500 text-xs'>ต้องการปิดการใช้งานหรือไม่ ?</div>
                 </ModalBody>
-                <ModalFooter>
-                    <Button onPress={() => { closeStatus(); onClose() }} className='px-6 py-1' size='sm' color='primary'>ยืนยัน</Button>
-                    <Button onPress={() => onClose()} className='px-6 py-1' size='sm'>ยกเลิก</Button>
+
+                <ModalFooter className='mt-4'>
+                    <Button onPress={() => onClose()} className='px-8 py-1' size='sm'>ยกเลิก</Button>
+                    <Button onPress={() => { closeStatus(); onClose() }} className='px-8 py-1' size='sm' color='danger'>ยืนยัน</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

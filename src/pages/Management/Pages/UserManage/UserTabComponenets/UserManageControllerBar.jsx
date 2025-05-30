@@ -108,8 +108,9 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
             <div className='w-48'>
                 <Select
                     aria-label='สถานะการทดลองงาน'
+                    label='สถานะการทดลองงาน'
                     variant='bordered'
-                    placeholder='สถานะการทดลองงาน'
+                    placeholder='ทั้งหมด'
                     onChange={(e) => setSelector(prev => ({ ...prev, probStatus: Number(e.target.value) === 1 ? true : Number(e.target.value) === 2 ? false : null }))}
                     value={selector.probStatus || null}
                 >
@@ -122,10 +123,12 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
             <div className='w-2/12'>
                 <Select
                     aria-label='สถานะการใช้งาน'
+                    label='สถานะการใช้งาน'
                     variant='bordered'
-                    placeholder='สถานะการใช้งาน'
-                    onChange={(e) => setSelector(prev => ({ ...prev, status: Number(e.target.value) === 1 ? true : Number(e.target.value) === 2 ? false : null }))}
+                    placeholder='ทั้งหมด'
+                    onChange={(e) => setSelector(prev => ({ ...prev, status: e.target.value || null }))}
                     value={selector.status || null}
+                    defaultSelectedKeys={String(selector.status)}
                 >
                     {statusitem.map(item => (
                         <SelectItem key={item.key} value={item.key}>{item.value}</SelectItem>

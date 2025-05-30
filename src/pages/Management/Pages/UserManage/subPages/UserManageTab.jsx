@@ -26,7 +26,7 @@ function UserManageTab() {
         department: null,
         role: null,
         probStatus: null,
-        status: null,
+        status: 1,
     })
 
     // Role Check
@@ -114,8 +114,9 @@ function UserManageTab() {
         if (selector.probStatus !== null) {
             userList = userList.filter(user => user.probStatus === selector.probStatus)
         }
+        const convertStatus = Number(selector.status) === 1 ? true : Number(selector.status) === 2 ? false : null
         if (selector.status !== null) {
-            userList = userList.filter(user => user.status === selector.status)
+            userList = userList.filter(user => user.status === convertStatus)
         }
         return userList
     }
@@ -123,7 +124,7 @@ function UserManageTab() {
     return (
         <div className='flex flex-col space-y-4'>
             <UserManageControllerBar agentId={agentId} departmentId={departmentId} roleId={roleId} selector={selector} setSelector={setSelector} />
-            <UserManageBody userList={filterUser()} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
+            <UserManageBody userList={filterUser()} isAdmin={isAdmin} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
         </div>
     )
 }
