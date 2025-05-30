@@ -63,7 +63,7 @@ function UserManageBody({ userList, isLoading, fetchData, roleId, departmentId, 
                                 </div>
 
                             </TableCell>
-                            <TableCell>{user.role.department.departmentName} / {user.role.roleName}</TableCell>
+                            <TableCell>{user.department.departmentName} / {user.role.roleName}</TableCell>
                             <TableCell>
                                 <span className={`${user.probStatus ? 'text-blue-500 bg-blue-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.probStatus ? 'ผ่านการทดลองงาน' : 'ยังไม่ผ่านการทดลองงาน'}</span>
                             </TableCell>

@@ -99,7 +99,7 @@ function UserManageTab() {
     const filterUser = () => {
         let userList = allUser
         if (selector.department !== null) {
-            userList = userList.filter(user => user.role.department.departmentId === Number(selector.department))
+            userList = userList.filter(user => user.department.departmentId === Number(selector.department))
         }
         if (selector.role !== null) {
             userList = userList.filter(user => user.role.roleId === Number(selector.role))
