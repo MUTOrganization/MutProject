@@ -1,5 +1,5 @@
 import UserProfileAvatar from '@/component/UserProfileAvatar'
-import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useLink } from '@heroui/react'
+import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, useLink } from '@heroui/react'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
 import { FaBan, FaEdit, FaPencilAlt, FaPlus, FaPlusCircle, FaPlusSquare, FaRegEdit, FaTrashAlt, FaUserEdit } from 'react-icons/fa'
@@ -26,7 +26,7 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
         {
             key: 'action', label: (<div className="text-right w-full">
                 {isSuperAdmin ? (
-                    selector.agent !== null && (
+                    selector.agent !== 'ทั้งหมด' && (
                         <span className='text-green-500 cursor-pointer hover:bg-green-200 transition-all duration-200 px-2 py-1.5 rounded-md' onClick={() => setIsOpenAddmployeeModal(true)}>
                             <FaPlus className="inline-block text-sm" />
                         </span>
@@ -42,6 +42,9 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
 
     return (
         <div className="max-h-[600px] overflow-y-auto rounded-lg scrollbar-hide">
+            <div className='text-end text-slate-500 font-semibold text-sm px-2 py-2'>
+                <span>จำนวนพนักงาน {userList?.length} คน</span>
+            </div>
             <Table aria-label='ตารางพนักงาน' isHeaderSticky removeWrapper className='scroll-y-auto'>
                 <TableHeader columns={columns}>
                     {(column) => (
@@ -78,8 +81,16 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
                             <TableCell className='w-2/12'>
                                 <div className='flex flex-row justify-center items-center w-full'>
                                     <span onClick={() => { setIsOpenChangePasswordModal(true); setSelectUserData(user) }} className='px-3 py-1 rounded-lg bg-slate-200 text-slate-600 cursor-pointer hover:bg-slate-300 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
-                                    <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
-                                    <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaBan className='text-red-500 font-bold text-sm' /></span></div>
+                                    {isSuperAdmin ? (
+                                        selector.agent !== 'ทั้งหมด' && (
+                                            <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
+                                        )
+                                    ) : (
+                                        <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
+                                    )}
+                                    <Tooltip content='ปิดการใช้งาน' placement='top' color='danger'>
+                                        <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-red-100 transition-all duration-200 rounded-full'><span><FaBan className='text-red-500 font-bold text-sm' /></span></div>
+                                    </Tooltip>
                                 </div>
                             </TableCell>
                         </TableRow>

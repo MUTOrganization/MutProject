@@ -19,11 +19,10 @@ function UserManageTab() {
 
     // Other Stage
     const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingRole, setIsLoadingRole] = useState(false)
 
     // Selector
     const [selector, setSelector] = useState({
-        agent: null,
+        agent: 'ทั้งหมด',
         department: null,
         role: null,
         probStatus: null,
@@ -65,7 +64,7 @@ function UserManageTab() {
 
     const selectAgentParams = () => {
         if (isSuperAdmin) {
-            return Number(selector.agent)
+            return selector.agent === 'ทั้งหมด' ? '' : Number(selector.agent)
         } else {
             return currentUser.agent.agentId
         }
@@ -78,22 +77,22 @@ function UserManageTab() {
             return ''
         }
     }
-    console.log(selector.agent)
 
     useEffect(() => {
         fetchRole()
     }, [selector.agent, selector.department])
 
-    useEffect(() => {
-        if (agentId.length > 0 && selector.agent === null) {
-            setSelector(prev => ({
-                ...prev,
-                agent: String(agentId[0].agentId),
-                department: null,
-                role: null
-            }))
-        }
-    }, [agentId])
+    // useEffect(() => {
+    //     if (agentId.length > 0 && selector.agent === null) {
+    //         setSelector(prev => ({
+    //             ...prev,
+    //             agent: String(agentId[0].agentId),
+    //             department: null,
+    //             role: null
+    //         }))
+    //     }
+    // }, [agentId])
+    console.log(selector)
 
     useEffect(() => {
         if (selector.agent !== null) {
@@ -101,12 +100,10 @@ function UserManageTab() {
         }
     }, [selector.agent])
 
-
-
     const filterUser = () => {
         let userList = allUser
         if (isManager) {
-            userList = userList.filter(user => user?.department?.departmentId === currentUser?.department?.departmentId)
+            userList = userList.filter(user => user?.department?.departmentId === currentUser?.department?.departmentId && user?.username !== currentUser?.username)
         }
         if (selector.department !== null) {
             userList = userList.filter(user => user.department.departmentId === Number(selector.department))
@@ -126,7 +123,7 @@ function UserManageTab() {
     return (
         <div className='flex flex-col space-y-4'>
             <UserManageControllerBar agentId={agentId} departmentId={departmentId} roleId={roleId} selector={selector} setSelector={setSelector} />
-            <UserManageBody isLoadingRole={isLoadingRole} userList={filterUser()} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
+            <UserManageBody userList={filterUser()} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
         </div>
     )
 }
