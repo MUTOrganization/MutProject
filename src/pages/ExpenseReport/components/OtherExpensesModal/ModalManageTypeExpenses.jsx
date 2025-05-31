@@ -55,7 +55,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
                             )}
                         </TableHeader>
 
-                        <TableBody>
+                        <TableBody emptyContent='ไม่พบข้อมูลประเภทค่าใช้จ่าย'>
                             {typeData.map((data, index) => (
                                 <TableRow key={`${data.username}-${index}`} className='text-center text-slate-600'>
                                     <TableCell className='text-center'>{data.typeName}</TableCell>

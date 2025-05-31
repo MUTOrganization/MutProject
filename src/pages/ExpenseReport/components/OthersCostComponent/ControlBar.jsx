@@ -49,11 +49,15 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
         getTypeData()
     }, [selectAgent])
 
+    // useEffect(() => {
+    //     if (typeData?.length > 0 && selectType === null) {
+    //         setSelectType(typeData[0]?.expensesTypeId);
+    //     }
+    // }, [typeData, selectAgent]);
+
     useEffect(() => {
-        if (typeData?.length > 0 && !selectType) {
-            setSelectType(typeData[0].expensesTypeId);
-        }
-    }, [typeData]);
+        setSelectType(null)
+    }, [selectAgent])
 
     // All Function
     const addExpenseItem = () => {
@@ -83,6 +87,16 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
         }));
     };
 
+    const handleValidate = () => {
+        const hasEmptyField = selectedData.list.some(e =>
+            !e.name?.trim() || !e.price?.trim()
+        )
+        if (hasEmptyField || selectType === null) {
+            return true
+        }
+        return false
+    }
+
     const handleConfirmAdd = async () => {
         try {
             await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
@@ -96,22 +110,21 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
 
     const isDisabled = selectedData.list.some(e =>
         !e.name || e.name.trim() === '' ||
-        // !e.qty || e.qty.trim() === '' ||
         !e.price || e.price.trim() === '' ||
         !selectType || selectType === null
     );
 
-    const handleChange = (selectedKey) => {
-        let getKey = selectedKey.target.value
-        const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
-        setSelectType(findValueById?.typeName)
-    };
+    // const handleChange = (selectedKey) => {
+    //     let getKey = selectedKey.target.value
+    //     const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
+    //     setSelectType(findValueById?.typeName)
+    // };
 
     // #region Return
     return (
         <>
-            <div className='flex flex-col lg:flex-row lg:justify-between items-center'>
-                <div className='header p-3 flex flex-col lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
+            <div className='flex flex-col lg:space-y-0 lg:flex-row lg:justify-between items-center w-full'>
+                <div className='header p-3 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
                     <DateSelector value={dateRange} onChange={setDateRange} />
                     {currentUser.baseRole === 'SUPER_ADMIN' && (
                         <>
@@ -188,6 +201,9 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     expensesDate={expensesDate}
                     setExpensesDate={setExpensesDate}
                     setSelectType={setSelectType}
+                    selectType={selectType}
+                    selectAgent={selectAgent}
+                    handleValidate={handleValidate}
                 />
             )}
 
@@ -198,6 +214,8 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     currentUser={currentUser}
                     typeData={typeData}
                     getTypeData={getTypeData}
+                    isSuperAdmin={isSuperAdmin}
+                    selectAgent={selectAgent}
                 />
             )}
 

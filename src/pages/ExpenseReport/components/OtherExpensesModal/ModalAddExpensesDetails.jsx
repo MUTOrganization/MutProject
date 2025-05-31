@@ -1,12 +1,23 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
-import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, Select, SelectItem, DatePicker } from "@heroui/react";
-import React, { useContext, useRef } from 'react'
-import { FaPlusCircle, FaTrash } from 'react-icons/fa';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
+import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker } from "@heroui/react";
+import React, { useContext, useEffect, useRef } from 'react'
+import { FaExclamationCircle, FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
 import { formatNumber } from "@/component/FormatNumber";
+import { Select, SelectItem } from "@nextui-org/select";
+import { toast } from "sonner";
 
 function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, setSelectType }) {
+    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, setSelectType, selectType, selectAgent, handleValidate }) {
+
+    const handleAccept = () => {
+        if (handleValidate()) {
+            toast.error('กรุณากรอกข้อมูลให้ครบ')
+            return
+        }
+        onClose();
+        handleConfirmAdd();
+    }
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
@@ -14,21 +25,22 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
                     <div className='space-y-8'>
-                        <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
+                        <div className="flex w-full flex-col gap-0 lg:gap-2 items-start">
                             <label className="text-sm text-slate-500">ระบุวันที่</label>
                             <DatePicker
                                 value={expensesDate}
                                 onChange={(e) => setExpensesDate(e)}
                                 granularity="day"
+                                aria-label="Select a date"
                             />
                         </div>
                         <div className='relative'>
                             <div className='flex justify-end mb-3'>
-                                <select onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
+                                <Select variant="bordered" placeholder="เลือกประเภท" aria-label="Select a type" key={selectAgent} className="w-48" value={selectType || null} onChange={(e) => setSelectType(Number(e.target.value) || null)}>
                                     {typeData?.filter(e => e.status === true).map((item) => (
-                                        <option value={item.expensesTypeId}>{item.typeName}</option>
+                                        <SelectItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName}</SelectItem>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
                             <Table className=''>
                                 <TableHeader className=''>
@@ -45,6 +57,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                             <TableRow key={index}>
                                                 <TableCell className="w-5/12" >
                                                     <Input maxLength={50} className="shadow-sm"
+                                                        aria-label="Input a name"
                                                         type="text"
                                                         value={item.name}
                                                         disabled={isEnable}
@@ -55,6 +68,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                 </TableCell>
                                                 <TableCell className="w-2/12">
                                                     <Input
+                                                        aria-label="Input a qty"
                                                         type="text"
                                                         maxLength={6}
                                                         value={item.qty}
@@ -77,6 +91,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                 </TableCell>
                                                 <TableCell className='w-3/12'>
                                                     <Input
+                                                        aria-label="Input a price"
                                                         type="text"
                                                         maxLength={10}
                                                         value={item.price}
@@ -132,7 +147,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                         </div>
 
                         <div className="other w-full">
-                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
+                            <div className="flex w-full flex-col gap-0 lg:gap-2 items-start">
                                 <label className="text-sm text-slate-500">หมายเหตุ</label>
                                 <Textarea
                                     labelPlacement="outside"
@@ -152,12 +167,9 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                         ยกเลิก
                     </Button>
                     <Button
-                        isDisabled={isDisabled}
+                        // isDisabled={isDisabled}
                         color="primary"
-                        onPress={() => {
-                            onClose();
-                            handleConfirmAdd();
-                        }}
+                        onPress={handleAccept}
                     >
                         ยืนยัน
                     </Button>

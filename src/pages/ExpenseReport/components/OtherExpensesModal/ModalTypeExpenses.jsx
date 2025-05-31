@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { toast } from 'sonner'
 import expensesService from '@/services/expensesService'
 
-function ModalTypeExpenses({ isOpen, onClose, currentUser, typeData, getTypeData }) {
+function ModalTypeExpenses({ isOpen, onClose, currentUser, typeData, getTypeData, isSuperAdmin, selectAgent }) {
 
     const [newTypeName, setNewTypeName] = useState('')
 
@@ -14,7 +14,7 @@ function ModalTypeExpenses({ isOpen, onClose, currentUser, typeData, getTypeData
             return;
         } else {
             try {
-                await expensesService.addExpensesType('insert', currentUser.agent.agentId, newTypeName)
+                await expensesService.addExpensesType('insert', isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId, newTypeName)
                 await getTypeData()
                 toast.success('เพิ่มข้อมูลสำเร็จ', { position: 'top-right' })
                 onClose()

@@ -42,7 +42,6 @@ function ModalEdid({ isOpen, onClose, data, typeData }) {
         try {
             await expensesService.editExpensesDetail(data.expensesId, newRemarks, formatDateObject(newDate), list, selectType)
             await getDataOtherExpenses()
-            console.log('EditData success')
             toast.success('แก้ไขข้อมูลสำเร็จ')
         } catch (error) {
             console.log('Error', error)

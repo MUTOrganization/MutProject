@@ -50,7 +50,7 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
             return <span>ไม่พบข้อมูลค่าใช้จ่าย</span>
         }
     }
-    console.log(filterData)
+
     // #region RETURN   
     return (
         <div className='content-conteainer mt-4'>
