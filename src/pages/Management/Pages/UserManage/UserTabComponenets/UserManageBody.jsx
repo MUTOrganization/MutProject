@@ -82,9 +82,13 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                 </TableCell>
                                 <TableCell>
                                     <div className='flex flex-row justify-start items-center w-full'>
+
+                                        {/* Change Password */}
                                         {(isSuperAdmin || isAdmin) && (
                                             <span onClick={() => { setIsOpenChangePasswordModal(true); setSelectUserData(user) }} className='px-3 py-1 rounded-lg bg-yellow-100 text-yellow-600 cursor-pointer hover:bg-yellow-200 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
                                         )}
+
+                                        {/* Edit User Date */}
                                         {isSuperAdmin ? (
                                             selector.agent !== 'ทั้งหมด' && (
                                                 <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
@@ -93,6 +97,8 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                             <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
                                         ) : ''
                                         }
+
+                                        {/* Close Status User */}
                                         {user?.status && (isSuperAdmin || isAdmin) && (
                                             <Tooltip content={'ปิดการใช้งาน'} placement='top' color='danger'>
                                                 <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className={`${user.status ? 'text-red-500  hover:bg-red-100' : 'text-green-500  hover:bg-green-100'} p-2 cursor-pointer transition-all duration-200 rounded-full`}><span> <FaBan /> </span></div>

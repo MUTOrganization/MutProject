@@ -21,7 +21,7 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
-                <ModalHeader className='text-slate-500'>{selectUserData.status ? 'ปิดการใช้งานผู้ใช้งาน' : 'เปิดการใช้งานผู้ใช้งาน'}</ModalHeader>
+                <ModalHeader className='text-slate-500'>ปิดการใช้งานผู้ใช้งาน</ModalHeader>
                 <ModalBody className='text-center'>
                     <div className='text-center mx-auto'>
                         <div className='p-5 bg-red-200 rounded-full'><FaExclamationCircle className='text-red-500 text-5xl' /></div>
@@ -30,7 +30,6 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
                     <div className='font-bold text-slate-500 bg-slate-100 rounded-lg w-5/12 mx-auto py-2'>{selectUserData.username.toUpperCase()}</div>
                     <div className='text-slate-500 text-xs'>ต้องการปิดการใช้งานหรือไม่ ?</div>
                 </ModalBody>
-
                 <ModalFooter className='mt-4'>
                     <Button onPress={() => onClose()} className='px-8 py-1' size='sm'>ยกเลิก</Button>
                     <Button onPress={() => { closeStatus(); onClose() }} className='px-8 py-1' size='sm' color='danger'>ยืนยัน</Button>

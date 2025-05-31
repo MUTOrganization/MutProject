@@ -20,7 +20,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         probStatus: selectUserData.probStatus ? '1' : '0',
         roleId: selectUserData.role.roleId || null,
     })
-    console.log(selectDepartment)
+
     const probItem = [
         { key: '1', value: 'ผ่านการทดลองงาน' },
         { key: '0', value: 'ไม่ผ่านการทดลองงาน' }

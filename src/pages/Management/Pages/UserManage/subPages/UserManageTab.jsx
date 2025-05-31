@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import UserManageControllerBar from '../UserTabComponenets/UserManageControllerBar'
 import UserManageBody from '../UserTabComponenets/UserManageBody'
 import { useAppContext } from '@/contexts/AppContext'
@@ -34,6 +34,22 @@ function UserManageTab() {
     const isAdmin = currentUser.baseRole === 'ADMIN'
     const isManager = currentUser.baseRole === 'MANAGER'
 
+    const selectAgentParams = () => {
+        if (isSuperAdmin) {
+            return selector.agent === 'ทั้งหมด' ? '' : Number(selector.agent)
+        } else {
+            return currentUser.agent.agentId
+        }
+    }
+
+    const selectAgentParamsRoleDepId = () => {
+        if (isSuperAdmin) {
+            return Number(selector.department)
+        } else {
+            return ''
+        }
+    }
+
     const fetchData = async () => {
         setIsLoading(true)
         try {
@@ -62,37 +78,10 @@ function UserManageTab() {
         }
     }
 
-    const selectAgentParams = () => {
-        if (isSuperAdmin) {
-            return selector.agent === 'ทั้งหมด' ? '' : Number(selector.agent)
-        } else {
-            return currentUser.agent.agentId
-        }
-    }
-
-    const selectAgentParamsRoleDepId = () => {
-        if (isSuperAdmin) {
-            return Number(selector.department)
-        } else {
-            return ''
-        }
-    }
 
     useEffect(() => {
         fetchRole()
     }, [selector.agent, selector.department])
-
-    // useEffect(() => {
-    //     if (agentId.length > 0 && selector.agent === null) {
-    //         setSelector(prev => ({
-    //             ...prev,
-    //             agent: String(agentId[0].agentId),
-    //             department: null,
-    //             role: null
-    //         }))
-    //     }
-    // }, [agentId])
-    console.log(selector)
 
     useEffect(() => {
         if (selector.agent !== null) {
@@ -100,7 +89,7 @@ function UserManageTab() {
         }
     }, [selector.agent])
 
-    const filterUser = () => {
+    const filterUser = useMemo(() => {
         let userList = allUser
         if (isManager) {
             userList = userList.filter(user => user?.department?.departmentId === currentUser?.department?.departmentId && user?.username !== currentUser?.username)
@@ -119,12 +108,12 @@ function UserManageTab() {
             userList = userList.filter(user => user.status === convertStatus)
         }
         return userList
-    }
+    }, [allUser, selector, currentUser, isManager])
 
     return (
         <div className='flex flex-col space-y-4'>
             <UserManageControllerBar agentId={agentId} departmentId={departmentId} roleId={roleId} selector={selector} setSelector={setSelector} />
-            <UserManageBody userList={filterUser()} isAdmin={isAdmin} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
+            <UserManageBody userList={filterUser} isAdmin={isAdmin} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
         </div>
     )
 }
