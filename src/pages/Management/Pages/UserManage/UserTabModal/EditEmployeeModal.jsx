@@ -1,7 +1,8 @@
+import { toastError, toastSuccess, toastWarning } from '@/component/Alert'
 import { useAppContext } from '@/contexts/AppContext'
 import roleService from '@/services/roleService'
 import userService from '@/services/userService'
-import { Button, Input } from '@heroui/react'
+import { Button, Input, Spinner } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
@@ -21,6 +22,8 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         roleId: selectUserData.role.roleId || null,
     })
 
+    const [isLoadingEdit, setIsLoadingEdit] = useState(false)
+
     const probItem = [
         { key: '1', value: 'ผ่านการทดลองงาน' },
         { key: '0', value: 'ไม่ผ่านการทดลองงาน' }
@@ -36,24 +39,37 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         }
     }
 
+    const handleValidate = () => {
+        if (!userData.name.trim() || !userData.nickname.trim() || !userData.roleId || userData.roleId === null) {
+            toastWarning('คำเตือน', 'กรุณากรอกข้อมูลให้ครบ')
+            return true
+        }
+        return false
+    }
+
+    const handleUpdate = async () => {
+        if (handleValidate()) {
+            return;
+        }
+        setIsLoadingEdit(true)
+        try {
+            await userService.updateUser(userData, [selectUserData.username])
+            await fetchData()
+            setIsLoadingEdit(false)
+            onClose()
+            toastSuccess('สำเร็จ', 'แก้ไขข้อมูลพนักงานสำเร็จ')
+        } catch (err) {
+            console.log(err)
+            toastError('ไม่สำเร็จ', 'แก้ไขข้อมูลพนักงานไม่สำเร็จ')
+        }
+    }
+
     useEffect(() => {
         fetchRole()
     }, [selectDepartment])
 
-    const handleUpdate = async () => {
-        try {
-            await userService.updateUser(userData, [selectUserData.username])
-            toast.success('บันทึกข้อมูลพนักงานเรียบร้อย')
-            fetchData()
-        } catch (err) {
-            console.log(err)
-            toast.error('บันทึกข้อมูลพนักงานไม่สำเร็จ')
-        }
-    }
-    const isDisabled = userData.name === '' || userData.nickname === '' || userData.roleId === null
-
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
             <ModalContent>
                 <ModalHeader className='space-x-2'><span className='text-slate-500'>แก้ไขข้อมูลพนักงาน</span> <span className='text-blue-500'>( {selectUserData.username} )</span></ModalHeader>
                 <ModalBody className=''>
@@ -64,7 +80,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                     <div className='flex flex-row justify-between items-center space-x-2'>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>แผนก</span>
-                            <Select aria-label='แผนก' size='sm' defaultSelectedKeys={[String(selectDepartment)]} onChange={(e) => setSelectDepartment(Number(e.target.value) || null)}>
+                            <Select aria-label='แผนก' size='sm' defaultSelectedKeys={[String(selectDepartment)]} onChange={(e) => { setSelectDepartment(Number(e.target.value) || null); setUserData(prev => ({ ...prev, roleId: null })) }}>
                                 {departmentId.map((department) => (
                                     <SelectItem key={department.departmentId} value={department.departmentId}>{department.departmentName}</SelectItem>
                                 ))}
@@ -86,8 +102,11 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                     </Select>
                 </ModalBody>
                 <ModalFooter className='my-2'>
-                    <Button size='sm' color='primary' isDisabled={isDisabled} className='px-6' onPress={() => { handleUpdate(); onClose() }}>บันทึก</Button>
-                    <Button size='sm' className='px-6' onPress={onClose}>ยกเลิก</Button>
+                    <Button size='sm' color='primary' className='px-8' onPress={handleUpdate}>
+                        {isLoadingEdit && <Spinner color='white' size='sm' />}
+                        <span>ยืนยีน</span>
+                    </Button>
+                    <Button size='sm' className='px-8' onPress={onClose}>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

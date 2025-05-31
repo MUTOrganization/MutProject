@@ -1,12 +1,12 @@
+import { toastError, toastSuccess, toastWarning } from '@/component/Alert'
 import { useAppContext } from '@/contexts/AppContext'
 import departmentService from '@/services/departmentService'
 import roleService from '@/services/roleService'
 import userService from '@/services/userService'
-import { Button, DatePicker, Input } from '@heroui/react'
+import { Button, Input, Spinner } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSuperAdmin, selector }) {
     const { currentUser } = useAppContext()
@@ -14,6 +14,7 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
     // Fetch Role
     const [roleData, setRoleData] = useState([])
 
+    // User Data
     const [userData, setUserData] = useState({
         username: '',
         name: '',
@@ -21,8 +22,12 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
         password: '',
         roleId: null
     })
+
     // Other State
     const [selectDepartment, setSelectDepartment] = useState(null)
+
+    // Loading
+    const [isLoadingAddUser, setIsLoadingAddUser] = useState(false)
 
     // Get Current Role
     const fetchRole = async () => {
@@ -38,22 +43,34 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
         fetchRole()
     }, [selectDepartment])
 
-    const AddEmployee = async () => {
-        if (userList?.find(u => u.username === userData.username)) {
-            toast.error('รหัสพนักงานนี้มีอยู่ในระบบแล้ว')
-            return
+    const handleValidate = () => {
+        if (userList?.some(u => u.username.toLowerCase() === userData.username.toLowerCase())) {
+            toastWarning('คำเตือน', 'รหัสพนักงานนี้มีอยู่ในระบบแล้ว')
+            return true
         }
-        try {
-            await userService.createUser(userData.username, userData.name, userData.nickname, userData.password, null, userData.roleId)
-            toast.success('สำเร็จเพิ่มพนักงาน')
-            fetchData()
-        } catch (err) {
-            console.log('Can not Add Employee', err)
-            toast.error('ไม่สำเร็จเพิ่มพนักงาน')
+        if (!userData.username.trim() || !userData.password.trim() || !userData.name.trim() || !userData.nickname.trim() || !userData.roleId || userData.roleId === null) {
+            toastWarning('คำเตือน', 'กรุณากรอกข้อมูลให้ครบ')
+            return true
         }
+        return false
     }
 
-    const isDisabled = userData.username === '' || userData.name === '' || userData.nickname === '' || userData.password === '' || userData.roleId === null
+    const AddEmployee = async () => {
+        if (handleValidate()) {
+            return
+        }
+        setIsLoadingAddUser(true)
+        try {
+            await userService.createUser(userData.username, userData.name, userData.nickname, userData.password, null, userData.roleId)
+            await fetchData()
+            setIsLoadingAddUser(false)
+            onClose()
+            toastSuccess('สำเร็จ', 'เพิ่มพนักงานสำเร็จ')
+        } catch (err) {
+            console.log('Can not Add Employee', err)
+            toastError('ไม่สำเร็จ', 'เพิ่มพนักงานไม่สำเร็จ')
+        }
+    }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
@@ -92,8 +109,11 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color='primary' size='sm' className='px-6' isDisabled={isDisabled} onPress={() => { AddEmployee(); onClose() }}>ยืนยัน</Button>
-                    <Button size='sm' onPress={() => onClose()}>ยกเลิก</Button>
+                    <Button color='primary' size='sm' className='px-8' onPress={AddEmployee}>
+                        {isLoadingAddUser && <Spinner color='white' size='sm' />}
+                        <span>บันทึก</span>
+                    </Button>
+                    <Button size='sm' className='px-8' onPress={() => onClose()}>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal >
