@@ -6,6 +6,7 @@ let socket;
 export function connectSocket() {
     socket = io(SOCKET_URL, {
         transports: ["websocket"],
+        withCredentials: true,
     });
     return socket;
 }

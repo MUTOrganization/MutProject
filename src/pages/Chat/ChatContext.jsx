@@ -6,37 +6,77 @@ import User from "@/models/user";
 import chatService from "@/services/chatroomService";
 import { joinRoom, leaveRoom } from "@/services/socketHandler.js/general";
 import userService from "@/services/userService";
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useMemo } from "react";
+import { getRoomName } from "./utils";
 
 const ChatContext = createContext({
     /** @type {Array<ChatRoom>} */
     chatRooms: [],
+    setChatRooms: () => {},
     isChatRoomsLoading: false,
     /** @type {Array<User>} */
     userList: [],
     isUserListLoading: false,
+    /** @type {Map<String, User>} */
+    userMap: new Map(),
     /** @type {ChatRoom} */
     currentChatRoom: null,
     setCurrentChatRoom: () => {},
+    /** @type {{[key: string]: Date}} */
+    chatRoomLastReads: {},
+    setChatRoomLastReads: () => {},
+    /** @type {{[key: string]: boolean}} */
+    roomsReadStatus: {},
 })
 
+
 export default function ChatContextProvider({ children }) {
-    const { currentUser } = useAppContext()
-    const { socket } = useSocketContext()
-    /** @type {Array<ChatRoom>} */
-    const [chatRooms, setChatRooms] = useState([]);
-    const [isChatRoomsLoading, setIsChatRoomsLoading] = useState(false);
-    /** @type {Array<User>} */
-    const [userList, setUserList] = useState([])
-    const [isUserListLoading, setIsUserListLoading] = useState(false)
+    const { currentUser } = useAppContext() // ข้อมูลผู้ใช้งานปัจจุบัน
+    const { socket } = useSocketContext() // socketInstance
+    /** @type {[ChatRoom[]]} */
+    const [chatRooms, setChatRooms] = useState([]); // รายการห้องแชท
+    const [isChatRoomsLoading, setIsChatRoomsLoading] = useState(false); // สถานะการดึงข้อมูลห้องแชท
+    /** @type {[User[]]} */
+    const [userList, setUserList] = useState([]) // รายการผู้ใช้งาน
+    const userMap = useMemo(() => { // ค่าที่เป็น Map ของผู้ใช้งาน
+        return new Map(userList.map(user => [user.username, user]))
+    },[userList])
+    const [isUserListLoading, setIsUserListLoading] = useState(false) // สถานะการดึงข้อมูลผู้ใช้งาน
 
     /** @type {[ChatRoom]} */
-    const [currentChatRoom, setCurrentChatRoom] = useState(null)
+    const [currentChatRoom, setCurrentChatRoom] = useState(null) // ห้องแชทปัจจุบัน
+
+    const [chatRoomLastReads, setChatRoomLastReads] = useState(() => { // ข้อมูลการอ่านข้อความของห้องแชท
+        const _chatRoomLastReadsRaw = localStorage.getItem(`chatRoom-last-read-time`)
+        const _chatRoomLastReads = _chatRoomLastReadsRaw ? JSON.parse(_chatRoomLastReadsRaw) : {}
+        Object.keys(_chatRoomLastReads).forEach(key => {
+            _chatRoomLastReads[key] = new Date(_chatRoomLastReads[key])
+        })
+        return _chatRoomLastReads
+    });
+
+    const roomsReadStatus = useMemo(() => {
+        const _roomsReadStatus = {};
+        chatRooms.forEach(room => {
+            const lastReadTime = chatRoomLastReads[room.chatRoomId];
+            const lastMessage = room.lastMessage;
+            if(!lastMessage) return;
+
+            const lastMessageDate = new Date(lastMessage.createdDate);
+            if(!lastReadTime || lastMessageDate > lastReadTime){
+                _roomsReadStatus[room.chatRoomId] = false;
+            }else{
+                _roomsReadStatus[room.chatRoomId] = true;
+            }
+        })
+        return _roomsReadStatus
+    }, [chatRooms, chatRoomLastReads])
+    
 
     function fetchUserList(){
         setIsUserListLoading(true)
         userService.getAllUser(currentUser.agent.agentId).then((data) => {
-            setUserList(data.filter(user => user.username !== currentUser.username))
+            setUserList(data)
         }).catch((err) => {
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลผู้ใช้งานได้')
@@ -45,41 +85,52 @@ export default function ChatContextProvider({ children }) {
         })
     }
 
-    function fetchChatRooms(){
-        setIsChatRoomsLoading(true)
-        chatService.getChatRooms().then((data) => {
-            setChatRooms(data)
+    async function fetchChatRooms(){
+        try{
+            setIsChatRoomsLoading(true)
+            const data = await chatService.getChatRooms();
+            setChatRooms(data);
             data.forEach(room => {
-                joinRoom(socket, `chatRoomId-${room.chatRoomId}`)
+                joinRoom(socket, getRoomName.chatroom(room.chatRoomId))
             })
-        }).catch((err) => {
+            return data
+        }catch(err){
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลห้องแชทได้')
-        })
-        .finally(() => setIsChatRoomsLoading(false))
+        }finally{
+            setIsChatRoomsLoading(false)
+        }
         
     }
 
     useEffect(() => {
         if(!socket) return;
+        joinRoom(socket, getRoomName.user(currentUser.username))
+        
         fetchUserList();
         fetchChatRooms();
 
         return () => {
+            leaveRoom(socket, getRoomName.user(currentUser.username))
             chatRooms.forEach(room => {
-                leaveRoom(socket, `chatRoomId-${room.chatRoomId}`)
+                leaveRoom(socket, getRoomName.chatroom(room.chatRoomId))
             })
         }
     }, [currentUser, socket])
 
     const value = {
         chatRooms,
+        setChatRooms,
         setIsChatRoomsLoading,
         isChatRoomsLoading,
         userList,
         isUserListLoading,
+        userMap,
         currentChatRoom,
         setCurrentChatRoom,
+        chatRoomLastReads,
+        setChatRoomLastReads,
+        roomsReadStatus,
     }
     return (
         <ChatContext.Provider value={value}>

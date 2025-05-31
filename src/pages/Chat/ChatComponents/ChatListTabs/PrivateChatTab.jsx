@@ -2,10 +2,17 @@ import { Spinner } from "@heroui/react";
 import { useChatContext } from "../../ChatContext"
 import UserProfile from "@/component/UserProfile";
 import { ChevronsRight } from "lucide-react";
+import { useMemo } from "react";
+import { useAppContext } from "@/contexts/AppContext";
 
 
 export default function PrivateChatTab({selectedUser, onSelectUser = () => {}}){
+    const { currentUser } = useAppContext()
     const { userList, isUserListLoading } = useChatContext();
+
+    const displayUserList = useMemo(() => {
+        return userList.filter(user => user.username !== currentUser.username)
+    }, [userList, currentUser])
     return (
         <div className=" w-full relative">
             {
@@ -17,7 +24,7 @@ export default function PrivateChatTab({selectedUser, onSelectUser = () => {}}){
                 : (
                     <div className="w-full flex flex-col gap-2 overflow-y-auto max-h-[520px]">
                         {
-                            userList.map((user) => {
+                            displayUserList.map((user) => {
                                 return(
                                     <div key={user.username} 
                                         className={`w-full flex flex-row justify-between rounded-lg p-1 px-2 items-center transition-all duration-200

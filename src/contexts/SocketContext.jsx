@@ -8,12 +8,15 @@ const SocketContext = createContext({
 });
 
 export const SocketProvider = ({ children }) => {
+    /** @type {[import('socket.io-client').Socket]} */
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
         const socketInstance = connectSocket();  
         setSocket(socketInstance);
-
+        socketInstance.on("hello", (data) => {
+            console.log(data);
+        })
         return () => {
             disconnectSocket();
         }

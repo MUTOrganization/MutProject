@@ -1,4 +1,5 @@
 import Agent from "./agent";
+import { ChatMessage } from "./chatMessage";
 import User from "./user";
 
 export class ChatRoom {
@@ -21,6 +22,8 @@ export class ChatRoom {
         this.agent = data.agent;
         /** @type {Array<User>} */
         this.roomMembers = data.roomMembers;
+        /** @type {ChatMessage} */
+        this.lastMessage = data.lastMessage ? ChatMessage.fromUserMessage(data.lastMessage) : null;
     }
 
 }

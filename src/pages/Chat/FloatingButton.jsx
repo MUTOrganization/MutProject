@@ -3,7 +3,6 @@ import ChatBody from './ChatBody';
 import { MessageSquareText } from 'lucide-react';
 
 function FloatingButton() {
-
     // ตัวเปิด Modal
     const [isOpen, setIsOpen] = useState(false);
     const [isOpen2, setIsOpen2] = useState(false);

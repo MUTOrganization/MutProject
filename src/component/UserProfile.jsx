@@ -9,7 +9,7 @@ export default function UserProfile({user}){
     return(
         <div className="w-full h-16 flex items-center">
             <div className="w-12 rounded-full me-2">
-                <UserProfileAvatar name={user.username}/>
+                <UserProfileAvatar name={user.name}/>
             </div>
             <div className="w-full flex flex-col">
                 <span className="text-sm font-bold">{user.name}</span>

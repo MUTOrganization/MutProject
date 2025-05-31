@@ -15,10 +15,13 @@ async function getPrivateChatRoom(username1, username2){
             username2
         }
     })
+    if(response.data === null || response.data === undefined){
+        return null
+    }
     return new ChatRoom(response.data)
 }
 
-async function createPrivateChatRoom(agentId,username1, username2){
+async function createPrivateChatRoom(agentId, username1, username2){
     const response = await api.post(`chatrooms/create`, {
         agentId: agentId,
         isPrivate: true,
@@ -32,5 +35,6 @@ async function createPrivateChatRoom(agentId,username1, username2){
 
 export default {
     getChatRooms,
-    getPrivateChatRoom
+    getPrivateChatRoom,
+    createPrivateChatRoom
 }

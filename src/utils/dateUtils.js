@@ -1,5 +1,8 @@
 import dayjs from "dayjs";
 import 'dayjs/locale/th'
+import relativeTime from "dayjs/plugin/relativeTime"
+
+dayjs.extend(relativeTime)
 
 export const thaiMonths = [
     "มกราคม",
@@ -72,18 +75,30 @@ export const formatDateObject = (dateObj) => {
     const day = String(dateObj.day).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-  
-  export const formatMonthObject = (dateObj) => {
-    if (!dateObj) return null;
-    const year = dateObj.year;
-    const month = String(dateObj.month).padStart(2, "0");
-    return `${year}-${month}`;
+
+export const formatMonthObject = (dateObj) => {
+  if (!dateObj) return null;
+  const year = dateObj.year;
+  const month = String(dateObj.month).padStart(2, "0");
+  return `${year}-${month}`;
+};
+
+export const formatDateRange = (dateRange) => {
+  return {
+    start: formatDateObject(dateRange.start),
+    end: formatDateObject(dateRange.end),
   };
-  
-  export const formatDateRange = (dateRange) => {
-    return {
-      start: formatDateObject(dateRange.start),
-      end: formatDateObject(dateRange.end),
-    };
-  };
+};
+
+
+export const formatRelativeTime = (date) => {
+  const now = dayjs()
+  const createdDate = dayjs(date)
+
+  const isSameDay = now.diff(createdDate, 'day') < 1;
+
+  return isSameDay
+  ? createdDate.locale('th').format('HH:mm')
+  : createdDate.locale('th').format('D MMM YYYY HH:mm')
+}
   

@@ -1,10 +1,11 @@
 import { Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/modal'
 import React, { useEffect, useState } from 'react'
 import ChatList from './ChatComponents/ChatList'
-import ChatBox from './ChatComponents/ChatBox'
+import ChatBox from './ChatComponents/ChatBox/ChatBox'
 import { useChatContext } from './ChatContext'
 import chatroomService from '@/services/chatroomService'
 import { useAppContext } from '@/contexts/AppContext'
+import { toastError } from '@/component/Alert'
 
 export default function ChatBody({ isOpen, onClose = () => {} }) {
     const { currentUser } = useAppContext()
@@ -13,23 +14,34 @@ export default function ChatBody({ isOpen, onClose = () => {} }) {
     const [selectedUser, setSelectedUser] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
 
+    async function fetchPrivateChatRoom(username){
+        try{
+            setIsLoading(true)
+            const chatRoom = await chatroomService.getPrivateChatRoom(currentUser.username, username)
+            setCurrentChatRoom(chatRoom)
+        }catch(err){
+            console.error(err)
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลห้องแชทได้')
+        }finally{
+            setIsLoading(false)
+        }
+    }
+
     useEffect(() => {
         if(selectedUser && selectedTab === 'private'){
-            chatroomService.getPrivateChatRoom(currentUser.username, selectedUser.username).then((data) => {
-                setCurrentChatRoom(data)
-                console.log(data);
-            }).catch((err) => {
-                console.error(err)
-                toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลห้องแชทได้')
-            })
+            fetchPrivateChatRoom(selectedUser.username)
         }
     }, [selectedUser])
+
+    async function handleStartChat(selectedUser){
+        await fetchPrivateChatRoom(selectedUser.username)
+    }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent className="w-full max-w-7xl h-[80vh]">
                 <ModalHeader className='text-slate-600'>แชท</ModalHeader>
-                <ModalBody className='flex flex-row justify-between items-start'>
+                <ModalBody className='flex flex-row justify-between items-start overflow-auto'>
 
                     {/* list ห้องแชท */}
                     <div className='w-full max-w-[320px] h-full'>
@@ -46,7 +58,7 @@ export default function ChatBody({ isOpen, onClose = () => {} }) {
                     </div>
                     {/* ช่องที่แสดงข้อความ */}
                     <div className='w-full h-full'>
-                        <ChatBox isLoading={isLoading}/>
+                        <ChatBox selectedTab={selectedTab} selectedUser={selectedUser} onStartChat={() => handleStartChat(selectedUser)}/>
                     </div>
 
                 </ModalBody>

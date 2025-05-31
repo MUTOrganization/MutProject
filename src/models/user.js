@@ -31,6 +31,8 @@ export default class User {
         this.agent = data.agent;
         /** @type {import('@/configs/types/rolebase').ROLES} */
         this.baseRole = data.baseRole || '';
+        /** @type {Boolean} */
+        this.status = data.status || true;
     }
 
 }

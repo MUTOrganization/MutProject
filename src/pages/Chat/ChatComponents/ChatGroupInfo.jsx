@@ -9,7 +9,7 @@ function ChatGroupInfo({ isOpen, onOpenChange }) {
                 <ModalHeader>รายละเอียดกลุ่ม</ModalHeader>
                 <ModalBody className='flex flex-col items-center justify-center space-y-4 py-8'>
                     <div className='space-y-4'>
-                        <Avatar name='C' className='w-28 h-28 text-4xl font-bold bg-emerald-200 text-white text-emerald-600' />
+                        <Avatar name='C' className='w-28 h-28 text-4xl font-bold bg-emerald-200 text-emerald-600' />
                         <div className='text-slate-500'>SOME GROUP</div>
                     </div>
                     <div className='flex flex-col space-y-2 items-center justify-center'>

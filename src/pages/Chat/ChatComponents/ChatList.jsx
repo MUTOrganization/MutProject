@@ -1,11 +1,10 @@
 import { Button, Input, Tab, Tabs, Tooltip } from '@heroui/react'
-import React, { useCallback, useEffect, useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
+import React, { useState } from 'react'
 import CreateGroupChat from './CreateGroupChat';
-import { useSocketContext } from '@/contexts/SocketContext';
 import PrivateChatTab from './ChatListTabs/PrivateChatTab';
 import { useChatContext } from '../ChatContext';
 import { PlusIcon } from 'lucide-react';
+import ChatHistoryTab from './ChatListTabs/ChatHistoryTab';
 
 export default function ChatList({ selectedTab, setSelectedTab, selectedUser, setSelectedUser }) {
     const { currentChatRoom, setCurrentChatRoom } = useChatContext();
@@ -28,7 +27,7 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
                 <div className='w-full'>
                     <Tabs aria-label="Options" radius='full' size='sm' selectedKey={selectedTab} onSelectionChange={setSelectedTab}>
                         <Tab key="history" title="แชทล่าสุด">
-                            <span className='text-sm text-slate-500'>History List</span>
+                            <ChatHistoryTab onSelectChatRoom={handleSelectRoom} />
                         </Tab>
                         <Tab key="private" title="แชทส่วนตัว">
                             <PrivateChatTab selectedUser={selectedUser} onSelectUser={handleSelectUser}/>

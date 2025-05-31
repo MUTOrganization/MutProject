@@ -3,9 +3,7 @@ import { useEffect } from "react";
 
 export default function useSocket(eventName, callback){
     const { socket } = useSocketContext();
-    console.log('render');
     useEffect(() => {
-        console.log('asasasaasas');
         if (!socket || !eventName || typeof callback !== "function") {
             if (process.env.NODE_ENV === "development") {
                 console.error(`Invalid socket parameters: `);
