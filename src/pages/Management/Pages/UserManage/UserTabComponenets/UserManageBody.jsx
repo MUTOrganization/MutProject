@@ -19,6 +19,7 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
     const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
+        { key: 'agent', label: 'ตัวแทนที่สังกัด' },
         { key: 'dep/role', label: 'แผนก | ตำแหน่ง' },
         { key: 'probStatus', label: 'สถานะการทดลองงาน' },
         { key: 'status', label: 'สถานะการใช้งาน' },
@@ -68,6 +69,7 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                     </div>
 
                                 </TableCell>
+                                <TableCell><span className='text-slate-500 text-xs'>{user.agent.name}</span></TableCell>
                                 <TableCell><span className='text-slate-500 font-bold'>{user.department.departmentName}</span> | <span className='text-slate-500'>{user.role.roleName}</span></TableCell>
                                 <TableCell>
                                     <span className={`${user.probStatus ? 'text-blue-500 bg-blue-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.probStatus ? 'ผ่านการทดลองงาน' : 'ยังไม่ผ่านการทดลองงาน'}</span>
