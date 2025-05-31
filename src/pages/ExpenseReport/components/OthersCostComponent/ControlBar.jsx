@@ -1,4 +1,4 @@
-import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip } from "@heroui/react";
+import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip, Autocomplete, AutocompleteItem } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import DateSelector from '../../../../component/DateSelector';
@@ -13,7 +13,7 @@ import { endOfMonth, startOfMonth, today } from "@internationalized/date";
 import { formatDateObject } from "@/utils/dateUtils";
 import { FaEraser } from "react-icons/fa";
 
-function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }) {
+function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, isSuperAdmin, setSelectAgent, selectAgent, agentData }) {
 
     const { setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, getDataOtherExpenses } = useContext(Data);
 
@@ -37,7 +37,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
     // fetchData
     const getTypeData = async () => {
         try {
-            const res = await getExpensesType.getExpensesType(currentUser.agent.agentId)
+            const res = await getExpensesType.getExpensesType(isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId)
             setTypeData(res)
         } catch (err) {
             console.log('Error', err)
@@ -47,7 +47,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
     // All Use Effect
     useEffect(() => {
         getTypeData()
-    }, [selectedAgent])
+    }, [selectAgent])
 
     useEffect(() => {
         if (typeData?.length > 0 && !selectType) {
@@ -113,17 +113,21 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
             <div className='flex flex-col lg:flex-row lg:justify-between items-center'>
                 <div className='header p-3 flex flex-col lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
                     <DateSelector value={dateRange} onChange={setDateRange} />
+                    {currentUser.baseRole === 'SUPER_ADMIN' && (
+                        <>
+                            <Autocomplete variant="bordered" selectedKey={`${selectAgent}`} onSelectionChange={(value) => setSelectAgent(value)} aria-label="Agent" label="ตัวแทน" className="w-2/12">
+                                {agentData.map(item => (
+                                    <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
+                                ))}
+                            </Autocomplete>
+                        </>
+                    )}
                     <div className="flex flex-row items-center justify-between space-x-2">
                         <Input type='text' label='รายการ' value={searchText} onChange={(e) => setSearchText(e.target.value)} variant="bordered" size='sm'></Input>
                         <Tooltip content='ล้างการค้ยหา' placement="right" color="danger">
                             <span className="px-2 py-2 bg-red-200 rounded-full cursor-pointer" onClick={() => setSearchText('')}><FaEraser className="text-red-500" /></span>
                         </Tooltip>
                     </div>
-                    {currentUser.businessId === 1 && (
-                        <>
-                            <AgentSelector />
-                        </>
-                    )}
                 </div>
 
                 <div className='btn-container-add'>
@@ -181,11 +185,9 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
                     selectedData={selectedData}
                     typeData={typeData}
                     setSelectedData={setSelectedData}
-                    handleChange={handleChange}
                     expensesDate={expensesDate}
                     setExpensesDate={setExpensesDate}
                     setSelectType={setSelectType}
-                    selectType={selectType}
                 />
             )}
 

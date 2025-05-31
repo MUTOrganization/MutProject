@@ -6,6 +6,7 @@ import { useAppContext } from '../../../contexts/AppContext';
 import { endOfMonth, startOfMonth, today } from '@internationalized/date';
 import expensesService from "@/services/expensesService";
 import { formatDateObject } from "@/utils/dateUtils";
+import agentService from "@/services/agentService";
 
 export const Data = createContext();
 
@@ -19,12 +20,19 @@ function TabsOthersCost() {
   const [isAction, setIsAction] = useState(false)
   const [searchText, setSearchText] = useState('')
 
+  // BaseRole Check
+  const isSuperAdmin = currentUser?.baseRole === 'SUPER_ADMIN'
+  const isAdmin = currentUser?.baseRole === 'ADMIN'
+  const isManager = currentUser?.baseRole === 'MANAGER'
+
   // Fetch Data
   const [typeData, setTypeData] = useState([])
   const [data, setData] = useState([])
+  const [agentData, setAgentData] = useState([])
 
-  // Select Type
+  // Select Data
   const [typeValue, setTypeValue] = useState("ทั้งหมด")
+  const [selectAgent, setSelectAgent] = useState(null)
 
   // Loading
   const [isLoading, setIsLoading] = useState(false)
@@ -42,8 +50,12 @@ function TabsOthersCost() {
   const getDataOtherExpenses = async () => {
     setIsLoading(true)
     try {
-      const res = await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(dateRange.start), formatDateObject(dateRange.end))
-      setData(res);
+      const [expenses, agent] = await Promise.all([
+        await expensesService.getExpensesDetails(isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId, formatDateObject(dateRange.start), formatDateObject(dateRange.end)),
+        await agentService.getAgent()
+      ])
+      setData(expenses);
+      setAgentData(agent);
       setIsLoading(false)
     } catch (error) {
       console.error('ไม่สามารถดึงข้อมูลได้:', error);
@@ -52,15 +64,15 @@ function TabsOthersCost() {
 
   useEffect(() => {
     getDataOtherExpenses();
-  }, [selectedAgent, dateRange])
+  }, [selectAgent, dateRange])
 
   const filterByDateRange = (itemDate) => {
     if (!dateRange || !dateRange.start || !dateRange.end) {
       return true;
     }
 
-    const startDate = new Date(dateRange.start.year, dateRange.start.month - 1, dateRange.start.day);
-    const endDate = new Date(dateRange.end.year, dateRange.end.month - 1, dateRange.end.day);
+    const startDate = new Date(dateRange.start);
+    const endDate = new Date(dateRange.end);
     const dateTarget = new Date(itemDate);
     return dateTarget >= startDate && dateTarget <= endDate;
   };
@@ -82,8 +94,8 @@ function TabsOthersCost() {
         dateRange, setDateRange, data, setData, isAction, setIsAction, currentUser, selectedAgent, typeData, setTypeData,
         typeValue, setTypeValue, getDataOtherExpenses, typeValue, filterData
       }}>
-        <ControlBar expensesDate={expensesDate} setExpensesDate={setExpensesDate} setSearchText={setSearchText} searchText={searchText} />
-        <Contents isLoading={isLoading} />
+        <ControlBar expensesDate={expensesDate} setExpensesDate={setExpensesDate} setSearchText={setSearchText} searchText={searchText} isSuperAdmin={isSuperAdmin} setSelectAgent={setSelectAgent} selectAgent={selectAgent} agentData={agentData} />
+        <Contents isLoading={isLoading} isSuperAdmin={isSuperAdmin} selectAgent={selectAgent} />
       </Data.Provider>
     </div >
   )

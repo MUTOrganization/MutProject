@@ -5,10 +5,8 @@ import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
 import { formatNumber } from "@/component/FormatNumber";
 
-function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
-
-    const { typeValue, setTypeValue } = useContext(Data)
+function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, isDisabled,
+    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, setSelectType }) {
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
