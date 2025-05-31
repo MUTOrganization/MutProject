@@ -49,12 +49,6 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
         getTypeData()
     }, [selectAgent])
 
-    // useEffect(() => {
-    //     if (typeData?.length > 0 && selectType === null) {
-    //         setSelectType(typeData[0]?.expensesTypeId);
-    //     }
-    // }, [typeData, selectAgent]);
-
     useEffect(() => {
         setSelectType(null)
     }, [selectAgent])
@@ -91,34 +85,11 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
         const hasEmptyField = selectedData.list.some(e =>
             !e.name?.trim() || !e.price?.trim()
         )
-        if (hasEmptyField || selectType === null) {
+        if (hasEmptyField || selectType === null || !selectedData.remark?.trim()) {
             return true
         }
         return false
     }
-
-    const handleConfirmAdd = async () => {
-        try {
-            await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
-            await getDataOtherExpenses()
-            toastSuccess('เพิ่มข้อมูลสำเร็จ')
-        } catch (error) {
-            console.error('Error adding other expenses:', error);
-            toastError('เพิ่มข้อมูลไม่สำเร็จ')
-        }
-    };
-
-    const isDisabled = selectedData.list.some(e =>
-        !e.name || e.name.trim() === '' ||
-        !e.price || e.price.trim() === '' ||
-        !selectType || selectType === null
-    );
-
-    // const handleChange = (selectedKey) => {
-    //     let getKey = selectedKey.target.value
-    //     const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
-    //     setSelectType(findValueById?.typeName)
-    // };
 
     // #region Return
     return (
@@ -190,8 +161,6 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     setTypeData={setTypeData}
                     setIsEnable={setIsEnable}
                     isEnable={isEnable}
-                    isDisabled={isDisabled}
-                    handleConfirmAdd={handleConfirmAdd}
                     handleExpenseChange={handleExpenseChange}
                     handleDeleteList={handleDeleteList}
                     addExpenseItem={addExpenseItem}
@@ -204,6 +173,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     selectType={selectType}
                     selectAgent={selectAgent}
                     handleValidate={handleValidate}
+                    getDataOtherExpenses={getDataOtherExpenses}
                 />
             )}
 

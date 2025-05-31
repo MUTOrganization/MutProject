@@ -1,21 +1,26 @@
-import React, { useContext } from 'react'
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, ModalFooter } from "@heroui/react";
+import React, { useContext, useState } from 'react'
+import { Button, Modal, ModalBody, ModalContent, ModalHeader, Textarea, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, ModalFooter, Spinner } from "@heroui/react";
 import { toast, Toaster } from 'sonner';
 import expensesService from '@/services/expensesService';
 import { Data } from '../../TabsExpense/TabsOthersCost';
+import { toastError, toastSuccess } from '@/component/Alert';
 
 function ModalDelete({ isOpen, onClose, data }) {
 
     const { getDataOtherExpenses } = useContext(Data)
+    const [isLoadingDelete, setIsLoadingDelete] = useState(false)
 
     const handleDelete = async () => {
+        setIsLoadingDelete(true)
         try {
             await expensesService.deleteExpensesDetails(data.expensesId)
             await getDataOtherExpenses()
-            toast.success('ลบข้อมูลสำเร็จ')
+            setIsLoadingDelete(false)
+            onClose();
+            toastSuccess('Success !', 'ลบข้อมูลสำเร็จ')
         } catch (error) {
             console.log('Something Wrong', error)
-            toast.error('ลบข้อมูลไม่สำเร็จ เกิดข้อผิดพลาด')
+            toastError('Error !', 'ลบข้อมูลไม่สำเร็จ เกิดข้อผิดพลาด')
         }
     }
 
@@ -97,8 +102,9 @@ function ModalDelete({ isOpen, onClose, data }) {
                         <Button color="danger" variant='light' className='h-8 px-10' onPress={onClose}>
                             ยกเลิก
                         </Button>
-                        <Button color="danger" className='h-8 px-10' onPress={() => { handleDelete(); onClose(); }}>
-                            ยืนยันการลบ
+                        <Button color="danger" className='h-8 px-10' onPress={() => { handleDelete(); }}>
+                            {isLoadingDelete && <Spinner color="white" size="sm" />}
+                            <span>ยืนยันการลบ</span>
                         </Button>
                     </ModalFooter>
 

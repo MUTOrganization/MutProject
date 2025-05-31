@@ -7,7 +7,6 @@ import {
     TableHeader,
     TableBody,
     TableRow,
-    getKeyValue,
     SelectItem,
     Select
 } from "@heroui/react";
@@ -16,10 +15,6 @@ import ModalManageOtherExpenses from '../OtherExpensesModal/ModalManageOtherExpe
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEdid from '../OtherExpensesModal/ModalEdid';
 import ModalDelete from '../OtherExpensesModal/ModalDelete';
-import { formatDateObject } from '@/utils/dateUtils';
-import expensesService from '@/services/expensesService'
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
-
 
 export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
     const { typeData, setTypeValue, filterData } = useContext(Data)
@@ -51,6 +46,12 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
         }
     }
 
+    useEffect(() => {
+        if (selectAgent !== null) {
+            setTypeValue('ทั้งหมด')
+        }
+    }, [selectAgent])
+
     // #region RETURN   
     return (
         <div className='content-conteainer mt-4'>
@@ -70,6 +71,7 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
             </div>
             <div className='ps-4'>
                 <Select
+                    key={selectAgent}
                     color="primary"
                     className="w-48"
                     size="sm"
@@ -155,6 +157,7 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
                     onClose={() => setIsModalEdit(false)}
                     data={selectData}
                     typeData={typeData}
+                    selectAgent={selectAgent}
                 />
             )}
 

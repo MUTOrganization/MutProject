@@ -1,23 +1,37 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
-import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker } from "@heroui/react";
-import React, { useContext, useEffect, useRef } from 'react'
+import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Spinner } from "@heroui/react";
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FaExclamationCircle, FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
 import { formatNumber } from "@/component/FormatNumber";
 import { Select, SelectItem } from "@nextui-org/select";
 import { toast } from "sonner";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
+import expensesService from "@/services/expensesService";
+import { formatDateObject } from "@/utils/dateUtils";
 
-function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, setSelectType, selectType, selectAgent, handleValidate }) {
+function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, getDataOtherExpenses, handleExpenseChange, handleDeleteList, addExpenseItem,
+    expensesDate, setExpensesDate, setSelectType, selectType, selectAgent, handleValidate }) {
 
-    const handleAccept = () => {
+    const [isLoadAdd, setIsLoadingAdd] = useState(false)
+
+    const handleConfirmAdd = async () => {
         if (handleValidate()) {
-            toast.error('กรุณากรอกข้อมูลให้ครบ')
-            return
+            toastWarning('เกิดข้อผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ')
+            return;
         }
-        onClose();
-        handleConfirmAdd();
-    }
+        setIsLoadingAdd(true)
+        try {
+            await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
+            await getDataOtherExpenses()
+            setIsLoadingAdd(false)
+            onClose();
+            toastSuccess('Success !', 'เพิ่มข้อมูลค่าใช้จ่ายเรียบร้อย')
+        } catch (error) {
+            console.error('Error adding other expenses:', error);
+            toastError('Error !', 'เพิ่มข้อมูลค่าใช้จ่ายไม่สำเร็จ')
+        }
+    };
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
@@ -166,12 +180,9 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                     <Button color="danger" variant="light" onPress={onClose}>
                         ยกเลิก
                     </Button>
-                    <Button
-                        // isDisabled={isDisabled}
-                        color="primary"
-                        onPress={handleAccept}
-                    >
-                        ยืนยัน
+                    <Button color="primary" onPress={handleConfirmAdd}>
+                        {isLoadAdd && <Spinner color="white" size="sm" />}
+                        <span>ยืนยัน</span>
                     </Button>
                 </ModalFooter>
             </ModalContent>

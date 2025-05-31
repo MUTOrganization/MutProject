@@ -1,16 +1,18 @@
 import React, { useContext, useState } from 'react'
-import { Button, Modal, ModalBody, ModalContent, ModalHeader, ModalFooter, Textarea, Table, TableHeader, SelectItem, TableColumn, Select, TableBody, TableRow, TableCell, Input, DatePicker } from "@heroui/react";
+import { Button, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, DatePicker, Spinner } from "@heroui/react";
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { useAppContext } from '@/contexts/AppContext';
 import { toast, Toaster } from 'sonner';
 import expensesService from '@/services/expensesService';
 import { formatDateObject } from '@/utils/dateUtils';
-import { toastError } from '@/component/Alert';
+import { toastError, toastSuccess, toastWarning } from '@/component/Alert';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { fromDate } from '@internationalized/date';
+import { Select, SelectItem } from '@nextui-org/select';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
 
-function ModalEdid({ isOpen, onClose, data, typeData }) {
-    const { currentUser } = useAppContext();
+function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
+
     const { getDataOtherExpenses } = useContext(Data)
 
     const initializeListWithTotal = (details = []) => {
@@ -28,38 +30,44 @@ function ModalEdid({ isOpen, onClose, data, typeData }) {
     const [list, setList] = useState(() => initializeListWithTotal(data.details));
     const [newRemarks, setNewRemarks] = useState(data.remarks)
     const [newDate, setNewDate] = useState(fromDate(new Date(data?.expensesDate)))
-    const [selectType, setSelectType] = useState(data?.expensesTypeId)
+    const [selectType, setSelectType] = useState(data?.expensesTypeId || null)
+    const [isLoadingEdit, setIsLoadingEdit] = useState(false)
 
     const handleAddWithDraw = () => {
-        setList(prev => [...prev, { name: null, qty: null, price: null, totalAmount: null }])
+        setList(prev => [...prev, { name: '', qty: '', price: '', totalAmount: '' }])
     }
 
     const handleDeleteWithDraw = (index) => {
         setList(prev => prev.filter((_, i) => i !== index));
     }
 
+    const handleValidate = () => {
+        const hasEmptyField = list.some(e =>
+            !e.name?.trim() || !String(e.price).trim()
+        )
+        if (hasEmptyField || selectType === null || !newRemarks?.trim()) {
+            return true
+        }
+        return false
+    }
+
     const handleEdit = async () => {
+        if (handleValidate()) {
+            toastWarning('คำเตือน !', 'กรุณากรอกข้อมูลให้ครบ')
+            return;
+        }
+        setIsLoadingEdit(true)
         try {
             await expensesService.editExpensesDetail(data.expensesId, newRemarks, formatDateObject(newDate), list, selectType)
             await getDataOtherExpenses()
-            toast.success('แก้ไขข้อมูลสำเร็จ')
+            setIsLoadingEdit(false)
+            onClose()
+            toastSuccess('Success !', 'แก้ไขข้อมูลสำเร็จ')
         } catch (error) {
             console.log('Error', error)
-            toast.error('แก้ไขข้อมูลไม่สำเร็จ')
+            toastError('Error !', 'แก้ไขข้อมูลไม่สำเร็จ')
         }
     }
-
-    const isDisabled = list.some(e =>
-        !e.name || e.name.trim() === '' ||
-        // !e.qty || e.qty.trim() === '' ||
-        !e.price || String(e.price).trim() === ''
-    );
-
-    const handleChange = (selectedKey) => {
-        let getKey = selectedKey.target.value
-        const findValueById = typeData.find(e => String(e?.id) === String(getKey));
-        setSelectType(findValueById?.id)
-    };
 
     const sumTotal = list.reduce((sum, item) => sum + parseFloat(item.totalAmount || 0), 0);
 
@@ -70,17 +78,6 @@ function ModalEdid({ isOpen, onClose, data, typeData }) {
                     <ModalHeader>
                         <div className='flex flex-col w-full'>
                             <span className='text-xl'>แก้ไขข้อมูล</span>
-                            <div className='flex flex-row items-baseline justify-between w-full mt-2 font-normal'>
-                                <span className='text-slate-400 text-sm'>สร้างโดย :  {data.create_By}</span>
-                                {data.update_By && data.update_Date && (
-                                    <>
-                                        <div className='flex flex-col items-end space-y-1'>
-                                            <span className='text-slate-400 text-sm'>อัพเดทโดย : {data.update_By}</span>
-                                            <span className='text-slate-400 text-sm'>วันที่อัพเดท : {new Date(data.update_Date).toISOString().split('T')[0]}</span>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
                         </div>
                     </ModalHeader>
                     <ModalBody>
@@ -96,11 +93,11 @@ function ModalEdid({ isOpen, onClose, data, typeData }) {
 
                             <div className='flex justify-end mb-3'>
                                 <div className='flex justify-end mb-3'>
-                                    <select value={selectType} onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
+                                    <Select disallowEmptySelection={true} variant="bordered" key={selectAgent} aria-label="Select a type" className="w-48" defaultSelectedKeys={[`${selectType}`] || null} onChange={(e) => setSelectType(Number(e.target.value) || null)}>
                                         {typeData?.filter(e => e.status === true).map((item) => (
-                                            <option value={item.expensesTypeId}>{item.typeName}</option>
+                                            <SelectItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName || null}</SelectItem>
                                         ))}
-                                    </select>
+                                    </Select>
                                 </div>
                             </div>
 
@@ -240,13 +237,9 @@ function ModalEdid({ isOpen, onClose, data, typeData }) {
                         <Button color="danger" variant="light" onPress={onClose}>
                             ยกเลิก
                         </Button>
-                        <Button color="primary"
-                            isDisabled={isDisabled || list.length === 0}
-                            onPress={() => {
-                                onClose();
-                                handleEdit();
-                            }}>
-                            ยืนยันการแก้ไข
+                        <Button color="primary" onPress={() => { handleEdit(); }}>
+                            {isLoadingEdit && <Spinner color='white' size="sm" />}
+                            <span>ยืนยันการแก้ไข</span>
                         </Button>
                     </ModalFooter>
                 </ModalContent>
