@@ -2,7 +2,6 @@ import { Accordion, AccordionItem, Card, CardBody, CardHeader, Chip, Listbox, Li
 import { useEffect, useMemo, useState } from "react";
 import { toastError } from "@/component/Alert";
 import fetchProtectedData from "@/utils/fetchData";
-import { URLS } from "@/config";
 import { useAppContext } from "@/contexts/AppContext";
 import { HFCheck } from "@/component/Icons";
 import { cFormatter } from "@/utils/numberFormatter";

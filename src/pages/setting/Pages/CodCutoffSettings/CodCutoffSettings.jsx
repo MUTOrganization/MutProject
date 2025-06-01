@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { toastError, toastSuccess } from "@/component/Alert";
 import fetchProtectedData from "@/utils/fetchData";
 import { useAppContext } from "@/contexts/AppContext";
-import { URLS } from "@/config";
 import AdvancedCodCuttoffSettings from "./AdvancedCodCuttoffSettings";
 export default function CodCutoffSettings() {
     const { currentUser } = useAppContext();
