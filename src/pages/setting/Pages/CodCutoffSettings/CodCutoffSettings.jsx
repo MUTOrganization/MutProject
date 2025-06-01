@@ -4,6 +4,7 @@ import { toastError, toastSuccess } from "@/component/Alert";
 import fetchProtectedData from "@/utils/fetchData";
 import { useAppContext } from "@/contexts/AppContext";
 import AdvancedCodCuttoffSettings from "./AdvancedCodCuttoffSettings";
+import { updateSettingCOD } from "@/services/settingCODService";
 export default function CodCutoffSettings() {
     const { currentUser } = useAppContext();
     const [isEdit, setIsEdit] = useState(false);
@@ -22,6 +23,7 @@ export default function CodCutoffSettings() {
     useEffect(() => {
         fetchSettingData();
     }, [])
+    
     const isChanged = useMemo(() => {
         return !oldSetting || (oldSetting.day != selectedDay
             || oldSetting.time !== `${selectedTime.hour.toString().padStart(2, '0')}:${selectedTime.minute.toString().padStart(2, '0')}`
@@ -47,16 +49,26 @@ export default function CodCutoffSettings() {
     }
     const handleSave = async () => {
         const time = isSetTime ? `${selectedTime.hour.toString().padStart(2, '0')}:${selectedTime.minute.toString().padStart(2, '0')}` : '00:00';
+        console.log("Update Setting")
         try {
             setIsLoading(true);
             const now = new Date();
-            const res = await fetchProtectedData.post(URLS.setting.updateCodCutoff, {
-                businessId: currentUser.businessId,
-                day: selectedDay,
-                time: time,
-                createBy: currentUser.userName,
-                startDate: `${now.getFullYear()}-${now.getMonth() + 1}-01`
-            });
+            const currentStartDate = `${now.getFullYear()}-${now.getMonth() + 1}-01`
+            // const res = await fetchProtectedData.post(URLS.setting.updateCodCutoff, {
+            //     businessId: currentUser.businessId,
+            //     day: selectedDay,
+            //     time: time,
+            //     createBy: currentUser.username,
+            //     startDate: `${now.getFullYear()}-${now.getMonth() + 1}-01`
+            // });
+
+            const r = await updateSettingCOD(
+                currentUser.agent.agentId,
+                selectedDay,
+                time,
+                currentUser.username,
+                currentStartDate
+            )
             toastSuccess('บันทึกข้อมูลสำเร็จ', 'เปลี่ยนวันตัดยอดยอดเงินเข้าของเดือนนี้เรียบร้อย');
             setOldSetting({ day: selectedDay, time: time });
             setIsEdit(false);
