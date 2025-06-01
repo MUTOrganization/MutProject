@@ -68,9 +68,10 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
 
     useEffect(() => {
         if (prevDate.start && prevDate.end && allUser.length > 0 && selectAgent !== null) {
+            console.log('Test')
             fetchPrevData()
         }
-    }, [prevDate, allUser, selectAgent])
+    }, [prevDate, allUser])
 
     useEffect(() => {
         setPrevCommissionData([])
@@ -93,7 +94,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                         <div className='text-2xl text-blue-500 font-bold'>{summary.profit}</div>
                     </div>
                     <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
-                        {isPercentLoading || isLoading ? (
+                        {isPercentLoading ? (
                             <Spinner variant='dots' size='sm' color='primary' />
                         ) : (
                             <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
@@ -111,7 +112,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                         <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.sales}</div>
                     </div>
                     <span>
-                        {isPercentLoading || isLoading ? (
+                        {isPercentLoading ? (
                             <Spinner variant='dots' size='sm' color='primary' />
                         ) : (
                             <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span>
@@ -127,7 +128,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                     <div className='mt-8 flex flex-col justify-center items-start py-4'>
                         <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.netExpense}</div>
                         <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
-                            {isPercentLoading || isLoading ? (
+                            {isPercentLoading ? (
                                 <Spinner variant='dots' size='sm' color='primary' />
                             ) : (
                                 <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
