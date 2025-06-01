@@ -94,12 +94,16 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                         <div className='text-2xl text-blue-500 font-bold'>{summary.profit}</div>
                     </div>
                     <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
-                        {isPercentLoading ? (
-                            <Spinner variant='dots' size='sm' color='primary' />
-                        ) : (
-                            <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
-                                {profitCompare?.ProfitValue?.icon} {profitCompare?.ProfitValue?.percent}
-                            </span>
+                        {!isLoading && (
+                            <>
+                                {isPercentLoading ? (
+                                    <Spinner variant='dots' size='sm' color='primary' />
+                                ) : (
+                                    <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
+                                        {profitCompare?.ProfitValue?.icon} {profitCompare?.ProfitValue?.percent}
+                                    </span>
+                                )}
+                            </>
                         )}
                     </span>
                 </div>
@@ -112,10 +116,14 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                         <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.sales}</div>
                     </div>
                     <span>
-                        {isPercentLoading ? (
-                            <Spinner variant='dots' size='sm' color='primary' />
-                        ) : (
-                            <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span>
+                        {!isLoading && (
+                            <>
+                                {isPercentLoading ? (
+                                    <Spinner variant='dots' size='sm' color='primary' />
+                                ) : (
+                                    <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span>
+                                )}
+                            </>
                         )}
                     </span>
 
@@ -128,12 +136,16 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                     <div className='mt-8 flex flex-col justify-center items-start py-4'>
                         <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.netExpense}</div>
                         <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
-                            {isPercentLoading ? (
-                                <Spinner variant='dots' size='sm' color='primary' />
-                            ) : (
-                                <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
-                                    {profitCompare?.percentNetExpenses?.icon} {profitCompare?.percentNetExpenses?.percent}
-                                </span>
+                            {!isLoading && (
+                                <>
+                                    {isPercentLoading ? (
+                                        <Spinner variant='dots' size='sm' color='primary' />
+                                    ) : (
+                                        <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
+                                            {profitCompare?.percentNetExpenses?.icon} {profitCompare?.percentNetExpenses?.percent}
+                                        </span>
+                                    )}
+                                </>
                             )}
                         </span>
                     </div>
