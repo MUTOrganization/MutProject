@@ -7,18 +7,23 @@ import { formatDateObject } from '@/utils/dateUtils'
 import { endOfMonth, parseDate, startOfMonth } from '@internationalized/date'
 import GroupProfitByMonth from '../GroupProfitByMonth'
 
-function AllSummary({ expensesData, commissionData, isLoading, currentUser, date, dateMode, allUser }) {
+function AllSummary({ expensesData, commissionData, isLoading, currentUser, date, dateMode, allUser, selectAgent }) {
 
+    // fetch Data
     const [prevCommissionData, setPrevCommissionData] = useState([])
     const [prevExpensesData, setPrevExpensesData] = useState([])
+
     const [isPercentLoading, setIsPercentLoading] = useState(false)
     const [prevDate, setPrevDate] = useState({})
-    const summary = GroupProfitByMonth.Summary(commissionData, expensesData)
-    const profitCompare = GroupProfitByMonth.getPrevPercentProfit(
-        prevCommissionData, commissionData,
-        prevExpensesData, expensesData
-    )
 
+    // Number Compare
+    const summary = GroupProfitByMonth.Summary(commissionData, expensesData)
+
+    // Percent Compare
+    const profitCompare = GroupProfitByMonth.getPrevPercentProfit(
+        prevCommissionData.length > 0 ? prevCommissionData : [], commissionData.length > 0 ? commissionData : [],
+        prevExpensesData.length > 0 ? prevExpensesData : [], expensesData.length > 0 ? expensesData : []
+    )
 
     useEffect(() => {
         if (!date?.start || !date?.end) return;
@@ -44,13 +49,14 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
         });
     }, [dateMode, date]);
 
+
     const fetchPrevData = async () => {
         setIsPercentLoading(true)
-        const Selectusers = allUser.map(item => item.username)
+        const Selectusers = allUser?.map(item => item.username)
         try {
             const [expenses, commission] = await Promise.all([
-                await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(prevDate.start), formatDateObject(prevDate.end)),
-                await commissionService.getCommission(currentUser.agent.agentId, Selectusers, formatDateObject(prevDate.start), formatDateObject(prevDate.end))
+                await expensesService.getExpensesDetails(selectAgent, formatDateObject(prevDate.start), formatDateObject(prevDate.end)),
+                await commissionService.getCommission(selectAgent, Selectusers, formatDateObject(prevDate.start), formatDateObject(prevDate.end))
             ])
             setPrevExpensesData(expenses)
             setPrevCommissionData(commission)
@@ -61,12 +67,21 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
     }
 
     useEffect(() => {
-        if (prevDate.start && prevDate.end && allUser.length > 0) {
+        if (prevDate.start && prevDate.end && allUser.length > 0 && selectAgent !== null) {
             fetchPrevData()
         }
-    }, [prevDate, allUser])
+    }, [prevDate, allUser, selectAgent])
 
-    const isDataEmpty = commissionData.length === 0 || expensesData.length === 0
+    useEffect(() => {
+        setPrevCommissionData([])
+        setPrevExpensesData([])
+    }, [selectAgent])
+
+    const isDataEmpty =
+        commissionData?.length === 0 ||
+        expensesData?.length === 0 ||
+        prevCommissionData?.length === 0 ||
+        prevExpensesData?.length === 0
 
     return (
         <div className='w-full flex flex-row justify-start items-center space-x-4'>
@@ -77,8 +92,14 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                     <div className='mt-8'>
                         <div className='text-2xl text-blue-500 font-bold'>{summary.profit}</div>
                     </div>
-                    <span className={`text-sm font-semibold ${profitCompare?.ProfitValue?.color}`}>
-                        {profitCompare?.ProfitValue?.icon} {profitCompare?.ProfitValue?.percent}
+                    <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
+                        {isPercentLoading || isLoading ? (
+                            <Spinner variant='dots' size='sm' color='primary' />
+                        ) : (
+                            <span className={`text-sm ${profitCompare?.ProfitValue?.color}`}>
+                                {profitCompare?.ProfitValue?.icon} {profitCompare?.ProfitValue?.percent}
+                            </span>
+                        )}
                     </span>
                 </div>
 
@@ -87,22 +108,32 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 <div className='subBox2'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ยอดขาย</header>
                     <div className='mt-8'>
-                        <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.sales}</div>
+                        <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.sales}</div>
                     </div>
                     <span>
-                        {!isPercentLoading || !isLoading ? <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span> : ''}
+                        {isPercentLoading || isLoading ? (
+                            <Spinner variant='dots' size='sm' color='primary' />
+                        ) : (
+                            <span className='text-sm'>{GroupProfitByMonth.getPrevPercentSales(prevCommissionData, commissionData)}</span>
+                        )}
                     </span>
 
                 </div>
 
                 <div className='h-20 w-0.5 bg-slate-100 rounded-md'></div>
 
-                <div className='subBox1 w-28'>
+                <div className='subBox1 w-auto'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ค่าใช้จ่ายรวม</header>
                     <div className='mt-8 flex flex-col justify-center items-start py-4'>
-                        <div className='text-2xl text-slate-500'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.netExpense}</div>
-                        <span className={`text-sm font-semibold ${profitCompare?.percentNetExpenses?.color}`}>
-                            {profitCompare?.percentNetExpenses?.icon} {profitCompare?.percentNetExpenses?.percent}
+                        <div className='text-2xl text-slate-500'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.netExpense}</div>
+                        <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
+                            {isPercentLoading || isLoading ? (
+                                <Spinner variant='dots' size='sm' color='primary' />
+                            ) : (
+                                <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
+                                    {profitCompare?.percentNetExpenses?.icon} {profitCompare?.percentNetExpenses?.percent}
+                                </span>
+                            )}
                         </span>
                     </div>
                 </div>
@@ -112,7 +143,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 <div className='subBox2 px-4'>
                     <header className='text-start text-sm text-slate-500 mb-3 absolute top-4'>ค่าคอมมิชชั่น</header>
                     <div className='flex flex-col justify-center items-start mt-8'>
-                        <div className='text-slate-500 text-2xl'>{isLoading || commissionData.length === 0 ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.commission}</div>
+                        <div className='text-slate-500 text-2xl'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.commission}</div>
 
                         <div className='flex flex-row justify-between items-center space-x-4 w-full my-1'>
                             <div className='text-orange-500 text-sm'>
