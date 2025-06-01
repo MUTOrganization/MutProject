@@ -53,7 +53,7 @@ function ExpensesChart({ expensesData, setSelectExpensesTypeFromChart, selectExp
     }
     return (
         <>
-            {expensesData.length > 0 ? (
+            {expensesData?.length > 0 ? (
                 <ReactApexChart options={options} series={series} type="donut" height={380} />
             ) : (
                 <div className='flex flex-row justify-center items-center w-full h-full'>
