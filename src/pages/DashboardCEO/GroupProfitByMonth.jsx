@@ -186,7 +186,7 @@ export const getPrevPercentProfit = (
     const percent = ((currentProfit - prevProfit) / Math.abs(prevProfit)) * 100
 
     const percentNetExpenses = (prevExpenses + prevCommission) <= 0
-        ? '0.00%'
+        ? '0.00'
         : (((currentExpenses + currentCommission) - (prevExpenses + prevCommission)) / (prevExpenses + prevCommission) * 100).toFixed(2)
 
     const isUp = percent > 0

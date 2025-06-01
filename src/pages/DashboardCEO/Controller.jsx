@@ -2,6 +2,7 @@ import AgentSelector from '@/component/AgentSelector'
 import DateSelector from '@/component/DateSelector'
 import agentService from '@/services/agentService'
 import { formatDateObject } from '@/utils/dateUtils'
+import { Autocomplete } from '@heroui/react'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
 
@@ -21,7 +22,7 @@ function Controller({ agentList, setAgentList, currentUser, date, setDate, dateM
             </div>
             <div className='w-2/12'>
                 {currentUser.baseRole === 'SUPER_ADMIN' && (
-                    <Select aria-label='ตัวเลือกหน่วยงาน' variant='bordered' label='ตัวแทน' size='sm' selectedKeys={[`${selectAgent}`]} onChange={(e) => setSelectAgent(Number(e.target.value) || null)}>
+                    <Select aria-label='ตัวเลือกหน่วยงาน' variant='bordered' label='ตัวแทน' selectedKeys={[`${selectAgent}`]} onChange={(e) => setSelectAgent(Number(e.target.value) || null)}>
                         {agentList.map((item) => (
                             <SelectItem key={item.agentId} value={item.agentId}>{item.name}</SelectItem>
                         ))}
