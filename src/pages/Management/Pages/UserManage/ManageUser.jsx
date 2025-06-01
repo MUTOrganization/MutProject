@@ -13,9 +13,6 @@ export default function UserManage() {
 
     const tabsDic = {
         "user": <UserManageTab />,
-        "role": <UserRoleManageTab />,
-        "probation": <UserProbationManageTab />,
-        "workStartDate": <UserStartWorkDateManage />
     }
     return (
         <section className="w-full">
@@ -48,40 +45,6 @@ export default function UserManage() {
                             }
                         />
                     }
-                    {
-                        accessCheck.haveAny(['FIX']) &&
-                        <Tab
-                            key="role"
-                            title={
-                                <div className="flex items-center space-x-2">
-                                    <span>จัดการตำแหน่ง</span>
-                                </div>
-                            }
-                        />
-                    }
-                    {
-                        accessCheck.haveAny(['FIX']) &&
-                        <Tab
-                            key="probation"
-                            title={
-                                <div className="flex items-center space-x-2">
-                                    <span>จัดการสถานะการทดลองงาน</span>
-                                </div>
-                            }
-                        />
-                    }
-                    {
-                        accessCheck.haveAny([]) &&
-                        <Tab
-                            key="workStartDate"
-                            title={
-                                <div className="flex items-center space-x-2">
-                                    <span>จัดการวันเริ่มทำงาน</span>
-                                </div>
-                            }
-                        />
-                    }
-
                 </Tabs>
                 <CardBody>
                     <div className="">
