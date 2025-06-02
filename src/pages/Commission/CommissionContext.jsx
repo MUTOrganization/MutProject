@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { CommissionData } from "./Components/YearlyContent/CommissionData";
 import fetchProtectedData from "@/utils/fetchData";
-import { URLS } from "../../config";
 import { toastError } from "../../component/Alert";
 import { useAppContext } from "../../contexts/AppContext";
 import { endOfMonth, startOfMonth, today } from "@internationalized/date";

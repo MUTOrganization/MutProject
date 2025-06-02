@@ -1,14 +1,43 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
-import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, Select, SelectItem, DatePicker } from "@heroui/react";
-import React, { useContext, useRef } from 'react'
-import { FaPlusCircle, FaTrash } from 'react-icons/fa';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
+import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Spinner } from "@heroui/react";
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { FaExclamationCircle, FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
 import { formatNumber } from "@/component/FormatNumber";
+import { Select, SelectItem } from "@nextui-org/select";
+import { toast } from "sonner";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
+import expensesService from "@/services/expensesService";
+import { formatDateObject } from "@/utils/dateUtils";
 
-function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedData, selectedData, typeData, isEnable, isDisabled,
-    handleConfirmAdd, handleExpenseChange, handleDeleteList, addExpenseItem, expensesDate, setExpensesDate, selectType, setSelectType }) {
+function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, getDataOtherExpenses, handleExpenseChange, handleDeleteList, addExpenseItem,
+    expensesDate, setExpensesDate, setSelectType, selectType, selectAgent, handleValidate }) {
 
-    const { typeValue, setTypeValue } = useContext(Data)
+    const [isLoadAdd, setIsLoadingAdd] = useState(false)
+
+    const handleConfirmAdd = async () => {
+        if (handleValidate()) {
+            toastWarning('เกิดข้อผิดพลาด', 'กรุณากรอกข้อมูลให้ครบ')
+            return;
+        }
+        setIsLoadingAdd(true)
+        try {
+            await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
+            await getDataOtherExpenses()
+            setIsLoadingAdd(false)
+            onClose();
+            toastSuccess('Success !', 'เพิ่มข้อมูลค่าใช้จ่ายเรียบร้อย')
+        } catch (error) {
+            console.error('Error adding other expenses:', error);
+            toastError('Error !', 'เพิ่มข้อมูลค่าใช้จ่ายไม่สำเร็จ')
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
 
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
@@ -16,21 +45,22 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                 <ModalHeader className="">ฟอร์มเพิ่มค่าใช้จ่าย</ModalHeader>
                 <ModalBody className='flex lg:flex-row px-6 space-x-0 lg:space-x-4 space-y-0 lg:space-y-7'>
                     <div className='space-y-8'>
-                        <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
+                        <div className="flex w-full flex-col gap-0 lg:gap-2 items-start">
                             <label className="text-sm text-slate-500">ระบุวันที่</label>
                             <DatePicker
                                 value={expensesDate}
                                 onChange={(e) => setExpensesDate(e)}
                                 granularity="day"
+                                aria-label="Select a date"
                             />
                         </div>
                         <div className='relative'>
                             <div className='flex justify-end mb-3'>
-                                <select onChange={(e) => setSelectType(e.target.value)} name="" id="" className="border-2 border-slate-200 px-4 py-1 rounded-xl text-sm">
+                                <Select variant="bordered" placeholder="เลือกประเภท" aria-label="Select a type" key={selectAgent} className="w-48" value={selectType || null} onChange={(e) => setSelectType(Number(e.target.value) || null)}>
                                     {typeData?.filter(e => e.status === true).map((item) => (
-                                        <option value={item.expensesTypeId}>{item.typeName}</option>
+                                        <SelectItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName}</SelectItem>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
                             <Table className=''>
                                 <TableHeader className=''>
@@ -47,17 +77,21 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                             <TableRow key={index}>
                                                 <TableCell className="w-5/12" >
                                                     <Input maxLength={50} className="shadow-sm"
+                                                        aria-label="Input a name"
                                                         type="text"
                                                         value={item.name}
                                                         disabled={isEnable}
                                                         onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
                                                         placeholder="รายการ"
                                                         size="sm"
+                                                        onKeyDown={handleKeyDown}
                                                     />
                                                 </TableCell>
                                                 <TableCell className="w-2/12">
                                                     <Input
+                                                        aria-label="Input a qty"
                                                         type="text"
+                                                        onKeyDown={handleKeyDown}
                                                         maxLength={6}
                                                         value={item.qty}
                                                         size="sm"
@@ -69,16 +103,12 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                             }
                                                         }}
                                                         placeholder="0"
-                                                        onKeyDown={(e) => {
-                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
-                                                        pattern="[0-9]*"
+                                                        pattern="[0-9]"
                                                     />
                                                 </TableCell>
                                                 <TableCell className='w-3/12'>
                                                     <Input
+                                                        aria-label="Input a price"
                                                         type="text"
                                                         maxLength={10}
                                                         value={item.price}
@@ -91,12 +121,8 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                                                         }}
                                                         placeholder='0.00'
                                                         size="sm"
-                                                        onKeyDown={(e) => {
-                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
-                                                        pattern="[0-9]*"
+                                                        onKeyDown={handleKeyDown}
+                                                        pattern="[0-9]"
                                                     />
                                                 </TableCell>
                                                 <TableCell className=''>
@@ -134,7 +160,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                         </div>
 
                         <div className="other w-full">
-                            <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
+                            <div className="flex w-full flex-col gap-0 lg:gap-2 items-start">
                                 <label className="text-sm text-slate-500">หมายเหตุ</label>
                                 <Textarea
                                     labelPlacement="outside"
@@ -153,15 +179,9 @@ function ModalAddExpensesDetails({ isOpen, onClose, handleChange, setSelectedDat
                     <Button color="danger" variant="light" onPress={onClose}>
                         ยกเลิก
                     </Button>
-                    <Button
-                        isDisabled={isDisabled}
-                        color="primary"
-                        onPress={() => {
-                            onClose();
-                            handleConfirmAdd();
-                        }}
-                    >
-                        ยืนยัน
+                    <Button color="primary" onPress={handleConfirmAdd}>
+                        {isLoadAdd && <Spinner color="white" size="sm" />}
+                        <span>ยืนยัน</span>
                     </Button>
                 </ModalFooter>
             </ModalContent>

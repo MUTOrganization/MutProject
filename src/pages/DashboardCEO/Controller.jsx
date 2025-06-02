@@ -2,22 +2,11 @@ import AgentSelector from '@/component/AgentSelector'
 import DateSelector from '@/component/DateSelector'
 import agentService from '@/services/agentService'
 import { formatDateObject } from '@/utils/dateUtils'
+import { Autocomplete } from '@heroui/react'
+import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
 
-function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDateMode }) {
-
-    const fetchAgent = async () => {
-        try {
-            const res = await agentService.getAgent()
-            setAgentList(res)
-        } catch (err) {
-            console.log('Cannot Get Agent', err)
-        }
-    }
-
-    useEffect(() => {
-        fetchAgent()
-    }, [])
+function Controller({ agentList, setAgentList, currentUser, date, setDate, dateMode, setDateMode, selectAgent, setSelectAgent, isSuperAdmin }) {
 
     return (
         <div className='w-full bg-white rounded-md p-4 flex flex-row justify-start items-center space-x-4'>
@@ -31,9 +20,13 @@ function Controller({ setAgentList, currentUser, date, setDate, dateMode, setDat
                     isShowDay={false}
                 />
             </div>
-            <div className=''>
+            <div className='w-2/12'>
                 {currentUser.baseRole === 'SUPER_ADMIN' && (
-                    <AgentSelector />
+                    <Select aria-label='ตัวเลือกหน่วยงาน' variant='bordered' label='ตัวแทน' selectedKeys={[`${selectAgent}`]} onChange={(e) => setSelectAgent(Number(e.target.value) || null)}>
+                        {agentList.map((item) => (
+                            <SelectItem key={item.agentId} value={item.agentId}>{item.name}</SelectItem>
+                        ))}
+                    </Select>
                 )}
             </div>
         </div>

@@ -7,7 +7,6 @@ import {
     TableHeader,
     TableBody,
     TableRow,
-    getKeyValue,
     SelectItem,
     Select
 } from "@heroui/react";
@@ -16,12 +15,8 @@ import ModalManageOtherExpenses from '../OtherExpensesModal/ModalManageOtherExpe
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEdid from '../OtherExpensesModal/ModalEdid';
 import ModalDelete from '../OtherExpensesModal/ModalDelete';
-import { formatDateObject } from '@/utils/dateUtils';
-import expensesService from '@/services/expensesService'
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
 
-
-export default function Contents({ isLoading }) {
+export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
     const { typeData, setTypeValue, filterData } = useContext(Data)
 
     const [selectData, setSelectData] = useState(null)
@@ -38,6 +33,24 @@ export default function Contents({ isLoading }) {
             setTypeValue(findValueById.typeName)
         }
     };
+
+    const emptyContentRender = () => {
+        if (isSuperAdmin) {
+            if (selectAgent === null) {
+                return <span>กรุณาเลือกตัวแทน</span>
+            } else {
+                return <span>ไม่พบข้อมูลค่าใช้จ่ายของตัวแทนนี้</span>
+            }
+        } else {
+            return <span>ไม่พบข้อมูลค่าใช้จ่าย</span>
+        }
+    }
+
+    useEffect(() => {
+        if (selectAgent !== null) {
+            setTypeValue('ทั้งหมด')
+        }
+    }, [selectAgent])
 
     // #region RETURN   
     return (
@@ -58,6 +71,7 @@ export default function Contents({ isLoading }) {
             </div>
             <div className='ps-4'>
                 <Select
+                    key={selectAgent}
                     color="primary"
                     className="w-48"
                     size="sm"
@@ -65,6 +79,7 @@ export default function Contents({ isLoading }) {
                     aria-label='ประเภท'
                     onChange={handleChange}
                     placeholder='ทั้งหมด'
+                    disallowEmptySelection={true}
                 >
                     <SelectItem key="all" value="ทั้งหมด">
                         ทั้งหมด
@@ -85,7 +100,7 @@ export default function Contents({ isLoading }) {
                         <TableColumn>วันที่สร้าง</TableColumn>
                         <TableColumn>Actions</TableColumn>
                     </TableHeader>
-                    <TableBody items={filterData || []} isLoading={isLoading} emptyContent={<span>ไม่พบข้อมูล</span>} loadingContent={<Spinner />}>
+                    <TableBody items={filterData || []} isLoading={isLoading} emptyContent={emptyContentRender()} loadingContent={<Spinner />}>
                         {item => (
                             <TableRow key={item.expensesId} onClick={() => { setSelectData(item); setIsModalOpen(true); }} className="hover:bg-slate-50 cursor-pointer text-slate-600 h-12">
                                 <TableCell>{item?.expensesType.typeName}</TableCell>
@@ -142,6 +157,7 @@ export default function Contents({ isLoading }) {
                     onClose={() => setIsModalEdit(false)}
                     data={selectData}
                     typeData={typeData}
+                    selectAgent={selectAgent}
                 />
             )}
 

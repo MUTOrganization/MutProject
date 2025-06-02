@@ -19,6 +19,7 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
     const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
+        { key: 'agent', label: 'ตัวแทนที่สังกัด' },
         { key: 'dep/role', label: 'แผนก | ตำแหน่ง' },
         { key: 'probStatus', label: 'สถานะการทดลองงาน' },
         { key: 'status', label: 'สถานะการใช้งาน' },
@@ -68,6 +69,7 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                     </div>
 
                                 </TableCell>
+                                <TableCell><span className='text-slate-500 text-xs'>{user.agent.name}</span></TableCell>
                                 <TableCell><span className='text-slate-500 font-bold'>{user.department.departmentName}</span> | <span className='text-slate-500'>{user.role.roleName}</span></TableCell>
                                 <TableCell>
                                     <span className={`${user.probStatus ? 'text-blue-500 bg-blue-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.probStatus ? 'ผ่านการทดลองงาน' : 'ยังไม่ผ่านการทดลองงาน'}</span>
@@ -82,9 +84,13 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                 </TableCell>
                                 <TableCell>
                                     <div className='flex flex-row justify-start items-center w-full'>
+
+                                        {/* Change Password */}
                                         {(isSuperAdmin || isAdmin) && (
                                             <span onClick={() => { setIsOpenChangePasswordModal(true); setSelectUserData(user) }} className='px-3 py-1 rounded-lg bg-yellow-100 text-yellow-600 cursor-pointer hover:bg-yellow-200 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
                                         )}
+
+                                        {/* Edit User Date */}
                                         {isSuperAdmin ? (
                                             selector.agent !== 'ทั้งหมด' && (
                                                 <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
@@ -93,6 +99,8 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                             <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
                                         ) : ''
                                         }
+
+                                        {/* Close Status User */}
                                         {user?.status && (isSuperAdmin || isAdmin) && (
                                             <Tooltip content={'ปิดการใช้งาน'} placement='top' color='danger'>
                                                 <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className={`${user.status ? 'text-red-500  hover:bg-red-100' : 'text-green-500  hover:bg-green-100'} p-2 cursor-pointer transition-all duration-200 rounded-full`}><span> <FaBan /> </span></div>

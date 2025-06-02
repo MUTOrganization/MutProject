@@ -1,5 +1,6 @@
+import { toastError, toastSuccess } from '@/component/Alert'
 import userService from '@/services/userService'
-import { Button, Input } from '@heroui/react'
+import { Button, Input, Spinner } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import React, { useState } from 'react'
 import { toast } from 'sonner'
@@ -7,15 +8,25 @@ import { toast } from 'sonner'
 function ChangePassword({ isOpen, onClose, selectUserData, fetchData }) {
 
     const [newPassword, setNewPassword] = useState(null)
+    const [isLoadingChangePassword, setIsLoadingChangePassword] = useState(false)
 
     const changePassword = async () => {
+        setIsLoadingChangePassword(true)
         try {
             await userService.changePassword(selectUserData.username, newPassword)
-            toast.success('เปลี่ยนรหัสผ่านสำเร็จ')
-            fetchData()
+            await fetchData()
+            setIsLoadingChangePassword(false)
+            onClose()
+            toastSuccess('สำเร็จ', 'เปลี่ยนรหัสผ่านสำเร็จ')
         } catch (err) {
             console.log('Cannot Change Password', err)
-            toast.error('เปลี่ยนรหัสผ่านไม่สำเร็จ')
+            toastError('ไม่สำเร็จ', 'เปลี่ยนรหัสผ่านไม่สำเร็จ')
+        }
+    }
+
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
         }
     }
 
@@ -27,10 +38,13 @@ function ChangePassword({ isOpen, onClose, selectUserData, fetchData }) {
                     <span className='text-blue-500 font-bold'>({selectUserData.username})</span>
                 </ModalHeader>
                 <ModalBody>
-                    <Input placeholder='รหัสผ่านใหม่' onChange={(e) => setNewPassword(e.target.value)} />
+                    <Input onKeyDown={handleKeyDown} maxLength={20} placeholder='รหัสผ่านใหม่' onChange={(e) => setNewPassword(e.target.value)} />
                 </ModalBody>
                 <ModalFooter>
-                    <Button color='primary' size='sm' className='px-6' isDisabled={newPassword === null} onPress={() => { changePassword(); onClose() }}>บันทึก</Button>
+                    <Button color='primary' size='sm' className='px-6' isDisabled={newPassword === null} onPress={changePassword}>
+                        {isLoadingChangePassword && <Spinner color='white' size='sm' />}
+                        <span>บันทึก</span>
+                    </Button>
                     <Button size='sm' onPress={onClose} className='px-6'>ยกเลิก</Button>
                 </ModalFooter>
             </ModalContent>

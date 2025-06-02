@@ -10,7 +10,6 @@ import OwnCommission from './Components/ownCommission.jsx';
 import CommissionContent from './Components/comissionContent.jsx'
 import fetchProtectedData from '@/utils/fetchData.js';
 import { useAppContext } from '../../contexts/AppContext.jsx';
-import { URLS } from '../../config.js';
 import { HFRefresh } from '../../component/Icons.jsx';
 import YearlyContent from './Components/YearlyContent/YearlyContent.jsx';
 import { toastError } from '../../component/Alert.jsx';

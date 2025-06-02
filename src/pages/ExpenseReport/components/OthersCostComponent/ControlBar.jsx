@@ -1,4 +1,4 @@
-import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip } from "@heroui/react";
+import { DropdownTrigger, DropdownMenu, DropdownItem, Input, useDisclosure, Button, Dropdown, Tooltip, Autocomplete, AutocompleteItem } from "@heroui/react";
 import React, { useContext, useEffect, useState } from 'react';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import DateSelector from '../../../../component/DateSelector';
@@ -13,7 +13,7 @@ import { endOfMonth, startOfMonth, today } from "@internationalized/date";
 import { formatDateObject } from "@/utils/dateUtils";
 import { FaEraser } from "react-icons/fa";
 
-function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }) {
+function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, isSuperAdmin, setSelectAgent, selectAgent, agentData }) {
 
     const { setSearch, dateRange, setDateRange, currentUser, selectedAgent, typeData, setTypeData, getDataOtherExpenses } = useContext(Data);
 
@@ -37,7 +37,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
     // fetchData
     const getTypeData = async () => {
         try {
-            const res = await getExpensesType.getExpensesType(currentUser.agent.agentId)
+            const res = await getExpensesType.getExpensesType(isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId)
             setTypeData(res)
         } catch (err) {
             console.log('Error', err)
@@ -47,13 +47,11 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
     // All Use Effect
     useEffect(() => {
         getTypeData()
-    }, [selectedAgent])
+    }, [selectAgent])
 
     useEffect(() => {
-        if (typeData?.length > 0 && !selectType) {
-            setSelectType(typeData[0].expensesTypeId);
-        }
-    }, [typeData]);
+        setSelectType(null)
+    }, [selectAgent])
 
     // All Function
     const addExpenseItem = () => {
@@ -83,47 +81,37 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
         }));
     };
 
-    const handleConfirmAdd = async () => {
-        try {
-            await expensesService.addExpensesDetails(selectedData.remark, formatDateObject(expensesDate), selectedData.list, selectType)
-            await getDataOtherExpenses()
-            toastSuccess('เพิ่มข้อมูลสำเร็จ')
-        } catch (error) {
-            console.error('Error adding other expenses:', error);
-            toastError('เพิ่มข้อมูลไม่สำเร็จ')
+    const handleValidate = () => {
+        const hasEmptyField = selectedData.list.some(e =>
+            !e.name?.trim() || !e.price?.trim()
+        )
+        if (hasEmptyField || selectType === null || !selectedData.remark?.trim()) {
+            return true
         }
-    };
-
-    const isDisabled = selectedData.list.some(e =>
-        !e.name || e.name.trim() === '' ||
-        // !e.qty || e.qty.trim() === '' ||
-        !e.price || e.price.trim() === '' ||
-        !selectType || selectType === null
-    );
-
-    const handleChange = (selectedKey) => {
-        let getKey = selectedKey.target.value
-        const findValueById = typeData.find(e => String(e?.expensesTypeId) === String(getKey));
-        setSelectType(findValueById?.typeName)
-    };
+        return false
+    }
 
     // #region Return
     return (
         <>
-            <div className='flex flex-col lg:flex-row lg:justify-between items-center'>
-                <div className='header p-3 flex flex-col lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
+            <div className='flex flex-col lg:space-y-0 lg:flex-row lg:justify-between items-center w-full'>
+                <div className='header p-3 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
                     <DateSelector value={dateRange} onChange={setDateRange} />
+                    {currentUser.baseRole === 'SUPER_ADMIN' && (
+                        <>
+                            <Autocomplete variant="bordered" selectedKey={`${selectAgent}`} onSelectionChange={(value) => setSelectAgent(value)} aria-label="Agent" label="ตัวแทน" className="w-2/12">
+                                {agentData.map(item => (
+                                    <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
+                                ))}
+                            </Autocomplete>
+                        </>
+                    )}
                     <div className="flex flex-row items-center justify-between space-x-2">
                         <Input type='text' label='รายการ' value={searchText} onChange={(e) => setSearchText(e.target.value)} variant="bordered" size='sm'></Input>
                         <Tooltip content='ล้างการค้ยหา' placement="right" color="danger">
                             <span className="px-2 py-2 bg-red-200 rounded-full cursor-pointer" onClick={() => setSearchText('')}><FaEraser className="text-red-500" /></span>
                         </Tooltip>
                     </div>
-                    {currentUser.businessId === 1 && (
-                        <>
-                            <AgentSelector />
-                        </>
-                    )}
                 </div>
 
                 <div className='btn-container-add'>
@@ -147,7 +135,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
                             }}
                         >
                             <DropdownItem
-                                title="เพิ่มข้อมูล"
+                                title="เพิ่มข้อมูลค่าใช้จ่าย"
                                 key="addexpenses"
                             />
                             <DropdownItem
@@ -173,19 +161,19 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
                     setTypeData={setTypeData}
                     setIsEnable={setIsEnable}
                     isEnable={isEnable}
-                    isDisabled={isDisabled}
-                    handleConfirmAdd={handleConfirmAdd}
                     handleExpenseChange={handleExpenseChange}
                     handleDeleteList={handleDeleteList}
                     addExpenseItem={addExpenseItem}
                     selectedData={selectedData}
                     typeData={typeData}
                     setSelectedData={setSelectedData}
-                    handleChange={handleChange}
                     expensesDate={expensesDate}
                     setExpensesDate={setExpensesDate}
                     setSelectType={setSelectType}
                     selectType={selectType}
+                    selectAgent={selectAgent}
+                    handleValidate={handleValidate}
+                    getDataOtherExpenses={getDataOtherExpenses}
                 />
             )}
 
@@ -196,6 +184,8 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText }
                     currentUser={currentUser}
                     typeData={typeData}
                     getTypeData={getTypeData}
+                    isSuperAdmin={isSuperAdmin}
+                    selectAgent={selectAgent}
                 />
             )}
 
