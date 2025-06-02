@@ -24,6 +24,12 @@ function ChangePassword({ isOpen, onClose, selectUserData, fetchData }) {
         }
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent>
@@ -32,7 +38,7 @@ function ChangePassword({ isOpen, onClose, selectUserData, fetchData }) {
                     <span className='text-blue-500 font-bold'>({selectUserData.username})</span>
                 </ModalHeader>
                 <ModalBody>
-                    <Input maxLength={20} placeholder='รหัสผ่านใหม่' onChange={(e) => setNewPassword(e.target.value)} />
+                    <Input onKeyDown={handleKeyDown} maxLength={20} placeholder='รหัสผ่านใหม่' onChange={(e) => setNewPassword(e.target.value)} />
                 </ModalBody>
                 <ModalFooter>
                     <Button color='primary' size='sm' className='px-6' isDisabled={newPassword === null} onPress={changePassword}>

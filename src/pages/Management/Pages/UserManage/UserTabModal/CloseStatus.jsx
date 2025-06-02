@@ -31,8 +31,10 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
                         <div className='p-5 bg-red-200 rounded-full'><FaExclamationCircle className='text-red-500 text-5xl' /></div>
                     </div>
                     <div className='text-red-400'>หากปิดการใช้งานแล้วจะไม่สามารถกู้คืนข้อมูลได้!</div>
-                    <div className='font-bold text-slate-500 bg-slate-100 rounded-lg w-5/12 mx-auto py-2'>{selectUserData.username.toUpperCase()}</div>
-                    <div className='text-slate-500 text-xs'>ต้องการปิดการใช้งานหรือไม่ ?</div>
+                    <div>
+                        <div className='font-bold text-slate-500 w-5/12 mx-auto'>{selectUserData.username.toUpperCase()}</div>
+                        <div className='text-red-500 text-xs'>ต้องการปิดการใช้งานหรือไม่ ?</div>
+                    </div>
                 </ModalBody>
                 <ModalFooter className='mt-4'>
                     <Button onPress={() => onClose()} className='px-8 py-1' size='sm'>ยกเลิก</Button>

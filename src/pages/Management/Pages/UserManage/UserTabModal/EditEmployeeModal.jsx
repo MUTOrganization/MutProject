@@ -64,6 +64,12 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         }
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
+
     useEffect(() => {
         fetchRole()
     }, [selectDepartment])
@@ -74,9 +80,9 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                 <ModalHeader className='space-x-2'><span className='text-slate-500'>แก้ไขข้อมูลพนักงาน</span> <span className='text-blue-500'>( {selectUserData.username} )</span></ModalHeader>
                 <ModalBody className=''>
                     <div className='flex flex-row justify-between items-center space-x-2'>
-                        <Input aria-label='ชื่อ' size='sm' placeholder='ชื่อ-นามสกุล' value={userData.name} onChange={(e) => setUserData(prev => ({ ...prev, name: e.target.value }))} />
+                        <Input onKeyDown={handleKeyDown} aria-label='ชื่อ' size='sm' placeholder='ชื่อ-นามสกุล' value={userData.name} onChange={(e) => setUserData(prev => ({ ...prev, name: e.target.value }))} />
                     </div>
-                    <Input type="text" size='sm' aria-label='ชื่อเล่น' placeholder='ชื่อเล่น' value={userData.nickname} onChange={(e) => setUserData(prev => ({ ...prev, nickname: e.target.value }))} />
+                    <Input onKeyDown={handleKeyDown} type="text" size='sm' aria-label='ชื่อเล่น' placeholder='ชื่อเล่น' value={userData.nickname} onChange={(e) => setUserData(prev => ({ ...prev, nickname: e.target.value }))} />
                     <div className='flex flex-row justify-between items-center space-x-2'>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>แผนก</span>

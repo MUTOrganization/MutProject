@@ -72,19 +72,25 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
         }
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
             <ModalContent>
                 <ModalHeader>เพิ่มพนักงาน</ModalHeader>
                 <ModalBody className='space-y-2'>
                     <div className='w-full flex flex-row justify-between items-center space-x-2'>
-                        <Input aria-label='รหัสพนักงาน' placeholder='รหัสพนักงาน' onChange={(e) => setUserData(prev => ({ ...prev, username: e.target.value }))} />
-                        <Input aria-label='รหัสผ่าน' placeholder='รหัสผ่าน' onChange={(e) => setUserData(prev => ({ ...prev, password: e.target.value }))} />
+                        <Input maxLength={20} onKeyDown={handleKeyDown} aria-label='รหัสพนักงาน' placeholder='รหัสพนักงาน' onChange={(e) => setUserData(prev => ({ ...prev, username: e.target.value }))} />
+                        <Input maxLength={20} onKeyDown={handleKeyDown} aria-label='รหัสผ่าน' placeholder='รหัสผ่าน' onChange={(e) => setUserData(prev => ({ ...prev, password: e.target.value }))} />
                     </div>
                     <div className='w-full flex flex-row justify-between items-center space-x-2'>
-                        <Input aria-label='ชื่อ' placeholder='ชื่อ - นามสกุล' onChange={(e) => setUserData(prev => ({ ...prev, name: e.target.value }))} />
+                        <Input onKeyDown={handleKeyDown} aria-label='ชื่อ' placeholder='ชื่อ - นามสกุล' onChange={(e) => setUserData(prev => ({ ...prev, name: e.target.value }))} />
                     </div>
-                    <Input aria-label='ชื่อเล่น' placeholder='ชื่อเล่น' onChange={(e) => setUserData(prev => ({ ...prev, nickname: e.target.value }))} />
+                    <Input onKeyDown={handleKeyDown} aria-label='ชื่อเล่น' placeholder='ชื่อเล่น' onChange={(e) => setUserData(prev => ({ ...prev, nickname: e.target.value }))} />
                     <div className='w-full flex flex-row justify-between items-center space-x-2'>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>แผนก</span>
