@@ -4,6 +4,7 @@ import { toast, Toaster } from 'sonner';
 import expensesService from '@/services/expensesService';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { toastError, toastSuccess } from '@/component/Alert';
+import { Select, SelectItem } from '@nextui-org/select';
 
 function ModalDelete({ isOpen, onClose, data }) {
 
@@ -50,6 +51,11 @@ function ModalDelete({ isOpen, onClose, data }) {
                                 </div>
                             </div>
 
+                            <div className='flex flex-row justify-end items-center px-2 w-full' size='sm'>
+                                <Select aria-label='Type' label='ประเภท' isDisabled className='w-5/12' variant='bordered' placeholder={`${data?.expensesType?.typeName}`}>
+                                    <SelectItem>{data?.expensesType?.typeName}</SelectItem>
+                                </Select>
+                            </div>
 
                             <div className="text-end text-sm text-slate-500 me-2">
                                 <div className="text-center">
