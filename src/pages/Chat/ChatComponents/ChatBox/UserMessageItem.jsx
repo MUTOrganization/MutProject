@@ -18,7 +18,7 @@ export default function UserMessageItem({message, isCurrentUser}) {
             <span className={`text-xs text-gray-500 ${isCurrentUser ? 'me-12' : 'ms-12'}`}>{displayText}</span>
             <div className={`flex items-center ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}>
                 <div className={`${isCurrentUser ? 'ms-1' : 'me-1'}`}>
-                    <UserProfileAvatar size="md" name={message.sender?.username} />
+                    <UserProfileAvatar size="md" name={message.sender?.username} imageURL={message.sender?.displayImgUrl} />
                 </div>
                 <pre className={`whitespace-pre-wrap font-sans border-1 p-2 px-3 text-sm rounded-2xl max-w-[400px] ${isCurrentUser ? 'bg-primary-400 text-white ms-1' : 'bg-gray-200 me-1'}`}>
                     {message.text}

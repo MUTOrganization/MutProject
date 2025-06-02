@@ -4,6 +4,8 @@ import { SESSION_STORAGE_KEYS } from "@/configs/sessionStorageKeys";
 import Agent from "@/models/agent";
 import User from "@/models/user";
 import { ACCESS } from "@/configs/accessids";
+import userService from "@/services/userService";
+import { toastError } from "@/component/Alert";
 
 const AppContext = createContext({
     /** @type {import('@/models/user').default} */
@@ -19,11 +21,14 @@ const AppContext = createContext({
         isAgentLoading: false,
         setSelectedAgentFromId: () => {},
     },
+    isChangeProfileImageModalOpen: false,
+    setIsChangeProfileImageModalOpen: () => {},
     accessCheck: {
         haveOne: () => false,
         haveAny: () => false,
         haveAll: () => false,
     },
+    changeProfileImage: async (file) => {},
 });
 
 export default function AppContextProvider({ children }) {
@@ -32,9 +37,9 @@ export default function AppContextProvider({ children }) {
     const [agents, setAgents] = useState([]);
     const [isAgentLoading, setIsAgentLoading] = useState(false);
     const [selectedAgent, setSelectedAgent] = useState(null);
+    const [isChangeProfileImageModalOpen, setIsChangeProfileImageModalOpen] = useState(false);
 
     const userAccessMap = useMemo(() => {
-        console.log(currentUser);
         return currentUser ? new Map(currentUser.access?.map(e => [e, true])) : new Map();
     },[currentUser])
 
@@ -62,6 +67,16 @@ export default function AppContextProvider({ children }) {
             fetchAgent();
         }
     }, [currentUser]);
+
+    async function changeProfileImage(file) {
+        try {
+            const url = await userService.changeProfileImage(currentUser.username, file);
+            setCurrentUser({...currentUser, displayImgUrl: url});
+        } catch (err) {
+            console.error("changeProfileImage error:", err);
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเปลี่ยนรูปโปรไฟล์ได้');
+        }
+    }
 
     async function login(username, password) {
         try {
@@ -143,6 +158,9 @@ export default function AppContextProvider({ children }) {
             setSelectedAgentFromId,
         },
         accessCheck,
+        changeProfileImage,
+        isChangeProfileImageModalOpen,
+        setIsChangeProfileImageModalOpen,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
