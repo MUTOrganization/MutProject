@@ -36,3 +36,10 @@ export default class User {
     }
 
 }
+
+export class ChatRoomMember extends User {
+    constructor(data) {
+        super(data);
+        this.isAdmin = Boolean(data.isAdmin === 'false' ? false : data.isAdmin);
+    }
+}

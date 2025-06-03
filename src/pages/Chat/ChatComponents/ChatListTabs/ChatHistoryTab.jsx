@@ -50,7 +50,7 @@ export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptI
                         {
                             roomInvites.map((invite) => {
                                 return(
-                                    <RoomInviteItem key={invite.chatRoomId} invite={invite} onAccept={onAcceptInvite} onReject={onRejectInvite} />
+                                    <RoomInviteItem key={invite.roomId} invite={invite} onAccept={() => onAcceptInvite(invite)} onReject={() => onRejectInvite(invite)} />
                                 )
                             })
                         }

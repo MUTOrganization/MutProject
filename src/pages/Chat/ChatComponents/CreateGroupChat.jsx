@@ -1,9 +1,8 @@
 import {  Button, Input, Textarea, Tooltip } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import React, { useRef, useState } from 'react'
-import { FaMinus, FaPencilAlt, FaPlus } from 'react-icons/fa'
+import { FaPlus } from 'react-icons/fa'
 import AddMember from './AddMember';
-import Select from 'react-select'
 import ImageInput from '@/component/ImageInput';
 import { useAppContext } from '@/contexts/AppContext';
 import UserProfileAvatar from '@/component/UserProfileAvatar';

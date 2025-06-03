@@ -1,5 +1,5 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/modal";
-import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Spinner } from "@heroui/react";
+import { Button, TableBody, TableCell, TableColumn, TableHeader, TableRow, Textarea, Table, Input, DatePicker, Spinner, Autocomplete, AutocompleteItem } from "@heroui/react";
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { FaExclamationCircle, FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { Data } from "../../TabsExpense/TabsOthersCost";
@@ -56,11 +56,11 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                         </div>
                         <div className='relative'>
                             <div className='flex justify-end mb-3'>
-                                <Select variant="bordered" placeholder="เลือกประเภท" aria-label="Select a type" key={selectAgent} className="w-48" value={selectType || null} onChange={(e) => setSelectType(Number(e.target.value) || null)}>
+                                <Autocomplete isClearable={false} allowsEmptyCollection variant="bordered" placeholder="เลือกประเภท" aria-label="Select a type" key={selectAgent} className="w-48" selectedKey={`${selectType}` || null} onSelectionChange={(value) => setSelectType(Number(value) || null)}>
                                     {typeData?.filter(e => e.status === true).map((item) => (
-                                        <SelectItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName}</SelectItem>
+                                        <AutocompleteItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName}</AutocompleteItem>
                                     ))}
-                                </Select>
+                                </Autocomplete>
                             </div>
                             <Table className=''>
                                 <TableHeader className=''>
@@ -91,38 +91,37 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                     <Input
                                                         aria-label="Input a qty"
                                                         type="text"
-                                                        onKeyDown={handleKeyDown}
+                                                        inputMode="numeric"
+                                                        pattern="\d*"
                                                         maxLength={6}
                                                         value={item.qty}
                                                         size="sm"
-                                                        disabled={isEnable}
                                                         onChange={(e) => {
                                                             const value = e.target.value;
-                                                            if (/^\d*\.?\d*$/.test(value)) {
+                                                            if (/^\d*$/.test(value)) {
                                                                 handleExpenseChange(index, 'qty', value);
                                                             }
                                                         }}
                                                         placeholder="0"
-                                                        pattern="[0-9]"
                                                     />
+
                                                 </TableCell>
                                                 <TableCell className='w-3/12'>
                                                     <Input
                                                         aria-label="Input a price"
                                                         type="text"
+                                                        inputMode="numeric"
                                                         maxLength={10}
                                                         value={item.price}
                                                         disabled={isEnable}
                                                         onChange={(e) => {
                                                             const value = e.target.value;
-                                                            if (/^\d*\.?\d*$/.test(value)) {
+                                                            if (/^\d*$/.test(value)) {
                                                                 handleExpenseChange(index, 'price', value);
                                                             }
                                                         }}
                                                         placeholder='0.00'
                                                         size="sm"
-                                                        onKeyDown={handleKeyDown}
-                                                        pattern="[0-9]"
                                                     />
                                                 </TableCell>
                                                 <TableCell className=''>
@@ -157,6 +156,14 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                     </TableRow>
                                 </TableBody>
                             </Table>
+                        </div>
+
+                        <div className="w-full text-end px-2 space-x-2">
+                            <span className="text-sm text-slate-500">รวมทั้งหมด</span>
+                            <span className="text-red-500 font-bold">
+                                {formatNumber(selectedData.list.reduce((acc, item) => acc + Number(item.totalAmount), 0)) || 0.00}
+                            </span>
+                            <span className="text-sm text-slate-500">บาท</span>
                         </div>
 
                         <div className="other w-full">

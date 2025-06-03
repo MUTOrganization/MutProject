@@ -60,6 +60,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
             list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
         }));
     };
+    
     const handleExpenseChange = (index, field, value) => {
         const updatedList = [...selectedData.list];
 
@@ -99,7 +100,12 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     <DateSelector value={dateRange} onChange={setDateRange} />
                     {currentUser.baseRole === 'SUPER_ADMIN' && (
                         <>
-                            <Autocomplete variant="bordered" selectedKey={`${selectAgent}`} onSelectionChange={(value) => setSelectAgent(value)} aria-label="Agent" label="ตัวแทน" className="w-2/12">
+                            <Autocomplete variant="bordered"
+                                selectedKey={`${selectAgent}`}
+                                onSelectionChange={(value) => {
+                                    if (value === null) return
+                                    setSelectAgent(value)
+                                }} aria-label="Agent" label="ตัวแทน" className="w-2/12">
                                 {agentData.map(item => (
                                     <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
                                 ))}

@@ -1,16 +1,24 @@
 import UserProfile from '@/component/UserProfile';
-import { Avatar, Button, Input } from '@heroui/react'
+import { Avatar, Button, Checkbox, Input } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from "@nextui-org/select"
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useChatContext } from '../ChatContext';
 import Fuse from 'fuse.js'
 import { useAppContext } from '@/contexts/AppContext';
 
-function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {} }) {
+function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}, roomInvites = [] }) {
     const { currentUser } = useAppContext();
     const { userList} = useChatContext();
     const [search, setSearch] = useState('');
+    
+
+    const invitedMemberMap = useMemo(() => {
+        return roomInvites.reduce((acc, invited) => {
+            acc[invited.inviteeUsername] = invited;
+            return acc;
+        }, {})
+    }, [roomInvites])
     
     const filteredMembers = useMemo(() => {
         const memberSet = new Set(members.map((member) => member.username))
@@ -44,7 +52,10 @@ function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}
                                 <span className='text-sm text-slate-500'>ไม่พบข้อมูล</span>
                             </div>
                         : displayUserList.map((user) => (
-                            <AddMemberItem key={user.username} user={user} onAddMember={(type) => handleAddMember(user, type)} />
+                            <AddMemberItem key={user.username} user={user} 
+                                onAddMember={(type) => handleAddMember(user, type)} 
+                                isInvited={invitedMemberMap[user.username] ? true : false} 
+                            />
                         ))}
                     </div>
                 </ModalBody>
@@ -69,20 +80,12 @@ function AddMemberItem({ user, isInvited = false, onAddMember = () => {} }) {
             <div className='flex flex-row justify-start items-center space-x-2 flex-1 w-[200px]'>
                 <UserProfile user={user} />
             </div>
-            <div className='w-24 mx-4'>
-                <Select aria-label='ประเภทสมาชิก' className='w-full'
-                    key={user.username}
-                    size='sm'
-                    variant='bordered'
-                    disallowEmptySelection
-                    selectedKeys={[type]}
-                    onSelectionChange={(keys) => setType(Array.from(keys)[0])}
-                >
-                    <SelectItem key='member' value='member'>สมาชิก</SelectItem>
-                    <SelectItem key='admin' value='admin'>แอดมิน</SelectItem>
-                </Select>
+            <div className='w-28 mx-4'>
+                <Checkbox isSelected={type === 'admin'} onValueChange={() => setType(type === 'admin' ? 'member' : 'admin')} size='sm' >
+                    เชิญเป็นผู้ดูแล
+                </Checkbox>
             </div>
-            <Button size='sm' color='primary' isDisabled={isInvited} onPress={handleAddMember}>{isInvited ? 'เชิญแล้ว' : 'เชิญ'}</Button>
+            <Button size='sm' color={isInvited ? 'default' : 'primary'} isDisabled={isInvited} onPress={handleAddMember}>{isInvited ? 'เชิญแล้ว' : 'เชิญ'}</Button>
         </div>
     )
 }

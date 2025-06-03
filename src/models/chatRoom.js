@@ -1,6 +1,6 @@
 import Agent from "./agent";
 import { ChatMessage } from "./chatMessage";
-import User from "./user";
+import { ChatRoomMember } from "./user";
 
 export class ChatRoom {
     constructor(data) {
@@ -24,7 +24,7 @@ export class ChatRoom {
         this.agentId = data.agentId;
         /** @type {Agent} */
         this.agent = data.agent;
-        /** @type {Array<User>} */
+        /** @type {Array<ChatRoomMember>} */
         this.roomMembers = data.roomMembers;
         /** @type {ChatMessage} */
         this.lastMessage = data.lastMessage ? ChatMessage.fromUserMessage(data.lastMessage) : null;
