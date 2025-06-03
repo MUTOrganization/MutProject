@@ -53,7 +53,7 @@ function FloatingButton() {
         <>
             <div className='fixed bottom-8 right-8 z-50'>
                 <div className='relative'>
-                    <Badge color='danger' content={unreadMessageCount > 0 ? unreadMessageCount : null}>
+                    <Badge color='danger' content={unreadMessageCount > 0 ? unreadMessageCount : null} isInvisible={unreadMessageCount === 0}>
                         <button onClick={() => setIsOpen(true)} className="bg-blue-600 text-white rounded-full shadow-xl hover:bg-blue-700 p-4">
                             <MessageSquareText size={30} />
                         </button>
