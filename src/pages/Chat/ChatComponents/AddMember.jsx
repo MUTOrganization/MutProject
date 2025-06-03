@@ -1,5 +1,5 @@
 import UserProfile from '@/component/UserProfile';
-import { Avatar, Button, Input } from '@heroui/react'
+import { Avatar, Button, Checkbox, Input } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from "@nextui-org/select"
 import React, { useEffect, useMemo, useState } from 'react'
@@ -80,18 +80,10 @@ function AddMemberItem({ user, isInvited = false, onAddMember = () => {} }) {
             <div className='flex flex-row justify-start items-center space-x-2 flex-1 w-[200px]'>
                 <UserProfile user={user} />
             </div>
-            <div className='w-24 mx-4'>
-                <Select aria-label='ประเภทสมาชิก' className='w-full'
-                    key={user.username}
-                    size='sm'
-                    variant='bordered'
-                    disallowEmptySelection
-                    selectedKeys={[type]}
-                    onSelectionChange={(keys) => setType(Array.from(keys)[0])}
-                >
-                    <SelectItem key='member' value='member'>สมาชิก</SelectItem>
-                    <SelectItem key='admin' value='admin'>แอดมิน</SelectItem>
-                </Select>
+            <div className='w-28 mx-4'>
+                <Checkbox isSelected={type === 'admin'} onValueChange={() => setType(type === 'admin' ? 'member' : 'admin')} size='sm' >
+                    เชิญเป็นผู้ดูแล
+                </Checkbox>
             </div>
             <Button size='sm' color={isInvited ? 'default' : 'primary'} isDisabled={isInvited} onPress={handleAddMember}>{isInvited ? 'เชิญแล้ว' : 'เชิญ'}</Button>
         </div>
