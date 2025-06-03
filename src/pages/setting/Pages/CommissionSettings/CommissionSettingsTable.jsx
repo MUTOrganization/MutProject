@@ -22,7 +22,6 @@ export default function CommissionSettingsTable({departmentData, depLoading}){
                 }
             })
             setSettingsData(response.data);
-            console.log(response.data);
         }catch(err){
             console.error('error fetching commission setting');
             toastError('เกิดข้อผิดพลาด','กรุณาลองใหม่อีกครั้ง');
@@ -44,6 +43,7 @@ export default function CommissionSettingsTable({departmentData, depLoading}){
     const haveSettingRoles = useMemo(() => {
         return Array.from(new Set(settingsData.map(e => e.roleId))).map(e => String(e));
     },[settingsData])
+    
     return(
         <section className="mt-4">
             <div className="flex space-x-4 max-h-[650px]">

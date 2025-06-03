@@ -5,6 +5,7 @@ import { toastSuccess, AlertQuestion, toastError } from '@/component/Alert'
 import fetchProtectedData from "@/utils/fetchData";
 import SetCommissionTab from "./SetCommissionTab";
 import { SaveIcon } from "lucide-react";
+import settingComService from "@/services/settingComService";
 
 function SetCommission({ departmentData, depLoading }) {
   const { currentUser } = useAppContext();
@@ -12,8 +13,6 @@ function SetCommission({ departmentData, depLoading }) {
   const [isGeneralChecked, setIsGeneralChecked] = useState(true);
   /** @type {[[{ id: Number, minAmount: Number, maxAmount: Number, percentage: String }]]} */
   const [formsCommission, setFormsCommission] = useState([{ id: 0, minAmount: 0, maxAmount: 1, percentage: 0 }]);
-  /** @type {[[{ id: Number, minAmount: Number, maxAmount: Number, baht: String }]]} */
-  const [formsIncentive, setFormsIncentive] = useState([{ id: 0, minAmount: 0, maxAmount: 1, baht: 0 }]);
   const [selectedDepartment, setSelectedDepartments] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [passedProb, setPassedProb] = useState('')
@@ -22,29 +21,23 @@ function SetCommission({ departmentData, depLoading }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [oldCommissionSetting, setOldCommissionSetting] = useState(null);
-  const [oldIncentiveSetting, setOldIncentiveSetting] = useState(null);
 
   const [isCommissionEdit, setIsCommissionEdit] = useState(false);
-  const [isIncentiveEdit, setIsIncentiveEdit] = useState(false);
 
   const [formPercentageValidate, setFormPercentageValidate] = useState([]);
-  const [formIncentiveValidate, setFormIncentiveValidate] = useState([]);
 
   const [selectedCommissionSource, setSelectedCommissionSource] = useState('SALE');
-  const [selectedIncentiveSource, setSelectedIncentiveSource] = useState('SALE');
-
-  const [tabActive, setTabActive] = useState('commission');
 
   const allFormsValid = useMemo(() => {
-    return formPercentageValidate.every(form => form.maxCurrent == false) && formIncentiveValidate.every(form => form.maxCurrent == false)
-  }, [formPercentageValidate, formIncentiveValidate])
+    return formPercentageValidate.every(form => form.maxCurrent == false)
+  }, [formPercentageValidate])
 
   useEffect(() => {
     setIsLoading(depLoading);
   }, [depLoading])
 
   const handleSelectedDepartment = (id) => {
-    const findDep = departmentData.find(e => e.id == id)
+    const findDep = departmentData.find(e => e.departmentId == id)
     if (findDep) {
       setSelectedDepartments(findDep)
     }
@@ -52,101 +45,74 @@ function SetCommission({ departmentData, depLoading }) {
   }
 
   const handleSelectedRole = (id) => {
-    const findRole = selectedDepartment.roles.find(e => e.id == id)
+    const findRole = selectedDepartment.roles.find(e => e.roleId == id)
     if (findRole) {
       setSelectedRole(findRole)
     }
   }
 
-  // useEffect(() => {
-  //   if (passedProb === '') {
-  //     resetFormState();
-  //   } else if (selectedDepartment && selectedRole && passedProb) {
-  //     fetchCommissionData();
-  //   }
-  // }, [selectedDepartment, selectedRole, passedProb]);
 
   const resetFormState = () => {
     setIsCommissionEdit(false);
-    setIsIncentiveEdit(false);
     setSelectedCommissionSource('SALE');
-    setSelectedIncentiveSource('SALE');
     setOldCommissionSetting(null);
-    setOldIncentiveSetting(null);
   };
+
   const clearForms = () => {
     setFormsCommission([{ id: 0, minAmount: 0, maxAmount: 1, percentage: 0 }]);
-    setFormsIncentive([{ id: 0, minAmount: 0, maxAmount: 1, baht: 0 }]);
   }
+
   const clearValidation = () => {
     setFormPercentageValidate([]);
-    setFormIncentiveValidate([]);
   }
+
   useEffect(() => {
     fetchCommissionSettingData();
   }, [selectedDepartment, selectedRole, passedProb]);
 
-  const fetchCommissionSettingData = async (specific) => {
-    if (specific == 'commission') {
-      setIsCommissionEdit(false);
-      setSelectedCommissionSource('SALE');
-      setOldCommissionSetting(null);
-      setFormsCommission([{ id: 0, minAmount: 0, maxAmount: 1, percentage: 0 }]);
-      setFormPercentageValidate([]);
-    }
-    if (specific == 'incentive') {
-      setIsIncentiveEdit(false);
-      setSelectedIncentiveSource('SALE');
-      setOldIncentiveSetting(null);
-      setFormsIncentive([{ id: 0, minAmount: 0, maxAmount: 1, baht: 0 }]);
-      setFormIncentiveValidate([]);
+  const fetchCommissionSettingData = async () => {
+    // if (specific == 'commission') {
+    //   setIsCommissionEdit(false);
+    //   setSelectedCommissionSource('SALE');
+    //   setOldCommissionSetting(null);
+    //   setFormsCommission([{ id: 0, minAmount: 0, maxAmount: 1, percentage: 0 }]);
+    //   setFormPercentageValidate([]);
+    // }
 
-    }
-    if (!specific) {
-      clearValidation();
-      clearForms()
-      resetFormState();
-    }
+    // if (!specific) {
+    //   clearValidation();
+    //   clearForms()
+    //   resetFormState();
+    // }
+
+    clearValidation();
+    clearForms()
+    resetFormState();
 
 
     if (!selectedDepartment || !selectedRole || passedProb === '') {
       return;
     }
+
     setIsLoading(true);
     try {
-      const response = await fetchProtectedData.post(`${URLS.setting.getCommission}`, {
-        roleId: selectedRole.id,
-        prob_status: passedProb,
-      });
+      const data = await settingComService.getCommissionSetting(selectedRole.roleId, passedProb)
+      setOldCommissionSetting(data);
+      const tierList = data.rates;
 
-      const commissionSetting = response.data.find(e => e.is_incentive == 0)
-      const incentiveSetting = response.data.find(e => e.is_incentive == 1)
-      if (commissionSetting) {
-        setOldCommissionSetting(commissionSetting);
-        const tierList = commissionSetting.tier_list;
-        setFormsCommission(tierList.percentage.map((tier, index) => ({
-          id: index,
-          minAmount: tier.minAmount,
-          maxAmount: tier.maxAmount,
-          percentage: tier.percentage,
-        })));
-        setSelectedCommissionSource(commissionSetting.type);
-        setIsCommissionEdit(true);
-      }
-      if (incentiveSetting) {
-        setOldIncentiveSetting(incentiveSetting);
-        const tierList = incentiveSetting.tier_list;
-        setFormsIncentive(tierList.baht.map((tier, index) => ({
-          id: index,
-          minAmount: tier.minAmount,
-          maxAmount: tier.maxAmount,
-          baht: tier.baht,
-        })));
-        setSelectedIncentiveSource(incentiveSetting.type);
-        setIsIncentiveEdit(true);
-      }
+      setFormsCommission(tierList.map((tier, index) => ({
+        id: index,
+        minAmount: tier.minAmount,
+        maxAmount: tier.maxAmount,
+        percentage: tier.percentage,
+      })));
+      setIsCommissionEdit(true);
     } catch (error) {
-      console.error('Error fetching commission data');
+      if (!error.response.status == 404) {
+        toastError('เกิดข้อผิดพลาดในการดึงข้อมูล', 'โปรดลองใหม่อีกครั้ง');
+        console.error('Error fetching commission data');
+      }
+
     } finally {
       setIsLoading(false);
     }
@@ -156,9 +122,6 @@ function SetCommission({ departmentData, depLoading }) {
     handleValidateForm(formsCommission, 'percentage')
   }, [formsCommission])
 
-  useEffect(() => {
-    handleValidateForm(formsIncentive, 'baht')
-  }, [formsIncentive])
 
 
   const handleValidateForm = (forms, type) => {
@@ -198,45 +161,40 @@ function SetCommission({ departmentData, depLoading }) {
       }
       prevForm = form;
     })
-    type === 'percentage' ? setFormPercentageValidate(_formValidate) : setFormIncentiveValidate(_formValidate)
+    setFormPercentageValidate(_formValidate)
   }
 
-  
 
-  const saveSetting = async (type) => {
-    const tierList = type === 'commission'
-      ? { percentage: formsCommission.map((e, index) => index === formsCommission.length - 1 ? { ...e, maxAmount: "9999999999999" } : e) }
-      : { baht: formsIncentive.map((e, index) => index === formsIncentive.length - 1 ? { ...e, maxAmount: "9999999999999" } : e) };
 
-    const selectedSource = type === 'commission' ? selectedCommissionSource : selectedIncentiveSource;
-    const oldSetting = type === 'commission' ? oldCommissionSetting : oldIncentiveSetting;
-    const isEdit = type === 'commission' ? isCommissionEdit : isIncentiveEdit;
+  const saveSetting = async () => {
+    const tierList = { percentage: formsCommission.map((e, index) => index === formsCommission.length - 1 ? { ...e, maxAmount: "9999999999999" } : e) }
 
-    const payload = {
-      department: selectedDepartment.name,
-      ownerId: currentUser.businessId,
-      roleId: selectedRole.id,
-      role: selectedRole.name,
-      prob: passedProb,
-      tier_list: tierList,
-      isIncentive: type === 'commission' ? '0' : '1',
-      type: selectedSource
-    };
-    if (isEdit && oldSetting) {
-      const id = oldSetting.id;
-      await fetchProtectedData.put(`${URLS.setting.updateCommission}/${id}`, { tier_list: tierList, type: selectedSource });
+    const rates = tierList.percentage.map(e => {
+      return {
+        minAmount: e.minAmount,
+        maxAmount: e.maxAmount,
+        percentage: e.percentage
+      }
+    })
+
+    const oldSetting = oldCommissionSetting;
+
+
+    if (isCommissionEdit && oldSetting) {
+      await settingComService.updateCommissionSetting(selectedRole.roleId, passedProb, rates)
     } else {
-      await fetchProtectedData.post(`${URLS.setting.addCommission}`, payload)
+      await settingComService.addCommissionSetting(selectedRole.roleId, passedProb, rates)
     }
+
   };
 
-  const handleSubmitClick = (type) => {
+  const handleSubmitClick = () => {
     setIsModalOpen(true);
   }
 
   const handleSubmit = async () => {
     try {
-      await Promise.all([saveSetting('commission'), saveSetting('incentive')]);
+      await saveSetting()
       fetchCommissionSettingData();
       toastSuccess('บันทึกข้อมูลสำเร็จ');
       setIsModalOpen(false);
@@ -245,7 +203,8 @@ function SetCommission({ departmentData, depLoading }) {
       toastError('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     }
   }
-  const isEdited = tabActive === 'commission' ? isCommissionEdit : isIncentiveEdit;
+
+
   return (
     <section className="w-full">
       <Card className="flex p-4" shadow="none" radius="sm">
@@ -254,25 +213,6 @@ function SetCommission({ departmentData, depLoading }) {
         </CardHeader>
         <CardBody>
           <div className="flex flex-col gap-4">
-            {/* Section */}
-            {/* <div className="flex flex-wrap items-center md:flex-nowrap gap-8">
-              <div className="flex flex-col w-full md:w-auto">
-                <h3 className="text-md font-bold mb-2">เลือกรูปแบบ</h3>
-                <div className="flex items-center gap-4">
-                  <Checkbox color="primary"
-                    isSelected={isGeneralChecked}
-                    onChange={() => handleCheckboxChange('general')}
-                  >
-                    เงื่อนไขทั่วไป
-                  </Checkbox>
-                  <Checkbox color="primary"
-                    isSelected={isExtraChecked}
-                    onChange={() => handleCheckboxChange('extra')}
-                  >
-                    เงื่อนไขพิเศษ</Checkbox>
-                </div>
-              </div>
-            </div> */}
             {isGeneralChecked && (
               <>
                 {/* Company Section */}
@@ -284,9 +224,10 @@ function SetCommission({ departmentData, depLoading }) {
                         <h3 className="mb-2">แผนก</h3>
                         <Select
                           label="เลือกแผนก"
+                          aria-label="แผนก"
                           variant="bordered"
                           className="min-w-[300px]"
-                          selectedKeys={selectedDepartment ? [String(selectedDepartment?.id)] : []}
+                          selectedKeys={selectedDepartment ? [String(selectedDepartment?.departmentId)] : []}
                           isLoading={isLoading}
                           onChange={(event) => handleSelectedDepartment(event.target.value)}
                           scrollShadowProps={{
@@ -295,11 +236,11 @@ function SetCommission({ departmentData, depLoading }) {
                           disallowEmptySelection
                         >
                           {departmentData.map((dep, index) =>
-                            <SelectItem key={String(dep.id)}
+                            <SelectItem key={String(dep.departmentId)}
                               endContent={dep.isHq == 1 && <Chip color="warning" variant="flat">สำนักงานใหญ่</Chip>}
-                              value={dep.name}
+                              value={dep.departmentName}
                             >
-                              {dep.name}
+                              {dep.departmentName}
                             </SelectItem>
                           )}
                         </Select>
@@ -313,7 +254,8 @@ function SetCommission({ departmentData, depLoading }) {
                           variant="bordered"
                           isLoading={isLoading}
                           className="min-w-[300px]"
-                          selectedKeys={selectedRole ? [String(selectedRole?.id)] : []}
+                          aria-label="ตำแหน่ง"
+                          selectedKeys={selectedRole ? [String(selectedRole?.roleId)] : []}
                           onChange={(e) => handleSelectedRole(e.target.value)}
                           scrollShadowProps={{
                             isEnabled: false
@@ -323,7 +265,7 @@ function SetCommission({ departmentData, depLoading }) {
                         >
                           {selectedDepartment ?
                             selectedDepartment.roles.map((role) =>
-                              <SelectItem key={role.id} value={role.name}>{role.name}</SelectItem>
+                              <SelectItem key={role.roleId} value={role.roleName}>{role.roleName}</SelectItem>
                             )
                             :
                             <SelectItem />
@@ -359,60 +301,39 @@ function SetCommission({ departmentData, depLoading }) {
                 <div className="min-h-[300px]">
                   {
                     !(selectedDepartment && selectedRole && passedProb !== '') ?
-                      <div className="flex ms-10 mt-6 font-bold">กรุณาเลือกตำแหน่ง</div>
+                      <div className="w-full h-full p-10 flex flex-col items-center justify-center bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="text-lg ">กรุณาเลือกข้อมูล</div>
+                        <div className="text-sm text-gray-500">เลือกแผนกและตำแหน่งเพื่อตั้งค่า Commission</div>
+                      </div>
                       :
                       <div>
                         <Divider className="mt-4" />
                         <div className="mt-4">
-                          <Tabs variant="underlined" color="primary"
-                            onSelectionChange={(key) => setTabActive(key)}
-                            selectedKey={tabActive}
-                          >
-                            <Tab key="commission" title="commission"></Tab>
-                            {/* <Tab key="incentive" title="incentive"></Tab> */}
-                          </Tabs>
                           <div className="my-4 px-4">
-                            {
-                              tabActive === 'commission' ?
-                                <SetCommissionTab
-                                  type={'commission'}
-                                  forms={formsCommission}
-                                  setForm={setFormsCommission}
-                                  formValidate={formPercentageValidate}
-                                  selectedData={{
-                                    department: selectedDepartment,
-                                    role: selectedRole,
-                                    passedProb: passedProb
-                                  }}
-                                  selectedSource={selectedCommissionSource}
-                                  setSelectedSource={setSelectedCommissionSource}
-                                />
-                                :
-                                <SetCommissionTab
-                                  type={'incentive'}
-                                  forms={formsIncentive}
-                                  setForm={setFormsIncentive}
-                                  formValidate={formIncentiveValidate}
-                                  selectedData={{
-                                    department: selectedDepartment,
-                                    role: selectedRole,
-                                    passedProb: passedProb
-                                  }}
-                                  selectedSource={selectedIncentiveSource}
-                                  setSelectedSource={setSelectedIncentiveSource}
-                                />
-                            }
+                            <SetCommissionTab
+                              type={'commission'}
+                              forms={formsCommission}
+                              setForm={setFormsCommission}
+                              formValidate={formPercentageValidate}
+                              selectedData={{
+                                department: selectedDepartment,
+                                role: selectedRole,
+                                passedProb: passedProb
+                              }}
+                              selectedSource={selectedCommissionSource}
+                              setSelectedSource={setSelectedCommissionSource}
+                            />
                           </div>
                         </div>
                         <div className="flex justify-end mt-8 me-8">
                           <Button
-                              color={'primary'}
-                              startContent={<SaveIcon />}
-                              className="text-white font-bold"
-                              onPress={handleSubmitClick}
-                              isDisabled={!allFormsValid}
+                            color={'primary'}
+                            startContent={<SaveIcon />}
+                            className="text-white font-bold"
+                            onPress={handleSubmitClick}
+                            isDisabled={!allFormsValid}
                           >
-                              {`บันทึกการตั้งค่า`}
+                            {`บันทึกการตั้งค่า`}
                           </Button>
                         </div>
                       </div>
@@ -420,56 +341,13 @@ function SetCommission({ departmentData, depLoading }) {
                 </div>
               </>
             )}
-            {/* {isExtraChecked && (
-              <div className="flex flex-col gap-2">
-                <h3 className="text-md font-bold mb-2">รายละเอียด</h3>
-                <div className="flex items-center gap-4">
-                  <p className="text-start text-sm">
-                    เป็นการให้ค่าตอบแทนพนักงานแบบรายเดือนโดยใช้นโยบายค่าคอมมิชชัน คำนวณค่าคอมมิชชันมีตัวชี้วัด 2 รูปแบบ คือ 1. จำนวน คือ พนักงานทำงานตามที่กำหนดได้ ครบจำนวน จะได้ค่าตอบแทนที่มากของจำนวนเงินนั้น เช่น ทำงานครบตั้งแต่ 1 - 50 จำนวน จะได้รับ 100 บาท 2. บาท คือ พนักงานทำงานครบตามจำนวนเงินที่กำหนดจะได้รับค่าตอบแทนเป็นบาท เช่น ขายของได้ 10,000 บาท จะได้รับเงิน 100 บาท หากมีข้อสงสัยสามารถติดต่อทีมงาน HOPEFUL-CRM เพื่สอบถามรายละเอียดเพิ่มเติม
-                  </p>
-                </div>
-                <div className="text-start text-sm mt-2">
-                  <Textarea
-                    variant="bordered"
-                    placeholder="กรุณาเขียนเงื่อนไขที่ต้องการจะใช้ในการคำนวณ"
-                    disableAnimation
-                    disableAutosize
-                    classNames={{
-                      input: "resize-y min-h-[40px]",
-                    }}
-                    isDisabled
-                  />
-                </div>
-                <div className="flex justify-end">
-                    <Button
-                        color="primary"
-                        className="text-white font-bold"
-                        onPress={() => setIsModalOpen(true)}
-                        isDisabled={!allFormsValid}
-                    >
-                        {isEdit ? 'แก้ไขข้อมูล' : 'บันทึกข้อมูล'}
-                    </Button>
-                </div>
-                <div className="flex justify-end">
-                  <Button
-                    color="primary"
-                    className="text-white font-bold"
-                    onPress={() => setIsModalOpen(true)}
-                    disabled={!selectedDepartment || !selectedRole || (!isPercentageChecked && !isBahtChecked)}
-                  >
-                    {isEdit ? 'แก้ไขข้อมูล' : 'บันทึกข้อมูล'}
-                  </Button>
-                </div>
-              </div>
-            )} */}
-            
 
           </div>
         </CardBody>
       </Card>
       <AlertQuestion
-        title={tabActive === 'commission' ? "ยืนยันการแก้ไขข้อมูล" : "ยืนยันการบันทึกข้อมูล"}
-        content={`คุณแน่ใจหรือไม่ว่าต้องการ${isEdited ? "แก้ไข" : "บันทึก"}ข้อมูล?`}
+        title={"ยืนยันการแก้ไขข้อมูล"}
+        content={`คุณแน่ใจหรือไม่ว่าต้องการ${isCommissionEdit ? "แก้ไข" : "บันทึก"}ข้อมูล?`}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={() => handleSubmit()}

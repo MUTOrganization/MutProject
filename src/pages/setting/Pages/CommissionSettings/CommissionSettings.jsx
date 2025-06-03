@@ -5,6 +5,7 @@ import CommissionSettingsTable from "./CommissionSettingsTable"
 import fetchProtectedData from "@/utils/fetchData";
 import { toastError } from "@/component/Alert";
 import { useAppContext } from "@/contexts/AppContext";
+import departmentService from "@/services/departmentService";
 
 export default function CommissionSettings() {
     const {currentUser} = useAppContext();
@@ -13,12 +14,9 @@ export default function CommissionSettings() {
     const fetchDepartmentData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetchProtectedData.get(`${URLS.departments.getWithRoles}`, {
-                params: {
-                    businessId: currentUser.businessId
-                }
-            });
-            setDepartmentList(response.data);
+            const res = await departmentService.getDepartments(currentUser.agent.agentId);
+            setDepartmentList(res);
+            console.log(res);
         } catch (error) {
             toastError('เกิดข้อผิดพลาด', 'กรุณาลองใหม่อีกครั้ง')
             console.error('error fetching data');
@@ -31,9 +29,9 @@ export default function CommissionSettings() {
         fetchDepartmentData();
     }, [])
 
-    const [activateTab, setActivateTab] = useState("access")
+    const [activateTab, setActivateTab] = useState("set")
     const tabs = {
-        "table": <CommissionSettingsTable departmentData={departmentList} depLoading={isLoading} />,
+        // "table": <CommissionSettingsTable departmentData={departmentList} depLoading={isLoading} />,
         "set": <SetCommission departmentData={departmentList} depLoading={isLoading} />,
     }
     return (
@@ -61,14 +59,14 @@ export default function CommissionSettings() {
                             </div>
                         }
                     />
-                    <Tab
+                    {/* <Tab
                         key="table"
                         title={
                             <div className="flex items-center space-x-2">
                                 <span>การตั้งค่า Commission ทั้งหมด</span>
                             </div>
                         }
-                    />
+                    /> */}
                 </Tabs>
                 <CardBody>
                     <div className="">
