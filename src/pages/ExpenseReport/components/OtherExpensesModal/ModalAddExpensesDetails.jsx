@@ -158,6 +158,14 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                             </Table>
                         </div>
 
+                        <div className="w-full text-end px-2 space-x-2">
+                            <span className="text-sm text-slate-500">รวมทั้งหมด</span>
+                            <span className="text-red-500 font-bold">
+                                {formatNumber(selectedData.list.reduce((acc, item) => acc + Number(item.totalAmount), 0)) || 0.00}
+                            </span>
+                            <span className="text-sm text-slate-500">บาท</span>
+                        </div>
+
                         <div className="other w-full">
                             <div className="flex w-full flex-col gap-0 lg:gap-2 items-start">
                                 <label className="text-sm text-slate-500">หมายเหตุ</label>
