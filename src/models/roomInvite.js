@@ -6,7 +6,7 @@ export class RoomInvite {
         this.roomInviteId = data.roomInviteId
         this.roomId = data.roomId
         /** @type {ChatRoom} */
-        this.room = new ChatRoom(data.room)
+        this.room = data.room ? new ChatRoom(data.room) : null
         /** @type {Boolean} */
         this.isAdmin = data.isAdmin
         /** @type {String} */

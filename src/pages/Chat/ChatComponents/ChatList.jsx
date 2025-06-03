@@ -12,11 +12,15 @@ import { playNotificationSound } from '@/utils/soundFunc';
 import GroupChatTab from './ChatListTabs/GroupChatTab';
 import chatroomService from '@/services/chatroomService';
 import { toastError } from '@/component/Alert';
+import User from '@/models/user';
+import AlertDeleteChatRoom from './AlertDeleteChatRoom';
 
 export default function ChatList({ selectedTab, setSelectedTab, selectedUser, setSelectedUser }) {
-    const { setCurrentChatRoom, setChatRooms, setRoomInvites, insertChatRoom, roomsReadStatus, roomInvites } = useChatContext();
+    const { setCurrentChatRoom, setChatRooms, setRoomInvites, insertChatRoom, roomsReadStatus, roomInvites, currentChatRoom } = useChatContext();
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('')
+    const [isAlertDeleteChatRoomOpen, setIsAlertDeleteChatRoomOpen] = useState(false);
+    const [deletingChatRoom, setDeletingChatRoom] = useState(null);
     
 
     useEffect(() => {
@@ -47,8 +51,8 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
 
     async function handleAcceptInvite(invite){
         try{
-            const room = await chatroomService.acceptRoomInvite(invite.chatRoomId)
-            setRoomInvites(prev => prev.filter(i => i.chatRoomId !== invite.chatRoomId))
+            const room = await chatroomService.acceptRoomInvite(invite.roomId)
+            setRoomInvites(prev => prev.filter(i => Number(i.roomId) !== Number(invite.roomId)))
 
             insertChatRoom(room)
             setCurrentChatRoom(room)
@@ -68,16 +72,61 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
                 }
                 return r
             }))
+
+            if(currentChatRoom && currentChatRoom.chatRoomId === room.chatRoomId){
+                setCurrentChatRoom(p => new ChatRoom({...p, roomMembers: [...p.roomMembers, new User(user)]}));
+                setSelectedUser(null)
+            }
         }catch(err) {
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเข้าร่วมกลุ่มแชทได้')
         }
 
-    }, [setChatRooms])
+    }, [setChatRooms, currentChatRoom])
     useSocket('chat:joined:room', handleSocketJoinGroup);
 
+    const handleSocketUpdateRoom = useCallback((data) => {
+        try{
+            const room = new ChatRoom(data)
+            setChatRooms(prev => prev.map(r => {
+                if(r.chatRoomId === room.chatRoomId){
+                    room.lastMessage = r.lastMessage
+                    return room
+                }
+                return r
+            }))
+
+            if(currentChatRoom && currentChatRoom.chatRoomId === room.chatRoomId){
+                room.lastMessage = currentChatRoom.lastMessage;
+                setCurrentChatRoom(room);
+            }
+
+        }catch(err){
+            console.error(err)
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถอัพเดตกลุ่มแชทได้')
+        }
+    }, [currentChatRoom, setCurrentChatRoom, setChatRooms])
+    useSocket('chat:updated:room', handleSocketUpdateRoom);
+
+    const handleSocketDeleteRoom = useCallback((data) => {
+        try{
+            const room = data;
+            setChatRooms(prev => prev.filter(r => Number(r.chatRoomId) !== Number(room.chatRoomId)))
+            if(currentChatRoom && Number(currentChatRoom.chatRoomId) === Number(room.chatRoomId)){
+                setCurrentChatRoom(null)
+                setIsAlertDeleteChatRoomOpen(true)
+                setDeletingChatRoom(room)
+            }
+        }catch(err){
+            console.error(err)
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถลบกลุ่มแชทได้')
+        }
+    }, [currentChatRoom, setChatRooms])
+    useSocket('chat:deleted:room', handleSocketDeleteRoom);
+
     async function handleRejectInvite(invite){
-        await chatroomService.rejectRoomInvite(invite.chatRoomId)
+        await chatroomService.rejectRoomInvite(invite.roomId)
+        setRoomInvites(prev => prev.filter(i => Number(i.roomId) !== Number(invite.roomId)))
     }
     
     return (
@@ -121,6 +170,14 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
                     onSubmit={handleCreateGroupChat}
                 />
             }
+
+            <AlertDeleteChatRoom 
+                isOpen={isAlertDeleteChatRoomOpen} 
+                onClose={() => {
+                    setIsAlertDeleteChatRoomOpen(false)
+                    setDeletingChatRoom(null)
+                }} 
+                currentChatRoom={deletingChatRoom} />
 
         </div >
     )

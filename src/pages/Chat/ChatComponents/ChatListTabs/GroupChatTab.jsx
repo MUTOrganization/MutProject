@@ -49,7 +49,7 @@ export default function GroupChatTab({ onSelectChatRoom, onAcceptInvite, onRejec
                         {
                             roomInvites.map((invite) => {
                                 return(
-                                    <RoomInviteItem key={invite.chatRoomId} invite={invite} onAccept={onAcceptInvite} onReject={onRejectInvite} />
+                                    <RoomInviteItem key={invite.roomId} invite={invite} onAccept={onAcceptInvite} onReject={onRejectInvite} />
                                 )
                             })
                         }

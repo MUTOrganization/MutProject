@@ -1,8 +1,7 @@
-import { Button, Input, Spinner, Textarea, Tooltip } from '@heroui/react'
+import { Button, Input, Spinner, Tooltip } from '@heroui/react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FaBan, FaInfo, FaInfoCircle, FaPaperclip, FaSearch, FaUserPlus } from 'react-icons/fa'
+import { FaInfoCircle, FaUserPlus } from 'react-icons/fa'
 import ChatGroupInfo from '../ChatGroupInfo'
-import ConfirmBlockMemberModal from '../ConfirmBlockMemberModal'
 import AddMember from '../AddMember'
 import { useChatContext } from '../../ChatContext'
 import { useAppContext } from '@/contexts/AppContext'
@@ -16,10 +15,6 @@ import chatMessageService from '@/services/chatMessageService'
 import { useSocketContext } from '@/contexts/SocketContext'
 import useSocket from '@/component/hooks/useSocket'
 import { playNotificationSound } from '@/utils/soundFunc'
-import { Menu } from 'lucide-react'
-import { ChatRoom } from '@/models/chatRoom'
-import { getRoomName } from '../../utils'
-import { joinRoom } from '@/services/socketHandler.js/general'
 
 export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const { currentUser } = useAppContext()
@@ -42,9 +37,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const [isOpenChatGroupInfo, setIsOpenChatGroupInfo] = useState(false)
     const [isOpenInviteMember, setIsOpenInviteMember] = useState(false)
 
-
-    
-
     async function handleStartChat(){
         try{
             setIsLoading(true)
@@ -65,7 +57,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         }
     }
     const handleSocketCreatePrivateChatRoom = useCallback((data) => {
-        console.log(data);
         insertChatRoom(data)
         playNotificationSound('message')
     },[currentUser, setChatRooms, socket])
@@ -269,7 +260,31 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
             scrollToBottom('smooth')
         }
     }, [currentChatRoom, setMessages, setPagination])
-    useSocket('chat:receive:system_message', handleSocketReceiveSystemMessage);
+    useSocket('chat:received:system_message', handleSocketReceiveSystemMessage);
+
+
+    const [roomInvites, setRoomInvites] = useState([]);
+
+    useEffect(() => {
+        if(currentChatRoom){
+            chatroomService.getRoomInvitesByChatRoomId(currentChatRoom.chatRoomId).then((data) => {
+                setRoomInvites(data);
+            }).catch((error) => {
+                console.log(error);
+                toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลการเชิญ');
+            })
+        }
+    }, [currentChatRoom])
+
+    async function handleInviteMember(user, type = 'member'){
+        try{
+            const invite = await chatroomService.createRoomInvite(currentChatRoom.chatRoomId, user.username, type === 'admin');
+            setRoomInvites(prev => [...prev, invite]);
+        }catch(err){
+            console.error(err);
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเชิญสมาชิกได้');
+        }
+    }
 
 
 
@@ -337,9 +352,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                             </div>
                             <span className='text-slate-500'>{roomInfo.name}</span>
                         </div>
-                        <Tooltip content='ข้อมูลผู้ใช้'>
-                            <span className='cursor-pointer' onClick={() => setIsOpenConfirmBlockMember(true)}><Menu className='text-primary-500' size='18px' /></span>
-                        </Tooltip>
                     </header>
                 ) : (
                     <header className='flex flex-row justify-between items-center border-1 border-slate-200 py-2 px-4 rounded-md relative'>
@@ -348,11 +360,11 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                             {/* <Tooltip content='ค้นหารายชื่อ' color='primary' className='text-white'>
                                 <div onClick={() => setIsOpenSearchMember(!isOpenSearchMember)} className='cursor-pointer'><FaSearch className='text-blue-500' size='18px' /></div>
                             </Tooltip> */}
-                            <Tooltip content='รายละเอียดกลุ่ม' color='warning' className='text-white'>
-                                <div className='cursor-pointer' onClick={() => setIsOpenChatGroupInfo(true)}><FaInfoCircle className='text-yellow-500' size='18px' /></div>
-                            </Tooltip>
                             <Tooltip content='เชิญเข้ากลุ่ม' color='success' className='text-white'>
                                 <div className='cursor-pointer' onClick={() => setIsOpenInviteMember(true)}><FaUserPlus className='text-green-500' size='18px' /></div>
+                            </Tooltip>
+                            <Tooltip content='รายละเอียดกลุ่ม' color='warning' className='text-white'>
+                                <div className='cursor-pointer' onClick={() => setIsOpenChatGroupInfo(true)}><FaInfoCircle className='text-yellow-500' size='18px' /></div>
                             </Tooltip>
                         </div>
                         {isOpenSearchMember && (
@@ -401,21 +413,17 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
             {isOpenChatGroupInfo && (
                 <ChatGroupInfo
                     isOpen={isOpenChatGroupInfo}
-                    onOpenChange={() => setIsOpenChatGroupInfo(false)}
-                />
-            )}
-
-            {isOpenConfirmBlockMember && (
-                <ConfirmBlockMemberModal
-                    isOpen={isOpenConfirmBlockMember}
-                    onOpenChange={() => setIsOpenConfirmBlockMember(false)}
+                    onClose={() => setIsOpenChatGroupInfo(false)}
                 />
             )}
 
             {isOpenInviteMember && (
                 <AddMember
                     isOpen={isOpenInviteMember}
-                    onOpenChange={() => setIsOpenInviteMember(false)}
+                    onClose={() => setIsOpenInviteMember(false)}
+                    members={currentChatRoom.roomMembers}
+                    roomInvites={roomInvites}
+                    onAddMember={handleInviteMember}
                 />
             )}
         </>
