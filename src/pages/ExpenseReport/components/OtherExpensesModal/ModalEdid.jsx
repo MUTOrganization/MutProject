@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Button, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, DatePicker, Spinner } from "@heroui/react";
+import { Button, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, DatePicker, Spinner, Autocomplete, AutocompleteItem } from "@heroui/react";
 import { FaPlusCircle, FaTrash } from 'react-icons/fa';
 import { useAppContext } from '@/contexts/AppContext';
 import { toast, Toaster } from 'sonner';
@@ -93,11 +93,11 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
 
                             <div className='flex justify-end mb-3'>
                                 <div className='flex justify-end mb-3'>
-                                    <Select disallowEmptySelection={true} variant="bordered" key={selectAgent} aria-label="Select a type" className="w-48" defaultSelectedKeys={[`${selectType}`] || null} onChange={(e) => setSelectType(Number(e.target.value) || null)}>
+                                    <Autocomplete allowsEmptyCollection={false} isClearable={false} variant="bordered" key={selectAgent} aria-label="Select a type" className="w-48" selectedKey={`${selectType || null}`} onSelectionChange={(value) => setSelectType(Number(value) || null)}>
                                         {typeData?.filter(e => e.status === true).map((item) => (
-                                            <SelectItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName || null}</SelectItem>
+                                            <AutocompleteItem aria-label="Select a type" key={item.expensesTypeId} value={item.expensesTypeId}>{item.typeName || null}</AutocompleteItem>
                                         ))}
-                                    </Select>
+                                    </Autocomplete>
                                 </div>
                             </div>
 
@@ -126,6 +126,11 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                                             type="text"
                                                             maxLength={45}
                                                             size='sm'
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === ' ') {
+                                                                    e.preventDefault();
+                                                                }
+                                                            }}
                                                             placeholder='รายการ'
                                                         />
                                                     </TableCell>
@@ -133,14 +138,17 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                                         <Input
                                                             value={item.qty}
                                                             onChange={(e) => {
-                                                                const updatedList = [...list];
-                                                                updatedList[index].qty = e.target.value;
+                                                                const val = e.target.value;
+                                                                if (/^\d*$/.test(val)) {
+                                                                    const updatedList = [...list];
+                                                                    updatedList[index].qty = val;
 
-                                                                const qty = parseFloat(updatedList[index].qty) || 1;
-                                                                const price = parseFloat(updatedList[index].price) || 0;
-                                                                updatedList[index].totalAmount = (qty * price).toFixed(2);
+                                                                    const qty = parseFloat(val) || 1;
+                                                                    const price = parseFloat(updatedList[index].price) || 0;
+                                                                    updatedList[index].totalAmount = (qty * price).toFixed(2);
 
-                                                                setList(updatedList);
+                                                                    setList(updatedList);
+                                                                }
                                                             }}
                                                             type="text"
                                                             className='input input-sm input-bordered focus:outline-none w-full'
@@ -148,7 +156,7 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                                             placeholder='0'
                                                             size='sm'
                                                             onKeyDown={(e) => {
-                                                                if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                                                                if (e.key === ' ') {
                                                                     e.preventDefault();
                                                                 }
                                                             }}
@@ -160,24 +168,24 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                                             value={item.price}
                                                             placeholder='0.00'
                                                             onChange={(e) => {
-                                                                const updatedList = [...list];
-                                                                updatedList[index].price = e.target.value;
-
-                                                                const qty = parseFloat(updatedList[index].qty) || 1;
-                                                                const price = parseFloat(updatedList[index].price) || 0;
-                                                                updatedList[index].totalAmount = (qty * price).toFixed(2);
-
-                                                                setList(updatedList);
+                                                                const val = e.target.value;
+                                                                if (/^\d*\.?\d*$/.test(val)) {
+                                                                    const updatedList = [...list];
+                                                                    updatedList[index].price = val;
+                                                                    const qty = parseFloat(updatedList[index].qty) || 1;
+                                                                    const price = parseFloat(val) || 0;
+                                                                    updatedList[index].totalAmount = (qty * price).toFixed(2);
+                                                                    setList(updatedList);
+                                                                }
                                                             }}
                                                             type="text"
                                                             size='sm'
                                                             maxLength={45}
                                                             onKeyDown={(e) => {
-                                                                if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
+                                                                if (e.key === ' ') {
                                                                     e.preventDefault();
                                                                 }
                                                             }}
-                                                            pattern="[0-9]*"
                                                         />
                                                     </TableCell>
                                                     <TableCell>
@@ -188,21 +196,25 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                                     </TableCell>
 
                                                     <TableCell>
-                                                        <FaTrash
-                                                            size={16}
-                                                            className='text-red-500 cursor-pointer hover:scale-150 transition duration-150 ease-in'
-                                                            onClick={() => handleDeleteWithDraw(index)}
-                                                        />
+                                                        {index > 0 && (
+                                                            <FaTrash
+                                                                size={16}
+                                                                className='text-red-500 cursor-pointer hover:scale-150 transition duration-150 ease-in'
+                                                                onClick={() => handleDeleteWithDraw(index)}
+                                                            />
+                                                        )}
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
                                             <TableRow>
                                                 <TableCell>
                                                     <div className='flex flex-row items-center space-x-1 justify-start mr-1 py-2'>
-                                                        <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={handleAddWithDraw}>
-                                                            <span><FaPlusCircle className='text-blue-500' /></span>
-                                                            <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
-                                                        </div>
+                                                        {list.length < 5 && (
+                                                            <div className='cursor-pointer flex flex-row items-center space-x-1' onClick={handleAddWithDraw}>
+                                                                <span><FaPlusCircle className='text-blue-500' /></span>
+                                                                <span className='text-sm text-blue-500 underline underline-offset-2'>เพิ่มข้อมูล</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </TableCell>
                                                 <TableCell></TableCell>
