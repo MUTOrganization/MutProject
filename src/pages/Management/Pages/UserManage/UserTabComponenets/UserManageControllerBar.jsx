@@ -51,17 +51,17 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         variant='bordered'
                         label='ตัวแทน'
                         placeholder='เลือกตัวแทน'
-                        onSelectionChange={(value) =>
+                        onSelectionChange={(value) => {
+                            if (value === null) return
                             setSelector((prev) => ({
                                 ...prev,
-                                agent: value || null,
+                                agent: value,
                                 department: null,
                                 role: null,
                             }))
-                        }
-                        selectedKey={selector.agent}
+                        }}
+                        selectedKey={`${selector.agent}`}
                     >
-                        <AutocompleteItem key="ทั้งหมด" value="ทั้งหมด">ทั้งหมด</AutocompleteItem>
                         {agentId.map(item => (
                             <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
                         ))}
@@ -77,9 +77,9 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         variant='bordered'
                         label='แผนก'
                         placeholder='ทั้งหมด'
-                        onChange={(e) => setSelector(prev => ({ ...prev, department: Number(e.target.value) || null }))}
+                        onChange={(e) => setSelector(prev => ({ ...prev, department: Number(e.target.value) || null, role: null }))}
                         value={selector.department || null}
-                        isDisabled={isAdmin ? false : selector.agent === 'ทั้งหมด'}
+                        isDisabled={isAdmin ? false : selector.agent === null}
                     >
                         {departmentId?.map(item => (
                             <SelectItem key={item.departmentId} value={item.departmentId}>{item.departmentName}</SelectItem>
@@ -91,7 +91,7 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
             {(isManager || isAdmin || isSuperAdmin) && (
                 <div className='w-48'>
                     <Select
-                        key={selector.agent}
+                        key={isSuperAdmin ? selector.agent : selector.department}
                         aria-label='ตำแหน่ง'
                         label='ตำแหน่ง'
                         placeholder='ทั้งหมด'

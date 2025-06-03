@@ -47,15 +47,21 @@ function TabsOthersCost() {
   });
 
   // Fetch ExpensesData
+
+  const fetchAgent = async () => {
+    try {
+      const agent = await agentService.getAgent()
+      setAgentData(agent)
+    } catch (error) {
+      console.error('ไม่สามารถดึงข้อมูลได้:', error);
+    }
+  }
+
   const getDataOtherExpenses = async () => {
     setIsLoading(true)
     try {
-      const [expenses, agent] = await Promise.all([
-        await expensesService.getExpensesDetails(isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId, formatDateObject(dateRange.start), formatDateObject(dateRange.end)),
-        await agentService.getAgent()
-      ])
+      const expenses = await expensesService.getExpensesDetails(isSuperAdmin ? Number(selectAgent) : currentUser.agent.agentId, formatDateObject(dateRange.start), formatDateObject(dateRange.end))
       setData(expenses);
-      setAgentData(agent);
       setIsLoading(false)
     } catch (error) {
       console.error('ไม่สามารถดึงข้อมูลได้:', error);
@@ -63,8 +69,20 @@ function TabsOthersCost() {
   }
 
   useEffect(() => {
-    getDataOtherExpenses();
+    fetchAgent();
+  }, [])
+
+  useEffect(() => {
+    if (selectAgent !== null) {
+      getDataOtherExpenses();
+    }
   }, [selectAgent, dateRange])
+
+  useEffect(() => {
+    if (agentData.length > 0 && selectAgent === null) {
+      setSelectAgent(agentData[0]?.agentId)
+    }
+  }, [agentData])
 
   const filterByDateRange = (itemDate) => {
     if (!dateRange || !dateRange.start || !dateRange.end) {

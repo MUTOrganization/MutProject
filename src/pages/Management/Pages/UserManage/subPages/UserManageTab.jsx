@@ -22,7 +22,7 @@ function UserManageTab() {
 
     // Selector
     const [selector, setSelector] = useState({
-        agent: 'ทั้งหมด',
+        agent: null,
         department: null,
         role: null,
         probStatus: null,
@@ -36,7 +36,7 @@ function UserManageTab() {
 
     const selectAgentParams = () => {
         if (isSuperAdmin) {
-            return selector.agent === 'ทั้งหมด' ? '' : Number(selector.agent)
+            return selector.agent === null ? '' : Number(selector.agent)
         } else {
             return currentUser.agent.agentId
         }
@@ -84,6 +84,12 @@ function UserManageTab() {
     }, [selector.agent, selector.department])
 
     useEffect(() => {
+        if (agentId.length > 0 && selector.agent === null) {
+            setSelector(prev => ({ ...prev, agent: agentId[0]?.agentId }))
+        }
+    }, [agentId])
+
+    useEffect(() => {
         if (selector.agent !== null) {
             fetchData()
         }
@@ -113,7 +119,7 @@ function UserManageTab() {
     return (
         <div className='flex flex-col space-y-4'>
             <UserManageControllerBar agentId={agentId} departmentId={departmentId} roleId={roleId} selector={selector} setSelector={setSelector} />
-            <UserManageBody userList={filterUser} isAdmin={isAdmin} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} selector={selector} />
+            <UserManageBody userList={filterUser} isAdmin={isAdmin} isLoading={isLoading} fetchData={fetchData} roleId={roleId} departmentId={departmentId} isSuperAdmin={isSuperAdmin} isManager={isManager} selector={selector} />
         </div>
     )
 }

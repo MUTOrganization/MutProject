@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
+import { Button, Checkbox, DatePicker, DateRangePicker, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure, ModalFooter, Textarea, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, Select, SelectItem } from "@heroui/react";
 import { formatNumber } from '@/component/FormatNumber';
 
 function ModalManageOtherExpenses({ isOpen, onClose, data }) {
@@ -19,10 +19,24 @@ function ModalManageOtherExpenses({ isOpen, onClose, data }) {
                             <div className='flex flex-row'>
                                 <div className="flex w-full lg:flex-col gap-0 lg:gap-2 items-start">
                                     <label className="text-sm text-slate-500">วันที่กรอก</label>
-                                    <input value={new Date(data.createdDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })} disabled className='input input-sm input-bordered focus:outline-none w-full text-sm h-9 rounded-lg shadow-sm bg-slate-100 px-2' />
+                                    <Input value={new Date(data.createdDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })} isDisabled />
                                 </div>
                             </div>
 
+                            <div className='w-full text-end'>
+                                <Select
+                                    selectedKeys={[String(data?.expensesType.typeName)]}
+                                    isDisabled
+                                    variant='bordered'
+                                    className="w-48"
+                                    size="sm"
+                                    label="ประเภท"
+                                >
+                                    <SelectItem key={data?.expensesType.typeName} value={data?.expensesType.typeName}>
+                                        {data?.expensesType.typeName}
+                                    </SelectItem>
+                                </Select>
+                            </div>
 
                             <div className="text-end text-sm text-slate-500 me-2">
                                 <div className="text-center">

@@ -9,7 +9,7 @@ import CloseStatus from '../UserTabModal/CloseStatus'
 import EditEmployeeModal from '../UserTabModal/EditEmployeeModal'
 import ChangePassword from '../UserTabModal/ChangePassword'
 
-function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId, isSuperAdmin, selector }) {
+function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperAdmin, selector , isManager }) {
     // Open Modal
     const [isOpenAddmployeeModal, setIsOpenAddmployeeModal] = useState(false)
     const [isOpenCloseStatusModal, setIsOpenCloseStatusModal] = useState(false)
@@ -26,18 +26,9 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
         { key: 'startWork', label: 'วันที่เริ่มทำงาน' },
         {
             key: 'action', label: (<div className="text-right w-full">
-                {isSuperAdmin ? (
-                    selector.agent !== 'ทั้งหมด' && (
-                        <span className='text-green-500 cursor-pointer hover:bg-green-200 transition-all duration-200 px-2 py-1.5 rounded-md' onClick={() => setIsOpenAddmployeeModal(true)}>
-                            <FaPlus className="inline-block text-sm" />
-                        </span>
-                    )
-                ) : isAdmin ? (
-                    <span className='text-green-500 cursor-pointer hover:bg-green-200 transition-all duration-200 px-2 py-1.5 rounded-md' onClick={() => setIsOpenAddmployeeModal(true)}>
-                        <FaPlus className="inline-block text-sm" />
-                    </span>
-                ) : ''
-                }
+                <span className='text-green-500 cursor-pointer hover:bg-green-200 transition-all duration-200 px-2 py-1.5 rounded-md' onClick={() => setIsOpenAddmployeeModal(true)}>
+                    <FaPlus className="inline-block text-sm" />
+                </span>
             </div>)
         }
     ]
@@ -86,22 +77,19 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                                     <div className='flex flex-row justify-start items-center w-full'>
 
                                         {/* Change Password */}
-                                        {(isSuperAdmin || isAdmin) && (
-                                            <span onClick={() => { setIsOpenChangePasswordModal(true); setSelectUserData(user) }} className='px-3 py-1 rounded-lg bg-yellow-100 text-yellow-600 cursor-pointer hover:bg-yellow-200 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
-                                        )}
+                                        <span onClick={() => { setIsOpenChangePasswordModal(true); setSelectUserData(user) }} className='px-3 py-1 rounded-lg bg-yellow-100 text-yellow-600 cursor-pointer hover:bg-yellow-200 transition-all duration-200'>เปลี่ยนรหัสผ่าน</span>
 
                                         {/* Edit User Date */}
                                         {isSuperAdmin ? (
                                             selector.agent !== 'ทั้งหมด' && (
                                                 <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
                                             )
-                                        ) : isAdmin ? (
+                                        ) : (
                                             <div onClick={() => { setIsOpenUpdateUserModal(true); setSelectUserData(user) }} className='p-2 cursor-pointer hover:bg-yellow-100 transition-all duration-200 rounded-full'><span><FaPencilAlt className='text-yellow-500 font-bold text-sm' /></span></div>
-                                        ) : ''
-                                        }
+                                        )}
 
                                         {/* Close Status User */}
-                                        {user?.status && (isSuperAdmin || isAdmin) && (
+                                        {user?.status && (
                                             <Tooltip content={'ปิดการใช้งาน'} placement='top' color='danger'>
                                                 <div onClick={() => { setIsOpenCloseStatusModal(true); setSelectUserData(user) }} className={`${user.status ? 'text-red-500  hover:bg-red-100' : 'text-green-500  hover:bg-green-100'} p-2 cursor-pointer transition-all duration-200 rounded-full`}><span> <FaBan /> </span></div>
                                             </Tooltip>
@@ -123,6 +111,7 @@ function UserManageBody({ userList, isAdmin, isLoading, fetchData, departmentId,
                         userList={userList}
                         isSuperAdmin={isSuperAdmin}
                         selector={selector}
+                        isManager={isManager}
                     />
                 )}
 
