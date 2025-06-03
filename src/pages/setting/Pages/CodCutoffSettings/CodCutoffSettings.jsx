@@ -1,10 +1,10 @@
 import { Button, Card, CardBody, Checkbox, Chip, Input, Select, SelectItem, TimeInput } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 import { toastError, toastSuccess } from "@/component/Alert";
-import fetchProtectedData from "@/utils/fetchData";
 import { useAppContext } from "@/contexts/AppContext";
-import AdvancedCodCuttoffSettings from "./AdvancedCodCuttoffSettings";
-import { updateSettingCOD } from "@/services/settingCODService";
+import settingCODService from "@/services/settingCODService";
+
+
 export default function CodCutoffSettings() {
     const { currentUser } = useAppContext();
     const [isEdit, setIsEdit] = useState(false);
@@ -14,59 +14,46 @@ export default function CodCutoffSettings() {
     const [isSetTime, setIsSetTime] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [isAdvancedSetting, setIsAdvancedSetting] = useState(false);
-
-    // const [selectedEffectMonth, setSelectedEffectMonth] = useState('nextMonth');
-
-    // const [isWarningModalShow, setIsWarningModalShow] = useState(false);
 
     useEffect(() => {
         fetchSettingData();
     }, [])
-    
+
     const isChanged = useMemo(() => {
         return !oldSetting || (oldSetting.day != selectedDay
             || oldSetting.time !== `${selectedTime.hour.toString().padStart(2, '0')}:${selectedTime.minute.toString().padStart(2, '0')}`
             || (!isSetTime && oldSetting.time !== '00:00'));
     }, [oldSetting, selectedDay, selectedTime, isSetTime]);
 
+    // Fetch Setting Data
     const fetchSettingData = async () => {
-        const res = await fetchProtectedData.get(URLS.setting.getCodCutoff + `/${currentUser.businessId}`);
-        if (res.data) {
-            setSelectedDay(res.data.day);
-            const [hour, minute] = res.data.time.split(':');
+        const res = await settingCODService.getSettingCOD(currentUser.agent.agentId)
+        if (res) {
+            setSelectedDay(res.cutoffDay);
+            const [hour, minute] = res.cutoffTime.split(':');
             setSelectedTime({ hour: parseInt(hour), minute: parseInt(minute) });
-            if (res.data.time === '00:00') {
+            if (res.cutoffTime === '00:00') {
                 setIsSetTime(false);
             } else {
                 setIsSetTime(true);
             }
-            setOldSetting({ day: res.data.day, time: res.data.time });
+            setOldSetting({ day: res.cutoffDay, time: res.cutoffTime });
         } else {
             setSelectedDay("1");
             setSelectedTime({ hour: 0, minute: 0 });
         }
     }
+
     const handleSave = async () => {
         const time = isSetTime ? `${selectedTime.hour.toString().padStart(2, '0')}:${selectedTime.minute.toString().padStart(2, '0')}` : '00:00';
-        console.log("Update Setting")
         try {
             setIsLoading(true);
             const now = new Date();
             const currentStartDate = `${now.getFullYear()}-${now.getMonth() + 1}-01`
-            // const res = await fetchProtectedData.post(URLS.setting.updateCodCutoff, {
-            //     businessId: currentUser.businessId,
-            //     day: selectedDay,
-            //     time: time,
-            //     createBy: currentUser.username,
-            //     startDate: `${now.getFullYear()}-${now.getMonth() + 1}-01`
-            // });
-
-            const r = await updateSettingCOD(
+            const res = await settingCODService.updateSettingCOD(
                 currentUser.agent.agentId,
                 selectedDay,
                 time,
-                currentUser.username,
                 currentStartDate
             )
             toastSuccess('บันทึกข้อมูลสำเร็จ', 'เปลี่ยนวันตัดยอดยอดเงินเข้าของเดือนนี้เรียบร้อย');
@@ -105,42 +92,27 @@ export default function CodCutoffSettings() {
                         </div>
                         <div className="border-b border-divider mb-8"></div>
                         <div className="mb-8">
-                            {/* <div className="flex justify-end">
-                                <Button variant="bordered" color="primary"
-                                    onPress={() => setIsAdvancedSetting(!isAdvancedSetting)}>{isAdvancedSetting ? 'ย้อนกลับ' : 'ตั้งค่าย้อนหลัง'}
-                                </Button>
-                            </div> */}
-                            {
-                                isAdvancedSetting ? 
-                                    <div className="mt-4 mx-4">
-                                        <AdvancedCodCuttoffSettings />
-                                    </div> 
-                                    :
-                                    <>
-                                        <div className="font-semibold mb-2">การตั้งค่าปัจจุบัน</div>
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex w-52">
-                                                <Input value={`วันที่ ${oldSetting?.day ?? 1} ของเดือนถัดไป`} variant="bordered" isDisabled />
-                                            </div>
-                                            <div>เวลา</div>
-                                            <div className="w-32">
-                                                <TimeInput variant="bordered" size="md"
-                                                    value={{ hour: oldSetting?.time.split(':')[0], minute: oldSetting?.time.split(':')[1] }}
-                                                    isDisabled hourCycle={24}
-                                                    granularity="minute"
-                                                />
-                                            </div>
-                                            {
-                                                isEdit ? <Button variant="bordered" color="primary" onPress={() => setIsEdit(false)}>ยกเลิก</Button>
-                                                    : <Button variant="solid" color="primary" onPress={() => setIsEdit(true)}>แก้ไข</Button>
-                                            }
-                                        </div>
-                                    </>
-                            }
+                            <div className="font-semibold mb-2">การตั้งค่าปัจจุบัน</div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex w-52">
+                                    <Input value={`วันที่ ${oldSetting?.day ?? 1} ของเดือนถัดไป`} aria-label="วันที่" variant="bordered" isDisabled />
+                                </div>
+                                <div>เวลา</div>
+                                <div className="w-32">
+                                    <TimeInput variant="bordered" size="md"
+                                        value={{ hour: oldSetting?.time.split(':')[0], minute: oldSetting?.time.split(':')[1] }}
+                                        isDisabled hourCycle={24}
+                                        granularity="minute"
+                                    />
+                                </div>
+                                {
+                                    isEdit ? <Button variant="bordered" color="primary" onPress={() => setIsEdit(false)}>ยกเลิก</Button>
+                                        : <Button variant="solid" color="primary" onPress={() => setIsEdit(true)}>แก้ไข</Button>
+                                }
+                            </div>
                         </div>
                         {
                             isEdit && (
-
                                 <div>
                                     <div className="border-b border-divider mb-8"></div>
                                     <div className="flex items-center gap-4">
@@ -170,12 +142,6 @@ export default function CodCutoffSettings() {
                     </div>
                 </CardBody>
             </Card>
-            {/* <AlertQuestion 
-                isOpen={isWarningModalShow}
-                onClose={() => setIsWarningModalShow(false)}
-                title="เปลี่ยนการตั้งค่าของนี้?"
-                content="คุณต้องการลบข้อมูลนี้ใช่หรือไม่? หากเปลี่ยนแล้ว"
-            /> */}
         </section>
     )
 }
