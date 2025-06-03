@@ -11,6 +11,8 @@ import { formatDateObject } from '@/utils/dateUtils';
 import Sales_ExpensesChart from './Components/Sales_ExpensesChart';
 import ExpensesChart from './Components/ExpensesChart';
 import ExpensesDetails from './Components/ExpensesDetails';
+import { Spinner } from '@heroui/react';
+import agentService from '@/services/agentService';
 
 function DashboardCEO() {
 
@@ -20,13 +22,16 @@ function DashboardCEO() {
     const [allUser, setAllUser] = useState([])
     const [expensesData, setExpensesData] = useState([])
     const [commissionData, setCommissionData] = useState([])
-    const [agentList, setAgentList] = useState(null)
+    const [agentList, setAgentList] = useState([])
+
+    //Access Check
+    const isSuperAdmin = currentUser.baseRole === 'SUPER_ADMIN'
 
     // Loading Data
     const [isLoading, setIsLoading] = useState(false)
 
     // Other State
-    const [selectAgent, setSelectAgent] = useState(null)
+    const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? null : currentUser.agent.agentId)
     const [selectExpensesTypeFromChart, setSelectExpensesTypeFromChart] = useState(null)
 
     // Date Data
@@ -38,48 +43,66 @@ function DashboardCEO() {
     })
     const [dateMode, setDateMode] = useState('ปี');
 
-    const fetchAllUser = async () => {
-        try {
-            const res = await userService.getAllUser(currentUser.agent.agentId)
-            setAllUser(res)
-        } catch (err) {
-            console.log('Cannot Get All User', err)
-        }
-    }
-
-    const fetchAllData = async () => {
-        setIsLoading(true)
-        const Selectusers = allUser.map(item => item.username)
-        try {
-            const [expenses, commission] = await Promise.all([
-                await expensesService.getExpensesDetails(currentUser.agent.agentId, formatDateObject(date.start), formatDateObject(date.end)),
-                await commissionService.getCommission(currentUser.agent.agentId, Selectusers, formatDateObject(date.start), formatDateObject(date.end))
-            ])
-            setExpensesData(expenses)
-            setCommissionData(commission)
-            setIsLoading(false)
-        } catch (err) {
-            console.log('Can not Get DataExpenses From Dashboard CEO', err)
-        }
-    }
-
     useEffect(() => {
-        fetchAllUser()
+        const fetchAgents = async () => {
+            try {
+                const agents = await agentService.getAgent()
+                setAgentList(agents)
+
+                if (isSuperAdmin && agents.length > 0) {
+                    setSelectAgent(agents[0].agentId)
+                }
+            } catch (err) {
+                console.log('Error loading agents', err)
+            }
+        }
+
+        fetchAgents()
     }, [])
 
-    useEffect(() => {
-        if (allUser.length > 0) {
-            fetchAllData()
+
+    const fetchEverything = async () => {
+        setIsLoading(true)
+        try {
+            const [users] = await Promise.all([
+                userService.getAllUser(selectAgent),
+            ])
+            const Selectusers = users.map(u => u.username)
+            const [expenses, commission] = await Promise.all([
+                expensesService.getExpensesDetails(selectAgent, formatDateObject(date.start), formatDateObject(date.end)),
+                commissionService.getCommission(selectAgent, Selectusers, formatDateObject(date.start), formatDateObject(date.end))
+            ])
+
+            setAllUser(users)
+            setExpensesData(expenses)
+            setCommissionData(commission)
+        } catch (err) {
+            console.log('Error fetching CEO dashboard data', err)
+        } finally {
+            setIsLoading(false)
         }
-    }, [date, allUser])
+    }
+
+
+    useEffect(() => {
+        setExpensesData([])
+        setCommissionData([])
+        fetchEverything()
+    }, [date, selectAgent])
+
+    useEffect(() => {
+        if (isSuperAdmin && agentList.length > 0 && selectAgent === null) {
+            setSelectAgent(agentList[0]?.agentId)
+        }
+    }, [selectAgent])
 
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>
-                <Controller setAgentList={setAgentList} currentUser={currentUser} date={date} setDate={setDate} dateMode={dateMode} setDateMode={setDateMode} />
+                <Controller agentList={agentList} setAgentList={setAgentList} currentUser={currentUser} date={date} setDate={setDate} dateMode={dateMode} setDateMode={setDateMode} selectAgent={selectAgent} setSelectAgent={setSelectAgent} isSuperAdmin={isSuperAdmin} />
             </div>
             <div className='w-full'>
-                <AllSummary expensesData={expensesData} commissionData={commissionData} isLoading={isLoading} currentUser={currentUser} date={date} dateMode={dateMode} allUser={allUser} />
+                <AllSummary expensesData={expensesData} selectAgent={selectAgent} commissionData={commissionData} isLoading={isLoading} currentUser={currentUser} date={date} dateMode={dateMode} allUser={allUser} />
 
                 {/* Chart Body */}
                 <div className='w-full mt-4 grid grid-cols-2 gap-4'>

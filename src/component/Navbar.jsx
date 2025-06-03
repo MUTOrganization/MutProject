@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Navbar as NextUINavbar,
   NavbarBrand,
@@ -15,10 +15,10 @@ import { useAppContext } from "../contexts/AppContext";
 import NavMenu from "./NavMenu";
 import UserProfileAvatar from "./UserProfileAvatar";
 import { useNavigate } from "react-router-dom";
-import { LogOutIcon } from "lucide-react";
+import { ImageIcon, LogOutIcon } from "lucide-react";
 
 function Navbar({ title }) {
-  const { currentUser, logout } = useAppContext();
+  const { currentUser, logout, setIsChangeProfileImageModalOpen } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const role = currentUser.role?.roleName;
   const navigate = useNavigate();
@@ -37,7 +37,6 @@ function Navbar({ title }) {
         return "default"; // สีเริ่มต้น (ถ้าไม่มี role ที่กำหนด)
     }
   };
-
 
   const handleLogout = () => {
     logout();
@@ -117,6 +116,18 @@ function Navbar({ title }) {
 
                   </div>
               </DropdownItem>
+              <DropdownItem
+                key="change-profile-image"
+                textValue="เปลี่ยนรูปภาพประจำตัว"
+                startContent={<ImageIcon className="text-blue-400" size={16} />}
+                onPress={() => {
+                  setTimeout(() => {
+                    setIsChangeProfileImageModalOpen(true);
+                  }, 200);
+                }}
+              >
+                เปลี่ยนรูปโปรไฟล์
+              </DropdownItem>
               <DropdownItem 
                 key="settings" 
                 textValue="ออกจากระบบ" 
@@ -130,6 +141,7 @@ function Navbar({ title }) {
           </Dropdown>
         </NavbarContent>
       </NextUINavbar>
+
     </>
   );
 }

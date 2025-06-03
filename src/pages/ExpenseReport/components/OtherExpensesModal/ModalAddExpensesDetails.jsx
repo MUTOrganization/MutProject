@@ -33,6 +33,12 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
+
     return (
         <Modal isOpen={isOpen} onOpenChange={onClose} size="3xl" isDismissable={false} isKeyboardDismissDisabled={true}>
             <ModalContent>
@@ -78,12 +84,14 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                         onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
                                                         placeholder="รายการ"
                                                         size="sm"
+                                                        onKeyDown={handleKeyDown}
                                                     />
                                                 </TableCell>
                                                 <TableCell className="w-2/12">
                                                     <Input
                                                         aria-label="Input a qty"
                                                         type="text"
+                                                        onKeyDown={handleKeyDown}
                                                         maxLength={6}
                                                         value={item.qty}
                                                         size="sm"
@@ -95,12 +103,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                             }
                                                         }}
                                                         placeholder="0"
-                                                        onKeyDown={(e) => {
-                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
-                                                        pattern="[0-9]*"
+                                                        pattern="[0-9]"
                                                     />
                                                 </TableCell>
                                                 <TableCell className='w-3/12'>
@@ -118,12 +121,8 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                         }}
                                                         placeholder='0.00'
                                                         size="sm"
-                                                        onKeyDown={(e) => {
-                                                            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight' && e.key !== 'Delete') {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
-                                                        pattern="[0-9]*"
+                                                        onKeyDown={handleKeyDown}
+                                                        pattern="[0-9]"
                                                     />
                                                 </TableCell>
                                                 <TableCell className=''>

@@ -66,10 +66,23 @@ async function changePassword(username, password) {
     return res.data
 }
 
+async function changeProfileImage(username, file) {
+    const url = 'users/changeProfileImage'
+    if(!file) throw new Error('File is required');
+
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('file', file);
+
+    const res = await api.put(url, formData)
+    return res.data.url;
+}
+
 export default {
     getAllUser,
     createUser,
     changeStatus,
     updateUser,
-    changePassword
+    changePassword,
+    changeProfileImage
 }

@@ -14,9 +14,9 @@ export const SocketProvider = ({ children }) => {
     useEffect(() => {
         const socketInstance = connectSocket();  
         setSocket(socketInstance);
-        socketInstance.on("hello", (data) => {
-            console.log(data);
-        })
+        // socketInstance.on("hello", (data) => {
+        //     // console.log(data);
+        // })
         return () => {
             disconnectSocket();
         }

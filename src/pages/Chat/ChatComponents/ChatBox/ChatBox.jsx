@@ -16,15 +16,26 @@ import chatMessageService from '@/services/chatMessageService'
 import { useSocketContext } from '@/contexts/SocketContext'
 import useSocket from '@/component/hooks/useSocket'
 import { playNotificationSound } from '@/utils/soundFunc'
+import { Menu } from 'lucide-react'
+import { ChatRoom } from '@/models/chatRoom'
+import { getRoomName } from '../../utils'
+import { joinRoom } from '@/services/socketHandler.js/general'
 
 export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const { currentUser } = useAppContext()
-    const { currentChatRoom, userMap, chatRooms, setChatRooms, chatRoomLastReads, setChatRoomLastReads } = useChatContext()
+    const { currentChatRoom, userMap, chatRooms, setChatRooms, setChatRoomLastReads, insertChatRoom } = useChatContext()
     const { socket } = useSocketContext()
     const isPrivate = selectedTab === 'private'
     const [isLoading, setIsLoading] = useState(false)
     // For Private Chat
     const [isOpenConfirmBlockMember, setIsOpenConfirmBlockMember] = useState(false)
+
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 30,
+        total: 0,
+        count: 0
+    })
 
     // For Group Chat
     const [isOpenSearchMember, setIsOpenSearchMember] = useState(false)
@@ -32,21 +43,20 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const [isOpenInviteMember, setIsOpenInviteMember] = useState(false)
 
 
-    const privateUser = useMemo(() => {
-        if(isPrivate && currentChatRoom){
-            const member = currentChatRoom.roomMembers.find(member => member.username !== currentUser.username)
-            return member
-        }
-        return null
-    },[currentUser, currentChatRoom])
-
     
 
     async function handleStartChat(){
         try{
             setIsLoading(true)
-            await chatroomService.createPrivateChatRoom(currentUser.agent.agentId, currentUser.username, selectedUser.username)
+            const room = await chatroomService.createPrivateChatRoom(currentUser.agent.agentId, currentUser.username, selectedUser.username)
             onStartChat(selectedUser)
+            
+            insertChatRoom(room)
+
+            socket.emit('chat:create:private', {
+                username1: currentUser.username,
+                username2: selectedUser.username
+            })
         }catch(err){
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเริ่มสนทนาได้')
@@ -54,10 +64,17 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
             setIsLoading(false)
         }
     }
+    const handleSocketCreatePrivateChatRoom = useCallback((data) => {
+        console.log(data);
+        insertChatRoom(data)
+        playNotificationSound('message')
+    },[currentUser, setChatRooms, socket])
+    useSocket('chat:created:private', handleSocketCreatePrivateChatRoom)
 
 
 
     const bottomRef = useRef(null)
+    const containerRef = useRef(null)
     /** @param {'instant' | 'smooth'} behavior */
     const scrollToBottom = (behavior = 'instant') => {
         setTimeout(() => {
@@ -65,19 +82,72 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         }, 0)
     }
 
+    const canLoadMore = useMemo(() => {
+        return pagination.count < pagination.total
+    }, [pagination])
 
+    const handleScroll = useCallback((e) => {
+        const container = e.target
+        if (container.scrollTop === 0 && currentChatRoom && canLoadMore && !isLoading) {
+            setPagination(prev => ({...prev, page: prev.page + 1}))
+        }
+    }, [canLoadMore, isLoading, currentChatRoom])
+
+    useEffect(() => {
+        const container = containerRef.current
+        if (container) {
+            container.addEventListener('scroll', handleScroll)
+            return () => container.removeEventListener('scroll', handleScroll)
+        }
+    }, [handleScroll])
+
+    // ดึงข้อมูล messages เมื่อ scroll ไปบนสุด
+    useEffect(() => {
+        if(currentChatRoom && pagination.page > 1){
+            setIsLoading(true)
+            chatMessageService.getChatMessages(currentChatRoom.chatRoomId, pagination.page, pagination.limit).then(data => {
+                const { data: messages, pagination } = data;
+                messages.forEach(message => {
+                    message.sender = userMap.get(message.senderUsername)
+                })
+                setMessages(prev => [...prev, ...messages])
+                setPagination(prev => ({...prev, total: pagination.total, count: prev.count + pagination.count}))
+                const container = containerRef.current;
+                if (container) {
+                    const oldScrollHeight = container.scrollHeight;
+                    const oldScrollTop = container.scrollTop;
+                    
+                    // รอให้ DOM อัพเดทก่อน
+                    setTimeout(() => {
+                        const newScrollHeight = container.scrollHeight;
+                        const newScrollTop = newScrollHeight - oldScrollHeight + oldScrollTop;
+                        container.scrollTop = newScrollTop;
+                    }, 0);
+                }
+            }).catch(error => {
+                console.error(error)
+                toastError('ไม่สามารถดึงข้อมูลการแชทได้')
+            }).finally(() => {
+                setIsLoading(false)
+            })
+        }
+    }, [pagination.page, currentChatRoom, userMap])
     /** @type {[ChatMessage[]]} */
     const [messages, setMessages] = useState([]);
     /** @type {[ChatMessage[]]} */
     const [pendingMessage, setPendingMessage] = useState([]);
+    
+     // ดึงข้อมูล messages ตอนเปิดห้องแชท
     useEffect(() => {
         if(currentChatRoom){
             setIsLoading(true)
-            chatMessageService.getChatMessages(currentChatRoom.chatRoomId).then(messages => {
+            chatMessageService.getChatMessages(currentChatRoom.chatRoomId, 1, pagination.limit).then(data => {
+                const { data: messages, pagination } = data;
                 messages.forEach(message => {
                     message.sender = userMap.get(message.senderUsername)
                 })
                 setMessages(messages)
+                setPagination(prev => ({...prev, total: pagination.total, count: pagination.count}))
                 scrollToBottom('instant')
             }).catch(error => {
                 console.error(error)
@@ -88,13 +158,30 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         }
     },[currentChatRoom, userMap])
 
-    useEffect(() => {
+    function saveChatRoomLastReadTime(){
         if(currentChatRoom){
+            // บันทึก state
+            setChatRoomLastReads(prev => ({...prev, [currentChatRoom.chatRoomId]: new Date()}))
+
+            // บันทึก localStorage
             const chatRoomLastReadsRaw = localStorage.getItem(`chatRoom-last-read-time`)
             const chatRoomLastReads = chatRoomLastReadsRaw ? JSON.parse(chatRoomLastReadsRaw) : {}
             chatRoomLastReads[currentChatRoom.chatRoomId] = new Date().toISOString()
             localStorage.setItem(`chatRoom-last-read-time`, JSON.stringify(chatRoomLastReads))
+
         }
+    }
+
+    // เมื่อเปิดห้องแชท
+    useEffect(() => {
+        setPagination({ // รีเซ็ตค่า pagination
+            page: 1,
+            limit: 30,
+            total: 0,
+            count: 0
+        })
+        saveChatRoomLastReadTime() // บันทึกข้อมูลการอ่านข้อความล่าสุด 
+
     }, [currentChatRoom])
 
     // function สำหรับเมื่อกดส่งข้อความแล้ว จะ mock ข้อความที่ส่งไปก่อนและขึ้นสถานะกำลังส่ง
@@ -118,41 +205,44 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         })
         setMessages(prev => [newMessage, ...prev])
         setPendingMessage(prev => [newMessage, ...prev])
+        setPagination(prev => ({...prev, total: prev.total + 1, count: prev.count + 1}))
         scrollToBottom('smooth')
 
         // อัพเดทข้อความล่าสุด และเรียงลำดับห้องแชทใหม่
         const chatRoomsCopy = [...chatRooms]
         const chatRoom = chatRoomsCopy.find(room => room.chatRoomId === currentChatRoom.chatRoomId)
         chatRoom.lastMessage = newMessage
-        chatRoomsCopy.sort((a, b) => {
-            if(!a.lastMessage && !b.lastMessage) return 0;
-            if(!a.lastMessage) return 1;
-            if(!b.lastMessage) return -1;
-            return new Date(b.lastMessage?.createdDate) - new Date(a.lastMessage?.createdDate);
-        })
         setChatRooms(chatRoomsCopy)
 
-        setChatRoomLastReads(prev => ({...prev, [currentChatRoom.chatRoomId]: newMessage.createdDate}))
+        saveChatRoomLastReadTime()
     }
-    // console.log(messages);
+
     // เมื่อ server แจ้งการส่งข้อความเสร็จสิ้น จะทำการอัพเดตสถานะของข้อความที่ส่งไปเป็น false และเปลี่ยน id ของข้อความเป็น id จริง
     const chatReceiveMessageHandler = useCallback((data) => {
         const { roomId, message, pendingMessageId } = data
-        if(Number(roomId) === Number(currentChatRoom.chatRoomId)){
-            if(message.senderUsername === currentUser.username){
+
+        if(Number(roomId) === Number(currentChatRoom?.chatRoomId)){ // ถ้าข้อความที่แจ้ง อยู่ในห้องแชทที่กำลังดูอยู่
+            if(message.senderUsername === currentUser.username){ // ถ้าเป็นข้อความที่ส่งจากตัวเอง จะทำการอัพเดท pendingMessage เป็น false , แก้ id เป็น id จริง และลบ pendingMessage ออก
                 setMessages(prev => prev.map(m => m.id === pendingMessageId ? {...m, id: `user-${message.userMessageId}`, isPending: false} : m))
                 setPendingMessage(prev => prev.filter(m => m.id !== pendingMessageId))
-            }else{
+                
+                saveChatRoomLastReadTime()
+            }else{ // ถ้าเป็นข้อความที่ส่งจากคนอื่น จะทำการเพิ่มข้อความเข้าไปใน messages และ scroll to bottom 
                 const newMessage = ChatMessage.fromUserMessage(message)
                 setMessages(prev => [newMessage, ...prev])
+                setPagination(prev => ({...prev, total: prev.total + 1, count: prev.count + 1}))
                 scrollToBottom('smooth')
+                saveChatRoomLastReadTime()
             }
         }
 
-        if(message.senderUsername === currentUser.username){
+
+        // ไม่สนว่าข้อความนี้อยู่ในห้องแชทที่กำลังดูอยู่หรือไม่ จะทำการอัพเดท lastMessage ใน ChatList 
+        if(message.senderUsername === currentUser.username){ 
+            const newMessage = ChatMessage.fromUserMessage(message)
             setChatRooms(prev => 
-                prev.map(room => room.chatRoomId === currentChatRoom.chatRoomId 
-                    ? {...room, lastMessage: { ...room.lastMessage, id: `user-${message.userMessageId}`}} 
+                prev.map(room => room.chatRoomId === newMessage.roomId 
+                    ? {...room, lastMessage: newMessage} 
                     : room
                 )
             )
@@ -161,16 +251,26 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
             const chatRoomsCopy = [...chatRooms]
             const chatRoom = chatRoomsCopy.find(room => room.chatRoomId === newMessage.roomId)
             chatRoom.lastMessage = newMessage
-            chatRoomsCopy.sort((a, b) => {
-                if(!a.lastMessage && !b.lastMessage) return 0;
-                if(!a.lastMessage) return 1;
-                if(!b.lastMessage) return -1;
-                return new Date(b.lastMessage?.createdDate) - new Date(a.lastMessage?.createdDate);
-            })
             setChatRooms(chatRoomsCopy)
+        }
+
+        // ถ้าไม่ใช่ห้องแชทที่กำลังดูอยู่ จะเปิดเสียงแจ้งเตือน
+        if(currentChatRoom?.chatRoomId !== roomId){
+            playNotificationSound()
         }
     },[currentChatRoom, userMap, pendingMessage, messages, chatRooms])
     useSocket('chat:receive:message', chatReceiveMessageHandler)
+
+    const handleSocketReceiveSystemMessage = useCallback((data) => {
+        const newMessage = ChatMessage.fromSystemMessage(data);
+        if(Number(newMessage.roomId) === Number(currentChatRoom?.chatRoomId)){ // ถ้าข้อความที่แจ้ง อยู่ในห้องแชทที่กำลังดูอยู่
+            setMessages(prev => [newMessage, ...prev])
+            setPagination(prev => ({...prev, total: prev.total + 1, count: prev.count + 1}))
+            scrollToBottom('smooth')
+        }
+    }, [currentChatRoom, setMessages, setPagination])
+    useSocket('chat:receive:system_message', handleSocketReceiveSystemMessage);
+
 
 
     const roomInfo = useMemo(() => {
@@ -192,16 +292,25 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                 }
             }else{
                 return {
-                    name: currentChatRoom.name,
+                    name: `${currentChatRoom.name} (${currentChatRoom.roomMembers.length})`,
                     imageFallback: currentChatRoom.name,
                     imageUrl: currentChatRoom.imageUrl,
                 }
             }
         }else{
-            return {
-                name: currentChatRoom.name,
-                imageFallback: currentChatRoom.name,
-                imageUrl: currentChatRoom.imageUrl,
+            if(currentChatRoom.isPrivate){
+                const member = currentChatRoom.roomMembers.find(member => member.username !== currentUser.username)
+                return {
+                    name: member.name,
+                    imageFallback: member.name,
+                    imageUrl: member.displayImgUrl,
+                }
+            }else{
+                return {
+                    name: `${currentChatRoom.name} (${currentChatRoom.roomMembers.length})`,
+                    imageFallback: currentChatRoom.name,
+                    imageUrl: currentChatRoom.imageUrl,
+                }
             }
         }
     }, [currentChatRoom, selectedTab, selectedUser])
@@ -218,7 +327,9 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         <>
             <div className='w-full h-full relative flex flex-col'>
                 {/* Controller Chat For Private Chat && Group Chat */}
-                {isPrivate ? (
+                
+                {
+                (!currentChatRoom || currentChatRoom.isPrivate) ? (
                     <header className='flex flex-row justify-between items-center border-1 border-slate-200 py-2 px-4 rounded-md shadow-sm'>
                         <div className='flex flex-row justify-center items-center space-x-2'>
                             <div>
@@ -226,13 +337,13 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                             </div>
                             <span className='text-slate-500'>{roomInfo.name}</span>
                         </div>
-                        <Tooltip content='บล็อค'>
-                            <span className='cursor-pointer' onClick={() => setIsOpenConfirmBlockMember(true)}><FaBan className='text-red-500' size='18px' /></span>
+                        <Tooltip content='ข้อมูลผู้ใช้'>
+                            <span className='cursor-pointer' onClick={() => setIsOpenConfirmBlockMember(true)}><Menu className='text-primary-500' size='18px' /></span>
                         </Tooltip>
                     </header>
                 ) : (
                     <header className='flex flex-row justify-between items-center border-1 border-slate-200 py-2 px-4 rounded-md relative'>
-                        <span className='text-slate-500'>Group Name (จำนวน)</span>
+                        <span className='text-slate-500'>{roomInfo.name}</span>
                         <div className='flex flex-row justify-center items-center space-x-4 '>
                             {/* <Tooltip content='ค้นหารายชื่อ' color='primary' className='text-white'>
                                 <div onClick={() => setIsOpenSearchMember(!isOpenSearchMember)} className='cursor-pointer'><FaSearch className='text-blue-500' size='18px' /></div>
@@ -265,7 +376,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                         </div>
                         :
                         <div className='w-full h-full relative flex flex-col justify-end items-center'>
-                            <div className='flex-1 w-full overflow-y-auto px-2'>
+                            <div ref={containerRef} className='flex-1 w-full overflow-y-auto px-2'>
                                 <div className='w-full h-full content-end '>
                                     <ChatMessageBox messages={messages} setMessages={setMessages} />
                                     <div ref={bottomRef} />

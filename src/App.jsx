@@ -9,6 +9,7 @@ import { Toaster } from "sonner";
 import FloatingButton from "./pages/Chat/FloatingButton";
 import { SocketProvider } from "./contexts/SocketContext";
 import ChatContextProvider from "./pages/Chat/ChatContext";
+import ChangeProfileImageModal from "./component/ChangeProfileImageModal";
 
 
 
@@ -73,8 +74,7 @@ const routes = [
 ];
 
 function App() {
-  const { isUserLoading } = useAppContext();
-  const location = useLocation();
+  const { isUserLoading, isChangeProfileImageModalOpen, setIsChangeProfileImageModalOpen } = useAppContext();
 
   if (isUserLoading) {
     return (
@@ -108,6 +108,7 @@ function App() {
                     />
                   ))}
                 </Routes>
+                <ChangeProfileImageModal isOpen={isChangeProfileImageModalOpen} onClose={() => setIsChangeProfileImageModalOpen(false)} />
                 <ChatContextProvider>
                   <FloatingButton />
                 </ChatContextProvider>

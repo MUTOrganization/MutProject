@@ -2,11 +2,10 @@ import { toastError, toastSuccess, toastWarning } from '@/component/Alert'
 import { useAppContext } from '@/contexts/AppContext'
 import roleService from '@/services/roleService'
 import userService from '@/services/userService'
-import { Button, Input, Spinner } from '@heroui/react'
+import { Autocomplete, AutocompleteItem, Button, Input, Spinner } from '@heroui/react'
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from '@nextui-org/select'
 import React, { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departmentId, isSuperAdmin, selector }) {
     const { currentUser } = useAppContext()
@@ -64,10 +63,16 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         }
     }
 
+    const handleKeyDown = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
+        }
+    }
+
     useEffect(() => {
         fetchRole()
     }, [selectDepartment])
-
+   
     return (
         <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
             <ModalContent>
@@ -80,26 +85,26 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                     <div className='flex flex-row justify-between items-center space-x-2'>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>แผนก</span>
-                            <Select aria-label='แผนก' size='sm' defaultSelectedKeys={[String(selectDepartment)]} onChange={(e) => { setSelectDepartment(Number(e.target.value) || null); setUserData(prev => ({ ...prev, roleId: null })) }}>
+                            <Autocomplete aria-label='แผนก' allowsEmptyCollection isClearable={false} size='sm' selectedKey={`${selectDepartment}`} onSelectionChange={(value) => { setSelectDepartment(Number(value) || null); setUserData(prev => ({ ...prev, roleId: null })) }}>
                                 {departmentId.map((department) => (
-                                    <SelectItem key={department.departmentId} value={department.departmentId}>{department.departmentName}</SelectItem>
+                                    <AutocompleteItem key={department.departmentId} value={department.departmentId}>{department.departmentName}</AutocompleteItem>
                                 ))}
-                            </Select>
+                            </Autocomplete>
                         </div>
                         <div className='w-full'>
                             <span className='text-xs text-slate-500'>ตำแหน่ง</span>
-                            <Select aria-label='ตำแหน่ง' size='sm' defaultSelectedKeys={[String(userData.roleId)]} onChange={(e) => setUserData(prev => ({ ...prev, roleId: Number(e.target.value) || null }))}>
+                            <Autocomplete aria-label='ตำแหน่ง' isClearable={false} size='sm' selectedKey={`${userData.roleId}`} onSelectionChange={(value) => setUserData(prev => ({ ...prev, roleId: Number(value) || null }))}>
                                 {roleData?.map((role) => (
-                                    <SelectItem key={role.roleId} value={role.roleId}>{role.roleName}</SelectItem>
+                                    <AutocompleteItem key={role.roleId} value={role.roleId}>{role.roleName}</AutocompleteItem>
                                 ))}
-                            </Select>
+                            </Autocomplete>
                         </div>
                     </div>
-                    <Select aria-label='สถานะการทดลองงาน' defaultSelectedKeys={[String(userData.probStatus)]} size='sm' className='mt-1' onChange={(e) => setUserData(prev => ({ ...prev, probStatus: e.target.value }))}>
+                    <Autocomplete aria-label='สถานะการทดลองงาน' isClearable={false} selectedKey={`${userData.probStatus}`} size='sm' className='mt-1' onSelectionChange={(value) => setUserData(prev => ({ ...prev, probStatus: value }))}>
                         {probItem.map((item) => (
-                            <SelectItem key={item.key} value={item.key}>{item.value}</SelectItem>
+                            <AutocompleteItem key={item.key} value={item.key}>{item.value}</AutocompleteItem>
                         ))}
-                    </Select>
+                    </Autocomplete>
                 </ModalBody>
                 <ModalFooter className='my-2'>
                     <Button size='sm' color='primary' className='px-8' onPress={handleUpdate}>

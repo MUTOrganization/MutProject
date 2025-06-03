@@ -16,6 +16,10 @@ export class ChatRoom {
         this.isPrivate = data.isPrivate;
         /** @type {boolean} */
         this.status = data.status;
+        /** @type {Date} */
+        this.createdDate = data.createdDate;
+        /** @type {Date} */
+        this.updatedDate = data.updatedDate;
         /** @type {number} */
         this.agentId = data.agentId;
         /** @type {Agent} */

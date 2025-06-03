@@ -106,19 +106,25 @@ export const Summary = (commissionData = [], expensesData = []) => {
 }
 
 export const getPrevPercentSales = (prevData, currentData) => {
-
     const getIncome = (data) =>
         data.reduce((acc, item) => {
             return acc + item.data.reduce((sum, d) => sum + (d?.adminIncome || 0), 0)
         }, 0)
 
-    const prev = getIncome(prevData)
-    const current = getIncome(currentData)
-
-    if (prev === 0) {
+    // ✅ ตรวจสอบว่าไม่มี currentData → ไม่ต้องแสดง %
+    if (currentData.length === 0) {
         return <span className="text-slate-400">0.00%</span>
     }
 
+    const prev = getIncome(prevData)
+    const current = getIncome(currentData)
+
+    // ✅ ทั้ง prev และ current เป็น 0
+    if (prev === 0 && current === 0) {
+        return <span className="text-slate-400">0.00%</span>
+    }
+
+    // ✅ ปกติ
     const percent = ((current - prev) / prev) * 100
     const formatted = percent.toFixed(2)
     const isPositive = percent > 0
@@ -131,9 +137,7 @@ export const getPrevPercentSales = (prevData, currentData) => {
     )
 }
 
-export const getPrevPercentNetExpenses = (prevCommission = [], currenCommission = [], prevExpenses = [], currentExpenses = []) => {
-    const prevCom = prevCommission.reduce((sum, item) => sum + (item.commission || 0), 0)
-}
+
 
 export const getPrevPercentProfit = (
     prevCommissionData = [],
@@ -159,35 +163,49 @@ export const getPrevPercentProfit = (
         sum + item.data.reduce((acc, d) => acc + (d?.adminIncome || 0), 0), 0)
     const currentProfit = currentSales - (currentCommission + currentExpenses)
 
-    // Percent Compare
-    if (prevProfit === 0) return { percent: '0.00%', icon: null, color: 'gray' }
-
-    const percent = ((currentProfit - prevProfit) / Math.abs(prevProfit)) * 100
-    let percentNetExpenses
-    if ((prevExpenses + prevCommission) === 0) {
-        percentNetExpenses = '0.00%'
-    } else {
-        percentNetExpenses = (((currentExpenses + currentCommission) - (prevExpenses + prevCommission)) / (prevExpenses + prevCommission) * 100).toFixed(2) + '%'
+    if (
+        prevProfit === 0 ||
+        currentCommissionData.length === 0 ||
+        currentExpensesData.length === 0
+    ) {
+        return {
+            ProfitValue: {
+                percent: '0.00%',
+                icon: '▼',
+                color: 'text-red-400',
+            },
+            percentNetExpenses: {
+                percent: '0.00%',
+                icon: '▼',
+                color: 'text-red-400',
+            }
+        }
     }
-    const isUp = percent > 0
 
-    const isPercentExpensesUp = percentNetExpenses > 0
-    const isPercentExpensesZero = percentNetExpenses === '0.00%'
+    // Final Percent Compare
+    const percent = ((currentProfit - prevProfit) / Math.abs(prevProfit)) * 100
+
+    const percentNetExpenses = (prevExpenses + prevCommission) <= 0
+        ? '0.00'
+        : (((currentExpenses + currentCommission) - (prevExpenses + prevCommission)) / (prevExpenses + prevCommission) * 100).toFixed(2)
+
+    const isUp = percent > 0
+    const isPercentExpensesUp = parseFloat(percentNetExpenses) > 0
 
     return {
         ProfitValue: {
             percent: `${percent.toFixed(2)}%`,
             icon: isUp ? '▲' : '▼',
-            color: isUp ? 'text-green-500' : 'text-red-500',
+            color: isUp ? 'text-green-400' : 'text-red-400',
         },
         percentNetExpenses: {
-            percent: percentNetExpenses,
-            icon: isPercentExpensesZero ? '' : isPercentExpensesUp ? '▲' : '▼',
-            color: isPercentExpensesZero ? 'text-slate-400' : (isPercentExpensesUp ? 'text-green-500' : 'text-red-500'),
+            percent: percentNetExpenses ? `${percentNetExpenses}%` : '',
+            icon: isPercentExpensesUp ? '▲' : '▼',
+            color: (isPercentExpensesUp ? 'text-green-400' : 'text-red-400'),
         }
-
     }
 }
+
 
 export default {
     groupProfitByMonth,
@@ -196,5 +214,4 @@ export default {
     getPrevPercentSales,
     Summary,
     getPrevPercentProfit,
-    getPrevPercentNetExpenses
 }

@@ -16,7 +16,7 @@ function ProfitChart({ commissionData, expensesData }) {
             type: 'line',
             zoom: { enabled: false }
         },
-        dataLabels: { enabled: false },
+        dataLabels: { enabled: true },
         stroke: { curve: 'straight' },
         colors: ['#800080'],
         title: { text: 'Profit Chart', align: 'left' },
@@ -46,7 +46,7 @@ function ProfitChart({ commissionData, expensesData }) {
             data: profitData
         }])
     }, [commissionData, expensesData])
-
+    console.log(series)
     return (
         <div>
             <ReactApexChart options={options} series={series} type="line" height={350} />

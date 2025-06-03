@@ -135,7 +135,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                             }}
                         >
                             <DropdownItem
-                                title="เพิ่มข้อมูล"
+                                title="เพิ่มข้อมูลค่าใช้จ่าย"
                                 key="addexpenses"
                             />
                             <DropdownItem

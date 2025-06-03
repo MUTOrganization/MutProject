@@ -1,22 +1,21 @@
 import { Avatar, Button, Spinner } from "@heroui/react";
 import { useChatContext } from "../../ChatContext";
-import { ChevronsRight } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAppContext } from "@/contexts/AppContext";
 import UserProfileAvatar from "@/component/UserProfileAvatar";
 import dayjs from "dayjs";
 import Fuse from "fuse.js";
 import RoomInviteItem from "../ChatList/RoomInviteItem";
-import chatroomService from "@/services/chatroomService";
 
-export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptInvite, onRejectInvite }){
+export default function GroupChatTab({ onSelectChatRoom, onAcceptInvite, onRejectInvite }){
     const { currentUser } = useAppContext();
     const { chatRooms, isChatRoomsLoading, currentChatRoom, roomsReadStatus, roomInvites } = useChatContext();
+    const [search, setSearch] = useState('')
 
-    
-
-    const filterdChatRooms = useMemo(() => {
-        const sortedChatRooms = [...chatRooms].sort((a, b) => {
+    const filteredChatRooms = useMemo(() => {
+        let sortedChatRooms = [...chatRooms]
+        sortedChatRooms = sortedChatRooms.filter((room) => room.isPrivate === false)
+        sortedChatRooms = sortedChatRooms.sort((a, b) => {
             const aLastDate = a.lastMessage?.createdDate ?? a.createdDate;
             const bLastDate = b.lastMessage?.createdDate ?? b.createdDate;
             if(!aLastDate && !bLastDate) return 0;
@@ -28,21 +27,21 @@ export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptI
     }, [chatRooms])
 
     const displayChatRooms = useMemo(() => {
-        if(searchText === '') return filterdChatRooms
-        const fuse = new Fuse(filterdChatRooms, {
+        if(search === '') return filteredChatRooms
+        const fuse = new Fuse(filteredChatRooms, {
             keys: ['name'],
             threshold: 0.3,
         })
-        const result = fuse.search(searchText)
+        const result = fuse.search(search)
         return result.map((item) => item.item)
-    }, [filterdChatRooms, searchText])
+    }, [filteredChatRooms, setSearch])
 
     return(
         <div className=" w-full relative">
             {
                 (chatRooms.length + roomInvites.length) === 0 && !isChatRoomsLoading ? (
                     <div>
-                        ไม่มีประวัติการแชท
+                        ไม่มีกลุ่มแชท
                     </div>
                 )
                 : (

@@ -2,10 +2,6 @@ import { useAppContext } from "@/contexts/AppContext";
 import { ChatMessage } from "@/models/chatMessage";
 import SystemMessageItem from "./SystemMessageItem";
 import UserMessageItem from "./UserMessageItem";
-import { useCallback, useEffect, useState } from "react";
-import { useChatContext } from "../../ChatContext";
-import { toastError } from "@/component/Alert";
-import useSocket from "@/component/hooks/useSocket";
 
 /**
  * 

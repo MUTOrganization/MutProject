@@ -1,44 +1,79 @@
 import { Input } from "@heroui/input"
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal"
-import { Button } from "@heroui/react"
-import React, { useContext, useState } from 'react'
+import { Button, Spinner } from "@heroui/react"
+import React, { useContext, useMemo, useState } from 'react'
 import { useAppContext } from '../../../../contexts/AppContext'
 import { toast } from 'sonner'
 import expensesService from '@/services/expensesService'
 import { Data } from '../../TabsExpense/TabsOthersCost'
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert"
+import { FaExclamationCircle } from "react-icons/fa"
 
 function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType, getTypeData, typeData }) {
 
-  const { currentUser } = useAppContext()
   const { isAction, setIsAction, getDataOtherExpenses } = useContext(Data)
-  const [newValue, setNewValue] = useState('')
+  const [newValue, setNewValue] = useState(selectData)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const sameClosedType = useMemo(() => {
+    return typeData.find(
+      (e) => e.typeName.toLowerCase() === newValue.trim().toLowerCase() && !e.status
+    );
+  }, [newValue, typeData]);
 
   const handleEdit = async () => {
-    if (typeData?.find(e => e.typeName === newValue)) {
-      toast.error('ประเภทนี้มีอยู่ในระบบแล้ว')
+    const TrimValue = newValue.trim()
+
+    // Validate
+    if (!TrimValue) {
+      toastWarning('คำเตือน', 'กรุณากรอกชื่อประเภท');
       return;
-    } else {
-      try {
+    }
+    // Check same type
+    const sameType = typeData.find(
+      (e) => e.typeName.toLowerCase() === TrimValue.toLowerCase()
+    );
+
+    setIsLoading(true);
+    try {
+      if (sameType) {
+        if (!sameType.status) {
+          await expensesService.ChangeExpensestypeStatus('close', sameType.expensesTypeId, false)
+          await getTypeData()
+          await getDataOtherExpenses()
+          onClose()
+          setIsAction(false)
+          toastSuccess('สำเร็จ', 'เปิดการใช้งานสำเร็จ')
+        } else {
+          toastWarning('คำเตือน', 'มีประเภทนี้อยู่ในระบบแล้ว')
+          setIsLoading(false);
+        }
+      } else {
         await expensesService.editExpensesType(action, id, newValue)
         await getTypeData()
         await getDataOtherExpenses()
-        toast.success('แก้ไขข้อมูลสำเร็จ', { position: 'top-right' })
+        onClose()
         setIsAction(!isAction)
-      } catch (error) {
-        console.log('Something Wrong', error)
+        toastSuccess('สำเร็จ', 'แก้ไขประเภทสำเร็จ')
       }
+    } catch (error) {
+      console.log('Something Wrong', error)
+      toastError('ผิดพลาด', 'แก้ไขประเภทไม่สำเร็จ')
     }
   }
 
   const handleDelete = async () => {
+    setIsLoading(true)
     try {
       await expensesService.ChangeExpensestypeStatus(action, id, isCloseType)
       await getTypeData()
       await getDataOtherExpenses()
-      toast.success('ปิดการใช้งานสำเร็จ', { position: 'top-right' })
-      setIsAction(!isAction)
+      onClose()
+      setIsAction(false)
+      toastSuccess('สำเร็จ', 'ปิดการใช้งานสำเร็จ')
     } catch (error) {
       console.log('Something Wrong', error)
+      toastError('ผิดพลาด', 'ปิดการใช้งานไม่สำเร็จ')
     }
   }
 
@@ -49,16 +84,36 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
           {action === 'edit' ? 'แก้ไขประเภท' : 'ปิดการใช้งาน'}
         </ModalHeader>
         <ModalBody>
-          {action === 'edit' ?
-            (
-              <>
-                <Input label='ชื่อประเภท' onChange={(e) => setNewValue(e.target.value)} placeholder={selectData} type='text'></Input>
-              </>
-            )
-            :
-            (<>
-              <Input label='ประเภท' placeholder={selectData} type='text'></Input>
-            </>)}
+          <>
+            {action === 'edit' ?
+              (
+                <>
+                  <Input label='ชื่อประเภท' variant="bordered"
+                    onChange={(e) => setNewValue(e.target.value)} value={newValue} type='text'
+                    onKeyDown={(e) => {
+                      if (e.key === ' ') {
+                        e.preventDefault();
+                      }
+                    }} />
+                </>
+              )
+              :
+              (<>
+                <Input label='ประเภท' variant="bordered" isDisabled placeholder={selectData} type='text' />
+              </>)}
+            <div>
+              {action === 'edit' &&
+                sameClosedType &&
+                newValue.trim().toLowerCase() !== selectData.toLowerCase() && (
+                  <div className="text-red-500 text-sm mt-1 bg-red-100 rounded-lg p-2 w-full flex flex-col justify-center items-center space-y-2">
+                    <FaExclamationCircle className="text-xl" />
+                    <span className="text-xs">
+                      มีประเภทนี้อยู่ในระบบและถูกปิดการใช้งานอยู่ หากกดบันทึกจะเป็นการเปิดการใช้งานแทน ต้องการหรือไม่?
+                    </span>
+                  </div>
+                )}
+            </div>
+          </>
         </ModalBody>
         <ModalFooter>
           {action === 'edit' ?
@@ -66,7 +121,8 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
               <Button size='sm' color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button size='sm' color="primary" onPress={() => { onClose(); handleEdit(); }}>
+              <Button size='sm' color="primary" onPress={handleEdit}>
+                {isLoading && <Spinner color="white" size="sm" />}
                 ยืนยันการแก้ไข
               </Button>
             </>) :
@@ -74,7 +130,8 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
               <Button size='sm' color="danger" variant="light" onPress={onClose}>
                 Close
               </Button>
-              <Button size='sm' color={isCloseType ? 'danger' : 'primary'} onPress={() => { onClose(); handleDelete(); }}>
+              <Button size='sm' color={isCloseType ? 'danger' : 'primary'} onPress={handleDelete}>
+                {isLoading && <Spinner color="white" size="sm" />}
                 <span className='text-white'>{isCloseType ? 'ยืนยันการปิดการใช้งาน' : 'ยืนยันการเปิดการใช้งาน'}</span>
               </Button>
             </>)}
