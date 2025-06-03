@@ -22,8 +22,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const { socket } = useSocketContext()
     const isPrivate = selectedTab === 'private'
     const [isLoading, setIsLoading] = useState(false)
-    // For Private Chat
-    const [isOpenConfirmBlockMember, setIsOpenConfirmBlockMember] = useState(false)
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -32,8 +30,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         count: 0
     })
 
-    // For Group Chat
-    const [isOpenSearchMember, setIsOpenSearchMember] = useState(false)
     const [isOpenChatGroupInfo, setIsOpenChatGroupInfo] = useState(false)
     const [isOpenInviteMember, setIsOpenInviteMember] = useState(false)
 
@@ -263,7 +259,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     useSocket('chat:received:system_message', handleSocketReceiveSystemMessage);
 
 
-    const [roomInvites, setRoomInvites] = useState([]);
+    const [roomInvites, setRoomInvites] = useState([]); // ข้อมูลการเชิญเข้ากลุ่มที่ยังไม่ตอบรับ
 
     useEffect(() => {
         if(currentChatRoom){
@@ -285,6 +281,11 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเชิญสมาชิกได้');
         }
     }
+
+    const handleSocketRejectInvite = useCallback((invite) => {
+        setRoomInvites(prev => prev.filter(i => Number(i.roomInviteId) !== Number(invite.roomInviteId)))
+    }, [setRoomInvites])
+    useSocket('chat:rejected:invite', handleSocketRejectInvite)
 
 
 
@@ -357,9 +358,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                     <header className='flex flex-row justify-between items-center border-1 border-slate-200 py-2 px-4 rounded-md relative'>
                         <span className='text-slate-500'>{roomInfo.name}</span>
                         <div className='flex flex-row justify-center items-center space-x-4 '>
-                            {/* <Tooltip content='ค้นหารายชื่อ' color='primary' className='text-white'>
-                                <div onClick={() => setIsOpenSearchMember(!isOpenSearchMember)} className='cursor-pointer'><FaSearch className='text-blue-500' size='18px' /></div>
-                            </Tooltip> */}
                             <Tooltip content='เชิญเข้ากลุ่ม' color='success' className='text-white'>
                                 <div className='cursor-pointer' onClick={() => setIsOpenInviteMember(true)}><FaUserPlus className='text-green-500' size='18px' /></div>
                             </Tooltip>
@@ -367,11 +365,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                                 <div className='cursor-pointer' onClick={() => setIsOpenChatGroupInfo(true)}><FaInfoCircle className='text-yellow-500' size='18px' /></div>
                             </Tooltip>
                         </div>
-                        {isOpenSearchMember && (
-                            <div className='absolute w-full -bottom-10 left-0 rounded-md bg-white shadow-md'>
-                                <Input placeholder='ชื่อสมาชิก' className='w-full' radius='none' />
-                            </div>
-                        )}
                     </header>
                 )}
 

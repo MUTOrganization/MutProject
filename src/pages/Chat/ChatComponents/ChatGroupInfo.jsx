@@ -7,7 +7,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import ImageInput from '@/component/ImageInput';
 import UserProfileAvatar from '@/component/UserProfileAvatar';
 import chatroomService from '@/services/chatroomService';
-import { toastError } from '@/component/Alert';
+import { toastError, toastWarning } from '@/component/Alert';
 import { Pencil, Trash2, Trash2Icon } from 'lucide-react';
 import ConfirmDeleteGroupModal from './ConfirmDeleteGroupModal';
 import ConfirmLeaveGroupModal from './ConfirmLeaveGroupModal';
@@ -65,6 +65,10 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
 
     async function handleLeaveGroup(){
         try{
+            if(currentChatRoom.roomMembers.find(e => e.username === currentUser.username)?.isAdmin && currentChatRoom.roomMembers.filter(e => e.isAdmin).length === 1){
+                toastWarning('ไม่สามารถออกจากกลุ่มได้', 'กลุ่มต้องมีผู้ดูแลอย่างน้อย 1 คน')
+                return
+            }
             setIsLoading(true)
             await chatroomService.leaveChatRoom(currentChatRoom.chatRoomId, currentUser.username)
             setCurrentChatRoom(null)
