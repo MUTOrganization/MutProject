@@ -40,7 +40,7 @@ const editIconSizeMap = {
     },
 }
 
-export default function ImageInput({ size = 'md', onChange = () => {}, oldImageUrl = null }) {
+export default function ImageInput({ size = 'md', onChange = () => {}, oldImageUrl = null, isDisabled = false }) {
     const [previewUrl, setPreviewUrl] = useState(oldImageUrl);
     // const [selectedFile, setSelectedFile] = useState(null);
 
@@ -68,17 +68,22 @@ export default function ImageInput({ size = 'md', onChange = () => {}, oldImageU
     
     return(
         <div className={`${sizeMap[size]} rounded-full`}>
-            <FileInput accept="image/*" onChange={handleFileChange}>
-                <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center relative cursor-pointer">
+            <FileInput accept="image/*" onChange={handleFileChange} isDisabled={isDisabled}>
+                <div className={`w-full h-full rounded-full bg-gray-200 flex items-center justify-center relative ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                     {previewUrl ? (
                         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
                     ) : (
                         <ImageIcon size={iconSizeMap[size]} />
                     )}
                     
-                    <div className={`${size === 'xs' && 'hidden'} absolute bottom-0 right-0 bg-white border border-gray-300 rounded-full ${editIconSizeMap[size].padding}`}>
+                    <div className={`${size === 'xs' && 'hidden'} absolute bottom-0 right-0 z-20 bg-white border border-gray-300 rounded-full ${editIconSizeMap[size].padding}`}>
                         <Edit size={editIconSizeMap[size].icon} />
                     </div>   
+
+                    <div className="absolute top-0 left-0 size-full z-10 flex items-center justify-center bg-black/40 rounded-full 
+                    transition-all duration-300 opacity-0 hover:opacity-100">
+                        <div className="text-white text-sm">กดเพื่อเปลี่ยนรูปภาพ</div>
+                    </div>
                     
                 </div>
             </FileInput>

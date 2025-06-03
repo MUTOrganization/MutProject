@@ -38,8 +38,8 @@ export default function RoomInviteItem({ invite, onAccept = () => {}, onReject =
                 </div>
             </div>
             <div className="flex w-full justify-end">
-                <Button variant="light" color="success" size="sm" onPress={() => onAccept(invite)}>เข้ากลุ่ม</Button>
-                <Button variant="light" color="danger" size="sm" onPress={() => onReject(invite)}>ปฏิเสธ</Button>
+                <Button variant="light" color="success" size="sm" onPress={onAccept}>เข้ากลุ่ม</Button>
+                <Button variant="light" color="danger" size="sm" onPress={onReject}>ปฏิเสธ</Button>
             </div>
             <div className="absolute top-2 right-2">
                 <div className="w-2 h-2 rounded-full bg-red-500" />
