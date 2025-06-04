@@ -98,7 +98,7 @@ function DashboardCEO() {
             setSelectAgent(agentList[0]?.agentId)
         }
     }, [selectAgent])
-    console.log(currentUser)
+    
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>
