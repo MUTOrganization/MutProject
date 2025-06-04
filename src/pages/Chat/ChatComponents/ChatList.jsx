@@ -52,6 +52,16 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
         playNotificationSound('invite');
     }, [setRoomInvites])
     useSocket('chat:receive:invite', handleSocketReceiveInvite)
+    
+    const handleSocketRejectedInvite = useCallback((data) => {
+        try{
+            setRoomInvites(prev => prev.filter(i => Number(i.roomInviteId) !== Number(data.roomInviteId)))
+        }catch(err){
+            console.error(err);
+            toastError('เกิดข้อผิดพลาด');
+        }
+    }, [setRoomInvites])
+    useSocket('chat:rejected:invite', handleSocketRejectedInvite)
 
     const [isAcceptInviteLoading, setIsAcceptInviteLoading] = useState(false);
     async function handleAcceptInvite(invite){
