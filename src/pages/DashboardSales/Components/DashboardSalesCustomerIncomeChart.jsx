@@ -1,106 +1,161 @@
-import React, { useState } from 'react'
-import ReactApexChart from 'react-apexcharts'
+import React, { useEffect, useState } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import { useDashboardSalesContext } from '../DashboardSalesContext';
+import { useAppContext } from '@/contexts/AppContext';
+import { endOfYear, startOfYear, today } from '@internationalized/date';
+import commissionService from '@/services/commissionService';
+import userService from '@/services/userService';
+import { formatDateObject } from '@/utils/dateUtils';
+import { Spinner } from '@heroui/react';
 
 function DashboardSalesCustomerIncomeChart() {
 
-    const [series, setSeries] = useState({
+    const { currentUser } = useAppContext()
+    const { selectAgent, dateMode, date } = useDashboardSalesContext()
+    const [isLoading, setIsLoading] = useState(false)
 
-        series: [
-            {
-                name: "High - 2013",
-                data: [28, 29, 33, 36, 32, 32, 33, 36, 32, 32, 33, 36]
-            },
-            {
-                name: "Low - 2013",
-                data: [12, 11, 14, 18, 17, 13, 13, 12, 11, 14, 18, 17]
-            }
-        ],
-        options: {
-            chart: {
-                height: 350,
-                type: 'line',
-                dropShadow: {
-                    enabled: true,
-                    color: '#000',
-                    top: 18,
-                    left: 7,
-                    blur: 10,
-                    opacity: 0.5
+    const [dateChart, setDateChart] = useState({
+        start: startOfYear(today()),
+        end: endOfYear(today())
+    })
+
+    const fetchCommissionData = async () => {
+        const oldIncome = Array(12).fill(0);
+        const newIncome = Array(12).fill(0);
+
+        setIsLoading(true)
+        try {
+            const commissionData = await commissionService.getCommission(selectAgent, currentUser.username, dateMode === 'ปี' ? formatDateObject(date.start) : formatDateObject(dateChart.start), dateMode === 'ปี' ? formatDateObject(date.end) : formatDateObject(dateChart.end));
+            setIsLoading(false)
+
+            commissionData.forEach(user => {
+                user.data.forEach(item => {
+                    const month = item.monthIndex - 1;
+                    oldIncome[month] += Number(item.oldCustomerIncome || 0);
+                    newIncome[month] += Number(item.newCustomerIncome || 0);
+                });
+            });
+
+            setSeries([
+                {
+                    name: "ลูกค้าเก่า (Old Customer)",
+                    data: oldIncome
                 },
-                zoom: {
-                    enabled: false
-                },
-                toolbar: {
-                    show: false
+                {
+                    name: "ลูกค้าใหม่ (New Customer)",
+                    data: newIncome
                 }
-            },
-            colors: ['#77B6EA', '#545454'],
-            dataLabels: {
+            ]);
+        } catch (err) {
+            console.log('Can not get Commission Data At DashboardSalesContext', err)
+        }
+    }
+
+    useEffect(() => {
+        fetchCommissionData()
+    }, [dateChart, selectAgent])
+
+    useEffect(() => {
+        if (dateMode === 'ปี') {
+            fetchCommissionData()
+        }
+    }, [dateMode, date])
+
+    useEffect(() => {
+        if (dateMode === 'เดือน') {
+            setDateChart({
+                start: startOfYear(today()),
+                end: endOfYear(today())
+            })
+        }
+    }, [dateMode])
+
+    const [series, setSeries] = useState([
+        {
+            name: "ลูกค้าเก่า (Old Customer)",
+            data: Array(12).fill(0)
+        },
+        {
+            name: "ลูกค้าใหม่ (New Customer)",
+            data: Array(12).fill(0)
+        }
+    ]);
+
+    const options = {
+        chart: {
+            height: 350,
+            type: 'line',
+            dropShadow: {
                 enabled: true,
+                color: '#000',
+                top: 10,
+                left: 5,
+                blur: 6,
+                opacity: 0.2
             },
-            stroke: {
-                curve: 'smooth'
+            zoom: { enabled: false },
+            toolbar: { show: false }
+        },
+        colors: ['#00C49F', '#008FFB'],
+        dataLabels: {
+            enabled: true,
+            formatter: (val) => val > 0 ? val.toLocaleString() : ''
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        title: {
+            text: 'รายได้ลูกค้าเก่า vs ลูกค้าใหม่ รายเดือน',
+            align: 'left'
+        },
+        grid: {
+            borderColor: '#e7e7e7',
+            row: {
+                colors: ['#f3f3f3', 'transparent'],
+                opacity: 0.5
             },
+        },
+        markers: {
+            size: 3
+        },
+        xaxis: {
+            categories: [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+                'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ],
             title: {
-                text: 'Average High & Low Temperature',
-                align: 'left'
-            },
-            grid: {
-                borderColor: '#e7e7e7',
-                row: {
-                    colors: ['#f3f3f3', 'transparent'],
-                    opacity: 0.5
-                },
-            },
-            markers: {
-                size: 1
-            },
-            xaxis: {
-                categories: [
-                    'มกราคม',
-                    'กุมภาพันธ์',
-                    'มีนาคม',
-                    'เมษายน',
-                    'พฤษภาคม',
-                    'มิถุนายน',
-                    'กรกฎาคม',
-                    'สิงหาคม',
-                    'กันยายน',
-                    'ตุลาคม',
-                    'พฤศจิกายน',
-                    'ธันวาคม'
-                ],
-                title: {
-                    text: 'Month'
-                }
-            },
-            yaxis: {
-                title: {
-                    text: 'Temperature'
-                },
-                min: 5,
-                max: 40
-            },
-            legend: {
-                position: 'top',
-                horizontalAlign: 'right',
-                floating: true,
-                offsetY: -25,
-                offsetX: -5
+                text: 'เดือน'
             }
         },
-
-
-    });
+        yaxis: {
+            title: {
+                text: 'ยอดขาย (บาท)'
+            },
+            labels: {
+                formatter: (val) => val.toLocaleString()
+            }
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'right',
+            floating: false,
+            offsetY: 0,
+            offsetX: 0
+        }
+    };
 
     return (
-        <div className='w-full bg-white rounded-lg p-4 shadow-sm'>
-            <div id="chart">
-                <ReactApexChart options={series.options} series={series.series} type="line" height={350} />
-            </div>
-            <div id="html-dist"></div>
+        <div className='w-full bg-white rounded-lg p-4 shadow-sm h-96'>
+            {isLoading ? (
+                <div className='flex justify-center items-center h-full'>
+                    <Spinner variant='wave' />
+                </div>
+            ) : (
+                <ReactApexChart options={options} series={series} type="line" height={350} />
+            )}
         </div>
-    )
+    );
 }
 
-export default DashboardSalesCustomerIncomeChart
+export default DashboardSalesCustomerIncomeChart;
