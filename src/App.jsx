@@ -21,7 +21,7 @@ const Commission = lazy(() => import("./pages/Commission/Commission"));
 const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
 const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
 const DashBoardSales = lazy(() => import("./pages/DashboardSales/DashboardSalesBody"));
-const Page403 = lazy(() => import("./pages/page403"));
+const Page403 = lazy(() => import("./pages/Page403"));
 const Page404 = lazy(() => import("./pages/Page404"));
 
 function ProtectedRoute({ children }) {
