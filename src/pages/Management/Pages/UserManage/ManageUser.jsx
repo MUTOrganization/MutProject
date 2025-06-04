@@ -1,11 +1,8 @@
 import { Card, CardBody, CircularProgress, Tab, Tabs } from "@heroui/react";
 import { lazy, Suspense, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
-import { ACCESS } from "../../../../configs/accessids";
 
-const UserProbationManageTab = lazy(() => import('./subPages/UserProbationManage'))
-const UserRoleManageTab = lazy(() => import('./subPages/UserRoleTab'))
-const UserStartWorkDateManage = lazy(() => import('./subPages/UserStartWorkDateManage'))
+
 const UserManageTab = lazy(() => import('./subPages/UserManageTab'))
 export default function UserManage() {
     const [activateTab, setActivateTab] = useState(sessionStorage.getItem('userManageTabs') ?? "user");
