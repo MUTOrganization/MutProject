@@ -1,3 +1,4 @@
+import { useAppContext } from "@/contexts/AppContext";
 import Department from "@/models/department";
 import { sortArray } from "@/utils/arrayFunc";
 import { formatDateThai } from "@/utils/dateUtils";
@@ -19,8 +20,7 @@ import { useMemo } from "react";
  * }} param0 
  * @returns 
  */
-export default function DepartmentTable({ 
-    isUserFromHq, 
+export default function DepartmentTable({  
     departmentList, 
     selectedDepartmentId, 
     isLoading, 
@@ -29,6 +29,8 @@ export default function DepartmentTable({
     onEditClick = () => {}, 
     onDeleteClick = () => {} 
 }){
+    const { currentUser } = useAppContext();
+    const isUserFromHq = currentUser?.baseRole === 'SUPER_ADMIN';
     const formattedDepartmentList = useMemo(() => {
         return sortArray([...departmentList], 'isHq', 'descending');
     }, [departmentList]);

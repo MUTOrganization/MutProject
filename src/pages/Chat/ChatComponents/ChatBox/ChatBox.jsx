@@ -175,7 +175,6 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     // function สำหรับเมื่อกดส่งข้อความแล้ว จะ mock ข้อความที่ส่งไปก่อนและขึ้นสถานะกำลังส่ง
     const handleSendMessage = (text, files) => {
         const pendingMessageId = `pending-${pendingMessage.length + 1}`
-        console.log(files);
         if(!files || files.length === 0){
             socket?.emit('chat:send:message', {
                 text,
@@ -183,12 +182,10 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                 pendingMessageId: `user-${pendingMessageId}`
             })
         }else{
-            console.log('asdasdasjdoas');
             const readPromises = files.map(file => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => {
-                        console.log('bbbb');
                         resolve({
                             file_name: file.name,
                             file_size_byte: file.size,
@@ -196,12 +193,10 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                             file_buffer: reader.result
                         });
                     }
-                    console.log('aaaa');
                     reader.readAsArrayBuffer(file)
                 })
             })
             Promise.all(readPromises).then(files => {
-                console.log('files');
                 socket?.emit('chat:send:message', {
                     text,
                     roomId: currentChatRoom.chatRoomId,

@@ -34,8 +34,8 @@ async function createPrivateChatRoom(agentId, username1, username2){
 async function createGroupChatRoom(agentId, name, description, file, members){
     const formData = new FormData()
     formData.append('agentId', agentId)
-    formData.append('name', name)
-    formData.append('description', description)
+    formData.append('name', name.trim())
+    formData.append('description', description.trim())
     formData.append('members', JSON.stringify(members.map(e => ({username: e.username, isAdmin: e.type === 'admin'}))))
     if(file){
         formData.append('file', file)

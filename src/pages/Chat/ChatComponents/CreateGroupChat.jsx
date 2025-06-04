@@ -8,7 +8,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import UserProfileAvatar from '@/component/UserProfileAvatar';
 import { Trash, UserCog, UserRoundCog } from 'lucide-react';
 import chatroomService from '@/services/chatroomService';
-import { toastError, toastSuccess } from '@/component/Alert';
+import { toastError, toastSuccess, toastWarning } from '@/component/Alert';
 
 function CreateGroupChat({ isOpen, onClose = () => {}, onSubmit = () => {} }) {
     const { currentUser } = useAppContext();
@@ -48,9 +48,12 @@ function CreateGroupChat({ isOpen, onClose = () => {}, onSubmit = () => {} }) {
 
     const handleSubmit = async () => {
         try{
+            if(editingGroup.name.trim() === '' || editingGroup.description.trim() === ''){
+                toastWarning('กรุณากรอกชื่อกลุ่มและรายละเอียดกลุ่ม')
+                return;
+            }
             setIsLoading(true)
             const newRoom = await chatroomService.createGroupChatRoom(currentUser.agent.agentId, editingGroup.name, editingGroup.description, editingGroup.image, members)
-            console.log('response.data', newRoom)
             toastSuccess('สร้างกลุ่มแชทสำเร็จ', 'ส่งคำเชิญเข้าร่วมกลุ่มแชทไปที่ผู้ใช้ที่เลือกแล้ว')
             setEditingGroup({
                 name: '',
@@ -95,13 +98,24 @@ function CreateGroupChat({ isOpen, onClose = () => {}, onSubmit = () => {} }) {
                                             value={editingGroup.name}
                                             maxLength={100}
                                             onValueChange={(value) => handleInputChange('name', value)}
+                                            validate={(value) => {
+                                                if(value.trim() === ''){
+                                                    return 'กรุณากรอกชื่อกลุ่ม'
+                                                }
+                                                return true;
+                                            }}
                                         />
                                         <Textarea placeholder='รายละเอียดกลุ่ม' size='sm' variant='bordered' 
                                             value={editingGroup.description}
                                             onValueChange={(value) => handleInputChange('description', value)}
+                                            validate={(value) => {
+                                                if(value.trim() === ''){
+                                                    return 'กรุณากรอกรายละเอียดกลุ่ม'
+                                                }
+                                                return true;
+                                            }}
                                         />
                                     </div>
-                                    <span className='text-blue-500'>{editingGroup.name.length}/100</span>
                                 </div>
                             </header>
 
