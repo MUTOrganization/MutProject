@@ -1,4 +1,4 @@
-import { toastError, toastWarning } from "@/component/Alert";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
 import { useAppContext } from "@/contexts/AppContext";
 import departmentService from "@/services/departmentService";
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/modal";
@@ -37,8 +37,10 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
             setIsLoading(true);
             if(isEdit){
                 await departmentService.updateDepartment(selectedDepartment.departmentId, editingDepartment.departmentName);
+                toastSuccess('ระบบทำการแก้ไขแผนกเรียบร้อย');
             }else{
                 await departmentService.createDepartment(currentUser.agent.agentId, editingDepartment.departmentName, isHq);
+                toastSuccess('ระบบทำการสร้างแผนกเรียบร้อย');
             }
             setEditingDepartment({
                 departmentName: ''
