@@ -24,6 +24,10 @@ export class ChatRoom {
         this.agentId = data.agentId;
         /** @type {Agent} */
         this.agent = data.agent;
+        /** @type {string} */
+        this.createdBy = data.createdBy;
+        /** @type {ChatRoomMember} */
+        this.createdByUser = data.createdByUser;
         /** @type {Array<ChatRoomMember>} */
         this.roomMembers = data.roomMembers;
         /** @type {ChatMessage} */

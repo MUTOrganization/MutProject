@@ -1,6 +1,7 @@
 import UserProfileAvatar from "@/component/UserProfileAvatar";
 import { ChatMessage } from "@/models/chatMessage";
 import { formatRelativeTime } from "@/utils/dateUtils";
+import { Spinner } from "@heroui/react";
 
 /**
  * 
@@ -25,6 +26,12 @@ export default function UserMessageItem({message, isCurrentUser}) {
                 </pre>
                 <div className={`text-[10px] text-gray-500`}>{ message.isPending && 'กำลังส่ง...' }</div>
             </div>
+            {
+                (message.isPending && message.isFilePending) &&
+                <div className={`flex justify-center items-center size-24 rounded-lg border-1 border-gray-300 bg-gray-200 ${isCurrentUser ? 'me-11' : 'ms-11'}`}>
+                    <Spinner />
+                </div>
+            }
         </div>
     )
 

@@ -14,9 +14,13 @@ import chatroomService from '@/services/chatroomService';
 import { toastError } from '@/component/Alert';
 import User from '@/models/user';
 import AlertDeleteChatRoom from './AlertDeleteChatRoom';
+import { leaveRoom } from '@/services/socketHandler.js/general';
+import { useSocketContext } from '@/contexts/SocketContext';
+import { getRoomName } from '../utils';
 
 export default function ChatList({ selectedTab, setSelectedTab, selectedUser, setSelectedUser }) {
     const { setCurrentChatRoom, setChatRooms, setRoomInvites, insertChatRoom, roomsReadStatus, roomInvites, currentChatRoom } = useChatContext();
+    const { socket } = useSocketContext();
     const [isOpen, setIsOpen] = useState(false);
     const [searchText, setSearchText] = useState('')
     const [isAlertDeleteChatRoomOpen, setIsAlertDeleteChatRoomOpen] = useState(false);
@@ -49,8 +53,10 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
     }, [setRoomInvites])
     useSocket('chat:receive:invite', handleSocketReceiveInvite)
 
+    const [isAcceptInviteLoading, setIsAcceptInviteLoading] = useState(false);
     async function handleAcceptInvite(invite){
         try{
+            setIsAcceptInviteLoading(true)
             const room = await chatroomService.acceptRoomInvite(invite.roomId)
             setRoomInvites(prev => prev.filter(i => Number(i.roomId) !== Number(invite.roomId)))
 
@@ -60,6 +66,21 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
         }catch(err){
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถยอมรับคำเชิญได้')
+        }finally{
+            setIsAcceptInviteLoading(false)
+        }
+    }
+
+    async function handleRejectInvite(invite){
+        try{
+            setIsAcceptInviteLoading(true)
+            await chatroomService.rejectRoomInvite(invite.roomId)
+            setRoomInvites(prev => prev.filter(i => Number(i.roomId) !== Number(invite.roomId)))
+        }catch(err){
+            console.error(err)
+            toastError('เกิดข้อผิดพลาด', 'ไม่สามารถปฏิเสธคำเชิญได้')
+        }finally{
+            setIsAcceptInviteLoading(false)
         }
     }
 
@@ -116,6 +137,7 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
                 setCurrentChatRoom(null)
                 setIsAlertDeleteChatRoomOpen(true)
                 setDeletingChatRoom(room)
+                leaveRoom(socket, getRoomName.chatroom(room.chatRoomId))
             }
         }catch(err){
             console.error(err)
@@ -123,11 +145,6 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
         }
     }, [currentChatRoom, setChatRooms])
     useSocket('chat:deleted:room', handleSocketDeleteRoom);
-
-    async function handleRejectInvite(invite){
-        await chatroomService.rejectRoomInvite(invite.roomId)
-        setRoomInvites(prev => prev.filter(i => Number(i.roomId) !== Number(invite.roomId)))
-    }
     
     return (
         <div className='w-full'>
@@ -142,13 +159,13 @@ export default function ChatList({ selectedTab, setSelectedTab, selectedUser, se
                                     <div className='absolute -top-1 -right-3 rounded-full size-2 bg-red-500'></div>
                                 }
                             </div>}>
-                            <ChatHistoryTab onSelectChatRoom={handleSelectRoom} searchText={searchText} onAcceptInvite={handleAcceptInvite} onRejectInvite={handleRejectInvite} />
+                            <ChatHistoryTab onSelectChatRoom={handleSelectRoom} searchText={searchText} onAcceptInvite={handleAcceptInvite} onRejectInvite={handleRejectInvite} isAcceptInviteLoading={isAcceptInviteLoading} />
                         </Tab>
                         <Tab key="private" title="แชทส่วนตัว">
                             <PrivateChatTab selectedUser={selectedUser} onSelectUser={handleSelectUser} searchText={searchText}/>
                         </Tab>
                         <Tab key="group" title="แชทกลุ่ม">
-                            <GroupChatTab onSelectChatRoom={handleSelectRoom} searchText={searchText} onAcceptInvite={handleAcceptInvite} onRejectInvite={handleRejectInvite} />
+                            <GroupChatTab onSelectChatRoom={handleSelectRoom} searchText={searchText} onAcceptInvite={handleAcceptInvite} onRejectInvite={handleRejectInvite} isAcceptInviteLoading={isAcceptInviteLoading} />
                         </Tab>
                     </Tabs>
                     

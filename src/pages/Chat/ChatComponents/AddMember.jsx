@@ -7,7 +7,7 @@ import { useChatContext } from '../ChatContext';
 import Fuse from 'fuse.js'
 import { useAppContext } from '@/contexts/AppContext';
 
-function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}, roomInvites = [] }) {
+function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}, roomInvites = [], isLoading = false }) {
     const { currentUser } = useAppContext();
     const { userList} = useChatContext();
     const [search, setSearch] = useState('');
@@ -55,6 +55,7 @@ function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}
                             <AddMemberItem key={user.username} user={user} 
                                 onAddMember={(type) => handleAddMember(user, type)} 
                                 isInvited={invitedMemberMap[user.username] ? true : false} 
+                                isDisabled={isLoading}
                             />
                         ))}
                     </div>
@@ -68,7 +69,7 @@ function AddMember({ isOpen, onClose = () => {}, members, onAddMember = () => {}
 }
 
 
-function AddMemberItem({ user, isInvited = false, onAddMember = () => {} }) {
+function AddMemberItem({ user, isInvited = false, onAddMember = () => {}, isDisabled = false }) {
     const [type, setType] = useState('member');
 
     const handleAddMember = () => {
@@ -85,7 +86,7 @@ function AddMemberItem({ user, isInvited = false, onAddMember = () => {} }) {
                     เชิญเป็นผู้ดูแล
                 </Checkbox>
             </div>
-            <Button size='sm' color={isInvited ? 'default' : 'primary'} isDisabled={isInvited} onPress={handleAddMember}>{isInvited ? 'เชิญแล้ว' : 'เชิญ'}</Button>
+            <Button size='sm' color={isInvited ? 'default' : 'primary'} isDisabled={isInvited || isDisabled} onPress={handleAddMember}>{isInvited ? 'เชิญแล้ว' : 'เชิญ'}</Button>
         </div>
     )
 }

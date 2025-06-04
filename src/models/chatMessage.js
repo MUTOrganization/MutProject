@@ -24,6 +24,8 @@ export class ChatMessage {
         this.updatedDate = data.updatedDate ? new Date(data.updatedDate) : null
         /** @type {Boolean} */
         this.isPending = data.isPending ?? false
+        /** @type {Boolean} */
+        this.isFilePending = data.isFilePending ?? false
     }
 
     static fromUserMessage(data){
@@ -57,7 +59,7 @@ export class ChatMessage {
     }
 }
 
-class MessageFile {
+export class MessageFile {
     constructor(data) {
         /** @type {String} */
         this.fileName = data.file_name
@@ -66,6 +68,6 @@ class MessageFile {
         /** @type {String} */
         this.fileUrl = data.file_url
         /** @type {Number} */
-        this.fileSizeBytes = data.file_size_bytes
+        this.fileSizeBytes = data.file_size_byte
     }
 }

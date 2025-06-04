@@ -8,11 +8,12 @@ import { Button } from "@heroui/react";
  * @param {{
  *  invite: RoomInvite,
  *  onAccept: (invite: RoomInvite) => void,
- *  onReject: (invite: RoomInvite) => void
+ *  onReject: (invite: RoomInvite) => void,
+ *  isLoading: boolean
  * }} param0 
  * @returns 
  */
-export default function RoomInviteItem({ invite, onAccept = () => {}, onReject = () => {} }) {
+export default function RoomInviteItem({ invite, onAccept = () => {}, onReject = () => {}, isLoading = false }) {
     return(
         <div key={invite.room.chatRoomId} 
             className={`w-full flex flex-col rounded-lg py-4 px-2 transition-all duration-200 relative
@@ -38,8 +39,8 @@ export default function RoomInviteItem({ invite, onAccept = () => {}, onReject =
                 </div>
             </div>
             <div className="flex w-full justify-end">
-                <Button variant="light" color="success" size="sm" onPress={onAccept}>เข้ากลุ่ม</Button>
-                <Button variant="light" color="danger" size="sm" onPress={onReject}>ปฏิเสธ</Button>
+                <Button variant="light" color="success" size="sm" onPress={onAccept} isLoading={isLoading}>เข้ากลุ่ม</Button>
+                <Button variant="light" color="danger" size="sm" onPress={onReject} isLoading={isLoading}>ปฏิเสธ</Button>
             </div>
             <div className="absolute top-2 right-2">
                 <div className="w-2 h-2 rounded-full bg-red-500" />

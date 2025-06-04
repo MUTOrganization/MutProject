@@ -9,7 +9,7 @@ import Fuse from "fuse.js";
 import RoomInviteItem from "../ChatList/RoomInviteItem";
 import chatroomService from "@/services/chatroomService";
 
-export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptInvite, onRejectInvite }){
+export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptInvite, onRejectInvite, isAcceptInviteLoading }){
     const { currentUser } = useAppContext();
     const { chatRooms, isChatRoomsLoading, currentChatRoom, roomsReadStatus, roomInvites } = useChatContext();
 
@@ -50,7 +50,7 @@ export default function ChatHistoryTab({ onSelectChatRoom, searchText, onAcceptI
                         {
                             roomInvites.map((invite) => {
                                 return(
-                                    <RoomInviteItem key={invite.roomId} invite={invite} onAccept={() => onAcceptInvite(invite)} onReject={() => onRejectInvite(invite)} />
+                                    <RoomInviteItem key={invite.roomId} invite={invite} onAccept={() => onAcceptInvite(invite)} onReject={() => onRejectInvite(invite)} isLoading={isAcceptInviteLoading} />
                                 )
                             })
                         }

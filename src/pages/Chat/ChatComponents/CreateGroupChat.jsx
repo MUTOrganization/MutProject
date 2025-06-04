@@ -14,8 +14,8 @@ function CreateGroupChat({ isOpen, onClose = () => {}, onSubmit = () => {} }) {
     const { currentUser } = useAppContext();
     const [isOpenModalAddMember, setIsOpenModalAddMember] = useState(false)
     const [editingGroup, setEditingGroup] = useState({
-        name: 'โปรเจค MUT',
-        description: 'คุยโปรเจค\nบลาๆ',
+        name: '',
+        description: '',
         image: null,
     })
     const [members, setMembers] = useState([

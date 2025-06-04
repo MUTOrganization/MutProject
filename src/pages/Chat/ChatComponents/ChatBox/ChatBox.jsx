@@ -10,7 +10,7 @@ import { toastError } from '@/component/Alert'
 import chatroomService from '@/services/chatroomService'
 import ChatMessageBox from './ChatMessageBox'
 import MessageInput from './MessageInput'
-import { ChatMessage } from '@/models/chatMessage'
+import { ChatMessage, MessageFile } from '@/models/chatMessage'
 import chatMessageService from '@/services/chatMessageService'
 import { useSocketContext } from '@/contexts/SocketContext'
 import useSocket from '@/component/hooks/useSocket'
@@ -19,6 +19,7 @@ import { playNotificationSound } from '@/utils/soundFunc'
 export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     const { currentUser } = useAppContext()
     const { currentChatRoom, userMap, chatRooms, setChatRooms, setChatRoomLastReads, insertChatRoom } = useChatContext()
+    const currentChatRoomId = currentChatRoom?.chatRoomId
     const { socket } = useSocketContext()
     const isPrivate = selectedTab === 'private'
     const [isLoading, setIsLoading] = useState(false)
@@ -90,7 +91,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
 
     // ดึงข้อมูล messages เมื่อ scroll ไปบนสุด
     useEffect(() => {
-        if(currentChatRoom && pagination.page > 1){
+        if(currentChatRoomId && pagination.page > 1){
             setIsLoading(true)
             chatMessageService.getChatMessages(currentChatRoom.chatRoomId, pagination.page, pagination.limit).then(data => {
                 const { data: messages, pagination } = data;
@@ -118,7 +119,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                 setIsLoading(false)
             })
         }
-    }, [pagination.page, currentChatRoom, userMap])
+    }, [pagination.page, currentChatRoomId, userMap])
     /** @type {[ChatMessage[]]} */
     const [messages, setMessages] = useState([]);
     /** @type {[ChatMessage[]]} */
@@ -126,7 +127,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     
      // ดึงข้อมูล messages ตอนเปิดห้องแชท
     useEffect(() => {
-        if(currentChatRoom){
+        if(currentChatRoomId){
             setIsLoading(true)
             chatMessageService.getChatMessages(currentChatRoom.chatRoomId, 1, pagination.limit).then(data => {
                 const { data: messages, pagination } = data;
@@ -143,7 +144,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                 setIsLoading(false)
             })
         }
-    },[currentChatRoom, userMap])
+    },[currentChatRoomId, userMap])
 
     function saveChatRoomLastReadTime(){
         if(currentChatRoom){
@@ -169,25 +170,60 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         })
         saveChatRoomLastReadTime() // บันทึกข้อมูลการอ่านข้อความล่าสุด 
 
-    }, [currentChatRoom])
+    }, [currentChatRoomId])
 
     // function สำหรับเมื่อกดส่งข้อความแล้ว จะ mock ข้อความที่ส่งไปก่อนและขึ้นสถานะกำลังส่ง
-    const handleSendMessage = (text) => {
+    const handleSendMessage = (text, files) => {
         const pendingMessageId = `pending-${pendingMessage.length + 1}`
-        socket?.emit('chat:send:message', {
-            text,
-            roomId: currentChatRoom.chatRoomId,
-            pendingMessageId: `user-${pendingMessageId}`
-        })
+        console.log(files);
+        if(!files || files.length === 0){
+            socket?.emit('chat:send:message', {
+                text,
+                roomId: currentChatRoom.chatRoomId,
+                pendingMessageId: `user-${pendingMessageId}`
+            })
+        }else{
+            console.log('asdasdasjdoas');
+            const readPromises = files.map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        console.log('bbbb');
+                        resolve({
+                            file_name: file.name,
+                            file_size_byte: file.size,
+                            file_type: file.type,
+                            file_buffer: reader.result
+                        });
+                    }
+                    console.log('aaaa');
+                    reader.readAsArrayBuffer(file)
+                })
+            })
+            Promise.all(readPromises).then(files => {
+                console.log('files');
+                socket?.emit('chat:send:message', {
+                    text,
+                    roomId: currentChatRoom.chatRoomId,
+                    pendingMessageId: `user-${pendingMessageId}`,
+                    files
+                })
+            }).catch(err => {
+                console.error(err);
+                toastError('ไม่สามารถส่งไฟล์ได้')
+            })
+        }
         const newMessage = new ChatMessage({
             id: pendingMessageId,
             roomId: currentChatRoom.chatRoomId,
             sender: currentUser,
             senderUsername: currentUser.username,
             text: text,
+            files: null,
             createdDate: new Date(),
             updatedDate: new Date(),
             isPending: true,
+            isFilePending: files ? true : false,
             source: 'user'
         })
         setMessages(prev => [newMessage, ...prev])
@@ -210,7 +246,8 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
 
         if(Number(roomId) === Number(currentChatRoom?.chatRoomId)){ // ถ้าข้อความที่แจ้ง อยู่ในห้องแชทที่กำลังดูอยู่
             if(message.senderUsername === currentUser.username){ // ถ้าเป็นข้อความที่ส่งจากตัวเอง จะทำการอัพเดท pendingMessage เป็น false , แก้ id เป็น id จริง และลบ pendingMessage ออก
-                setMessages(prev => prev.map(m => m.id === pendingMessageId ? {...m, id: `user-${message.userMessageId}`, isPending: false} : m))
+                const files = !message.files ? null : message.files.map(f => new MessageFile(f))
+                setMessages(prev => prev.map(m => m.id === pendingMessageId ? {...m, id: `user-${message.userMessageId}`, files: files, isPending: false} : m))
                 setPendingMessage(prev => prev.filter(m => m.id !== pendingMessageId))
                 
                 saveChatRoomLastReadTime()
@@ -272,13 +309,17 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
         }
     }, [currentChatRoom])
 
+    const [isInviteMemberLoading, setIsInviteMemberLoading] = useState(false);
     async function handleInviteMember(user, type = 'member'){
         try{
+            setIsInviteMemberLoading(true)
             const invite = await chatroomService.createRoomInvite(currentChatRoom.chatRoomId, user.username, type === 'admin');
             setRoomInvites(prev => [...prev, invite]);
         }catch(err){
             console.error(err);
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเชิญสมาชิกได้');
+        }finally{
+            setIsInviteMemberLoading(false)
         }
     }
 
@@ -340,7 +381,7 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
     }
 
     return (
-        <>
+        <div className='w-full h-full'>
             <div className='w-full h-full relative flex flex-col'>
                 {/* Controller Chat For Private Chat && Group Chat */}
                 
@@ -382,12 +423,12 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                         :
                         <div className='w-full h-full relative flex flex-col justify-end items-center'>
                             <div ref={containerRef} className='flex-1 w-full overflow-y-auto px-2'>
-                                <div className='w-full h-full content-end '>
+                                <div className='w-full h-full content-end'>
                                     <ChatMessageBox messages={messages} setMessages={setMessages} />
                                     <div ref={bottomRef} />
                                 </div>
                             </div>
-                            <div className='w-full'>
+                            <div className='w-full mt-2'>
                                 <MessageInput onSendMessage={handleSendMessage} />
                             </div>
                         </div>
@@ -417,8 +458,9 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                     members={currentChatRoom.roomMembers}
                     roomInvites={roomInvites}
                     onAddMember={handleInviteMember}
+                    isLoading={isInviteMemberLoading}
                 />
             )}
-        </>
+        </div>
     )
 }

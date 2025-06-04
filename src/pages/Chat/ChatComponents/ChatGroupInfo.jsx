@@ -8,13 +8,17 @@ import ImageInput from '@/component/ImageInput';
 import UserProfileAvatar from '@/component/UserProfileAvatar';
 import chatroomService from '@/services/chatroomService';
 import { toastError, toastWarning } from '@/component/Alert';
-import { Pencil, Trash2, Trash2Icon } from 'lucide-react';
+import { Pencil, Trash2, Trash2Icon, UserCog } from 'lucide-react';
 import ConfirmDeleteGroupModal from './ConfirmDeleteGroupModal';
 import ConfirmLeaveGroupModal from './ConfirmLeaveGroupModal';
+import { useSocketContext } from '@/contexts/SocketContext';
+import { leaveRoom } from '@/services/socketHandler.js/general';
+import { getRoomName } from '../utils';
 
 function ChatGroupInfo({ isOpen, onClose = () => {} }) {
     const { currentUser } = useAppContext();
-    const { currentChatRoom, setCurrentChatRoom } = useChatContext();
+    const { currentChatRoom, setCurrentChatRoom, setChatRooms } = useChatContext();
+    const { socket } = useSocketContext();
 
     const [isEditingGroupInfo, setIsEditingGroupInfo] = useState(false)
     const [editingGroupInfo, setEditingGroupInfo] = useState({
@@ -65,13 +69,17 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
 
     async function handleLeaveGroup(){
         try{
-            if(currentChatRoom.roomMembers.find(e => e.username === currentUser.username)?.isAdmin && currentChatRoom.roomMembers.filter(e => e.isAdmin).length === 1){
-                toastWarning('ไม่สามารถออกจากกลุ่มได้', 'กลุ่มต้องมีผู้ดูแลอย่างน้อย 1 คน')
+            const roomId = currentChatRoom.chatRoomId
+            if(currentChatRoom.createdBy === currentUser.username){
+                toastWarning('ไม่สามารถออกจากกลุ่มได้', 'ผู้สร้างกลุ่มไม่สามารถออกจากกลุ่มได้')
                 return
             }
             setIsLoading(true)
-            await chatroomService.leaveChatRoom(currentChatRoom.chatRoomId, currentUser.username)
+            await chatroomService.leaveChatRoom(roomId, currentUser.username)
+            setChatRooms(prev => prev.filter(room => room.chatRoomId !== roomId))
             setCurrentChatRoom(null)
+            leaveRoom(socket, getRoomName.chatroom(roomId))
+            onClose()
         }catch(err){
             console.error(err)
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถออกจากกลุ่มได้')
@@ -83,10 +91,12 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
 
     async function handleDeleteGroup(){
         try{
-            new Date().toDate
+            const roomId = currentChatRoom.chatRoomId
             setIsLoading(true)
-            await chatroomService.deleteChatRoom(currentChatRoom.chatRoomId)
+            await chatroomService.deleteChatRoom(roomId)
+            setChatRooms(prev => prev.filter(room => room.chatRoomId !== roomId))
             setCurrentChatRoom(null)
+            leaveRoom(socket, getRoomName.chatroom(roomId))
             onClose()
         }catch(err){
             console.error(err)
@@ -119,13 +129,21 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
                         }
                         <div className='flex justify-center w-full items-center space-x-2'>
                             <div className='text-center font-bold text-2xl'>{currentChatRoom.name}</div>
-                            <div className='cursor-pointer' onClick={() => setIsEditingGroupInfo(true)}><Pencil size={16}/></div>
+                            {
+                                isAdmin && (
+                                    <div className='cursor-pointer' onClick={() => setIsEditingGroupInfo(true)}><Pencil size={16}/></div>
+                                )
+                            }
                         </div>
                     </div>
                     <div className='flex flex-col space-y-2 justify-center w-full'>
                         <div className='flex flex-row w-full items-center space-x-2'>
                             <span className='text-slate-600 font-bold'>รายละเอียดกลุ่ม</span> 
-                            <span className='cursor-pointer' onClick={() => setIsEditingGroupInfo(true)}><Pencil size={16}/></span>
+                            {
+                                isAdmin && (
+                                    <span className='cursor-pointer' onClick={() => setIsEditingGroupInfo(true)}><Pencil size={16}/></span>
+                                )
+                            }
                         </div>
                         <pre className='text-slate-400 px-2 w-full max-h-[100px] overflow-y-auto overflow-x-hidden'>
                             {currentChatRoom.description}
@@ -140,12 +158,10 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
                                         <div className='flex flex-row items-center justify-center size-12 rounded-full relative'>
                                                 <UserProfileAvatar name={member.name} imageURL={member.displayImgUrl} size='md' />
                                                 {
-                                                    member.type === 'admin' && (
-                                                        <Tooltip content="แอดมิน">
-                                                            <div className='absolute top-0 left-0 bg-white border-1 rounded-full p-1'>
-                                                                <UserCog size={16} />
-                                                            </div>
-                                                        </Tooltip>
+                                                    member.isAdmin && (
+                                                        <div className='absolute -top-1 -left-1 bg-white border-1 rounded-full p-1'>
+                                                            <UserCog size={16} />
+                                                        </div>
                                                     )
                                                 }
                                         </div>
@@ -156,23 +172,31 @@ function ChatGroupInfo({ isOpen, onClose = () => {} }) {
                     </div>
                     <div className='border-1 border-slate-200 w-full h-0.5'></div>
                     <div className='w-full flex flex-col space-y-2'>
-                        <div className='w-full bg-red-200 text-red-500 rounded-lg p-2 flex flex-row 
-                            justify-between items-center px-3 cursor-pointer hover:bg-red-500 hover:text-white transition-all duration-300'
-                            onClick={() => setIsLeavingGroup(true)}
-                        >
-                            <span>ออกจากกลุ่ม</span>
-                            <span><FaRunning /></span>
-                        </div>
-                        <Button 
-                            variant='solid'
-                            color='danger'
-                            radius='sm'
-                            className='flex flex-row items-center justify-between'
-                            onPress={() => setIsDeletingGroup(true)}
-                        >
-                            <span>ลบกลุ่ม</span>
-                            <span><Trash2 size={16}/></span>
-                        </Button>
+                        {
+                            currentChatRoom.createdBy !== currentUser.username && 
+                            <Button variant='ghost' color='danger' className='w-full text-red-500 rounded-lg p-2 flex flex-row 
+                                justify-between items-center px-3 cursor-pointer hover:bg-red-500 hover:text-white transition-all duration-300'
+                                onPress={() => setIsLeavingGroup(true)} isLoading={isLoading}
+                            >
+                                <span>ออกจากกลุ่ม</span>
+                                <span><FaRunning /></span>
+                            </Button>
+                        }
+                        {
+                            isAdmin && (
+                            <Button 
+                                variant='solid'
+                                color='danger'
+                                radius='sm'
+                                className='flex flex-row items-center justify-between'
+                                onPress={() => setIsDeletingGroup(true)}
+                                isDisabled={isLoading}
+                            >
+                                <span>ลบกลุ่ม</span>
+                                <span><Trash2 size={16}/></span>
+                            </Button>
+                            )
+                        }
                     </div>
                 </ModalBody>
 

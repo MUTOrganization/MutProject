@@ -42,24 +42,26 @@ export default function ChatBody({ isOpen, onClose = () => {} }) {
             <ModalContent className="w-full max-w-7xl h-[80vh]">
                 <ModalHeader className='text-slate-600'>แชท</ModalHeader>
                 <ModalBody className='flex flex-row justify-between items-start overflow-auto'>
+                    <div className='flex grow max-w-[1300px]'>
+                        {/* list ห้องแชท */}
+                        <div className='w-[320px] h-full'>
+                            <ChatList 
+                                selectedTab={selectedTab} 
+                                setSelectedTab={setSelectedTab}      
+                                selectedUser={selectedUser}
+                                setSelectedUser={setSelectedUser}
+                            />
 
-                    {/* list ห้องแชท */}
-                    <div className='w-full max-w-[320px] h-full'>
-                        <ChatList 
-                            selectedTab={selectedTab} 
-                            setSelectedTab={setSelectedTab}      
-                            selectedUser={selectedUser}
-                            setSelectedUser={setSelectedUser}
-                        />
+                        </div>
+                        <div className='w-1 h-full py-8'>
+                            <div className='w-full h-full bg-slate-100' />
+                        </div>
+                        {/* ช่องที่แสดงข้อความ */}
+                        <div className='flex-1 max-w-[900px] h-full'>
+                            <ChatBox selectedTab={selectedTab} selectedUser={selectedUser} onStartChat={() => handleStartChat(selectedUser)}/>
+                        </div>
+                    </div>
 
-                    </div>
-                    <div className='w-1 h-full py-8'>
-                        <div className='w-full h-full bg-slate-100' />
-                    </div>
-                    {/* ช่องที่แสดงข้อความ */}
-                    <div className='w-full h-full'>
-                        <ChatBox selectedTab={selectedTab} selectedUser={selectedUser} onStartChat={() => handleStartChat(selectedUser)}/>
-                    </div>
 
                 </ModalBody>
             </ModalContent>
