@@ -65,7 +65,7 @@ function DashboardSalesMainData() {
                                             <span>ยอดรวม</span>
                                             <span className=''>
                                                 {isSwitch ?
-                                                    code?.summary?.paidOrderCount : formatNumber(code?.summary?.paidIncome)} / {isSwitch ? code?.summary?.orderCount : formatNumber(code?.summary?.income)}
+                                                    code?.summary?.paidOrderCount || 0 : formatNumber(code?.summary?.paidIncome || 0)} / {isSwitch ? code?.summary?.orderCount || 0 : formatNumber(code?.summary?.income || 0)}
                                             </span>
                                         </div>
                                         <Progress value={isSwitch ? code?.summary?.paidOrderCount : code?.summary?.paidIncome} color='success' maxValue={isSwitch ? code?.summary?.orderCount : code?.summary?.income} size='sm' />
@@ -73,16 +73,16 @@ function DashboardSalesMainData() {
                                     <div>
                                         <div className='text-slate-500 flex flex-row justify-between items-center'>
                                             <span>COD</span>
-                                            <span>{isSwitch ? code?.COD?.paidOrderCount : formatNumber(code?.COD?.paidIncome)} / {isSwitch ? code?.COD?.orderCount : formatNumber(code?.COD?.income)}</span>
+                                            <span>{isSwitch ? code?.COD?.paidOrderCount || 0 : formatNumber(code?.COD?.paidIncome || 0)} / {isSwitch ? code?.COD?.orderCount || 0 : formatNumber(code?.COD?.income || 0)}</span>
                                         </div>
                                         <Progress value={isSwitch ? code?.COD?.paidOrderCount : code?.COD?.paidIncome} color='primary' maxValue={isSwitch ? code?.COD?.orderCount : code?.COD?.income} size='sm' />
                                     </div>
                                     <div>
                                         <div className='text-slate-500 flex flex-row justify-between items-center'>
                                             <span>TRANSFER</span>
-                                            <span>{isSwitch ? code?.TRANSFER?.paidOrderCount : formatNumber(code?.TRANSFER?.paidIncome)} / {isSwitch ? code?.TRANSFER?.orderCount : code?.TRANSFER?.income}</span>
+                                            <span>{isSwitch ? code?.TRANSFER?.paidOrderCount || 0 : formatNumber(code?.TRANSFER?.paidIncome || 0)} / {isSwitch ? code?.TRANSFER?.orderCount || 0 : formatNumber(code?.TRANSFER?.income) || 0}</span>
                                         </div>
-                                        <Progress value={isSwitch ? code?.TRANSFER?.paidOrderCount : code?.TRANSFER?.paidIncome} color='warning' maxValue={isSwitch ? code?.TRANSFER?.orderCount : code?.TRANSFER?.income} size='sm' />
+                                        <Progress value={isSwitch ? code?.TRANSFER?.paidOrderCount : code?.TRANSFER?.paidIncome} color='warning' maxValue={isSwitch ? code?.TRANSFER?.orderCount : code?.TRANSFER?.income || 0} size='sm' />
                                     </div>
                                 </div>
                             </div>

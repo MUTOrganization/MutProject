@@ -2,11 +2,12 @@ import React from 'react'
 import { useDashboardSalesContext } from '../DashboardSalesContext';
 import DateSelector from '@/component/DateSelector';
 import { Autocomplete, AutocompleteItem } from '@heroui/react';
+import { useAppContext } from '@/contexts/AppContext';
 
 function DashboardSalesController() {
 
-    const { date, setDate, dateMode, setDateMode, agentData, selectAgent, setSelectAgent, userData, selectUser, setSelectUser , selectUserParams } = useDashboardSalesContext();
-    console.log(selectUserParams())
+    const { date, setDate, dateMode, setDateMode, agentData, selectAgent, setSelectAgent, userData, selectUser, setSelectUser, isSuperAdmin, isAdmin } = useDashboardSalesContext();
+
     return (
         <div className='w-full bg-white rounded-lg p-4 shadow-sm flex flex-row justify-start items-center space-x-4'>
             <DateSelector
@@ -18,17 +19,30 @@ function DashboardSalesController() {
                 onModeChange={setDateMode}
             />
 
-            <Autocomplete className='w-2/12' variant='bordered' aria-label='ตัวแทน' label='เลือกตัวแทน' selectedKey={`${selectAgent}`} onSelectionChange={(value) => setSelectAgent(Number(value) || null)}>
-                {agentData.map((item) => (
-                    <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
-                ))}
-            </Autocomplete>
+            {isSuperAdmin && (
+                <Autocomplete className='w-2/12' variant='bordered' aria-label='ตัวแทน' label='เลือกตัวแทน' selectedKey={`${selectAgent}`}
+                    onSelectionChange={(value) => {
+                        if (value === null) return;
+                        setSelectAgent(Number(value) || null)
+                    }}>
+                    {agentData.map((item) => (
+                        <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
+                    ))}
+                </Autocomplete>
+            )}
 
-            <Autocomplete className='w-2/12' variant='bordered' aria-label='ตัวแทน' label='เลือกผู้ขาย' selectedKey={`${selectUser}`} onSelectionChange={(value) => setSelectUser(value || null)}>
-                {userData.map((item) => (
-                    <AutocompleteItem key={item.username} value={item.username}>{item.username}</AutocompleteItem>
-                ))}
-            </Autocomplete>
+            {(isSuperAdmin || isAdmin) && (
+                <Autocomplete className='w-2/12' variant='bordered' aria-label='เลือกผู้ขาย' label='เลือกผู้ขาย' selectedKey={`${selectUser}`}
+                    onSelectionChange={(value) => {
+                        if (value === null) return;
+                        setSelectUser(value || null)
+                    }}>
+                    <AutocompleteItem key='ทั้งหมด' value='ทั้งหมด'>ทั้งหมด</AutocompleteItem>
+                    {userData.map((item) => (
+                        <AutocompleteItem key={item.username} value={item.username}>{item.username}</AutocompleteItem>
+                    ))}
+                </Autocomplete>
+            )}
 
         </div>
     )
