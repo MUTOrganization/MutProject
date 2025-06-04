@@ -8,7 +8,7 @@ import DashboardSalesCustomerIncomeChart from './DashboardSalesCustomerIncomeCha
 function DashboardSalesChart() {
 
   return (
-    <div className='w-full flex flex-row justify-between items-center space-x-5'>
+    <div className='w-full flex flex-row justify-between items-start space-x-5 h-full'>
       <DashboardSalesTotalChart />
       <DashboardSalesCustomerIncomeChart />
     </div>

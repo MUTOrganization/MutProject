@@ -1,93 +1,143 @@
-import React, { useState } from 'react'
-import ReactApexChart from 'react-apexcharts'
+import React, { useEffect, useState } from 'react';
+import ReactApexChart from 'react-apexcharts';
 import { useDashboardSalesContext } from '../DashboardSalesContext';
+import userService from '@/services/userService';
+import commissionService from '@/services/commissionService';
+import { formatDateObject } from '@/utils/dateUtils';
+import { useAppContext } from '@/contexts/AppContext';
+import { endOfYear, startOfYear, today } from '@internationalized/date';
+import { Spinner } from '@heroui/react';
 
 function DashboardSalesTotalChart() {
-    
-    const { commissionData } = useDashboardSalesContext()
 
-    const commissionDatas = () => {
-        
+    const { currentUser } = useAppContext()
+    const { selectAgent, dateMode, date } = useDashboardSalesContext()
+
+    const [isLoading, setIsLoading] = useState(false)
+    const [dateChart, setDateChart] = useState({
+        start: startOfYear(today()),
+        end: endOfYear(today())
+    })
+
+    const [series, setSeries] = useState([
+        {
+            name: 'ยอดขาย (Admin Income)',
+            color: '#A7F3D0',
+            data: Array(12).fill(0)
+        },
+        {
+            name: 'ค่าคอมมิชชัน',
+            color: '#008FFB',
+            data: Array(12).fill(0)
+        },
+    ]);
+
+    const fetchCommissionData = async () => {
+        const monthlyCommission = Array(12).fill(0);
+        const monthlyIncome = Array(12).fill(0);
+
+        setIsLoading(true)
+        try {
+            const commissionData = await commissionService.getCommission(selectAgent, currentUser.username, dateMode === 'ปี' ? formatDateObject(date.start) : formatDateObject(dateChart.start), dateMode === 'ปี' ? formatDateObject(date.end) : formatDateObject(dateChart.end));
+            setIsLoading(false)
+
+            commissionData.forEach(user => {
+                user.data.forEach(item => {
+                    const monthIndex = item.monthIndex - 1;
+                    monthlyCommission[monthIndex] += Number(item.commission || 0);
+                    monthlyIncome[monthIndex] += Number(item.adminIncome || 0);
+                });
+            });
+
+            setSeries([
+                {
+                    name: 'ยอดขาย (Admin Income)',
+                    color: '#00C49F',
+                    data: monthlyIncome
+                },
+                {
+                    name: 'ค่าคอมมิชชัน',
+                    color: '#008FFB',
+                    data: monthlyCommission
+                },
+            ]);
+        } catch (err) {
+            console.log('Can not get Commission Data At DashboardSalesContext', err)
+        }
     }
 
-    const [series, setSeries] = useState({
+    useEffect(() => {
+        fetchCommissionData()
+    }, [dateChart, selectAgent])
 
-        series: [
-            {
-                name: 'Q1 Budget',
-                group: 'budget',
-                color: '#80c7fd',
-                data: [44000, 55000, 41000, 67000, 22000, 43000],
+    useEffect(() => {
+        if (dateMode === 'ปี') {
+            fetchCommissionData()
+        }
+    }, [dateMode, date])
+
+    useEffect(() => {
+        if (dateMode === 'เดือน') {
+            setDateChart({
+                start: startOfYear(today()),
+                end: endOfYear(today())
+            })
+        }
+    }, [dateMode])
+
+    const options = {
+        chart: {
+            type: 'bar',
+            height: 350,
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
             },
-            {
-                name: 'Q1 Actual',
-                group: 'actual',
-                color: '#008FFB',
-                data: [48000, 50000, 40000, 65000, 25000, 40000],
-            },
-        ],
-        options: {
-            chart: {
-                type: 'bar',
-                height: 350,
-                stacked: true,
-            },
-            stroke: {
-                width: 1,
-                colors: ['#fff']
-            },
-            dataLabels: {
-                formatter: (val) => {
-                    return val / 1000 + 'K'
-                }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false
-                }
-            },
-            xaxis: {
-                categories: [
-                    'มกราคม',
-                    'กุมภาพันธ์',
-                    'มีนาคม',
-                    'เมษายน',
-                    'พฤษภาคม',
-                    'มิถุนายน',
-                    'กรกฎาคม',
-                    'สิงหาคม',
-                    'กันยายน',
-                    'ตุลาคม',
-                    'พฤศจิกายน',
-                    'ธันวาคม'
-                ]
-            },
-            fill: {
-                opacity: 1
-            },
-            yaxis: {
-                labels: {
-                    formatter: (val) => {
-                        return val / 1000 + 'K'
-                    }
-                }
-            },
-            legend: {
-                position: 'bottom',
-                clusterGroupedSeriesOrientation: "vertical"
+        },
+        xaxis: {
+            categories: [
+                'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน',
+                'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม',
+                'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+            ]
+        },
+        fill: {
+            opacity: 1
+        },
+        yaxis: {
+            labels: {
+                formatter: (val) => val / 1000 + 'K'
             }
         },
+        legend: {
+            position: 'bottom',
+            clusterGroupedSeriesOrientation: "vertical"
+        }
+    };
 
-
-    });
     return (
-        <div className='w-full bg-white rounded-lg p-4 shadow-sm'>
-            <div id="chart">
-                <ReactApexChart options={series.options} series={series.series} type="bar" height={350} />
-            </div>
-            <div id="html-dist"></div>
+        <div className='w-full bg-white rounded-lg p-4 shadow-sm h-96'>
+            {isLoading ? (
+                <div className='flex flex-row justify-center items-center h-full'>
+                    <Spinner variant='wave' />
+                </div>
+            ) : (
+                <ReactApexChart options={options} series={series} type="bar" height={350} />
+            )}
         </div>
-    )
+    );
 }
 
-export default DashboardSalesTotalChart
+export default DashboardSalesTotalChart;

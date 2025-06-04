@@ -3,7 +3,7 @@ import agentService from '@/services/agentService';
 import commissionService from '@/services/commissionService';
 import userService from '@/services/userService';
 import { formatDateObject } from '@/utils/dateUtils';
-import { endOfMonth, startOfMonth, today } from '@internationalized/date';
+import { endOfMonth, endOfYear, startOfMonth, startOfYear, today } from '@internationalized/date';
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 const DashboardSalesContext = createContext();
@@ -26,9 +26,11 @@ export function DashboardSalesProvider({ children }) {
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
     const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? null : currentUser?.agent?.agentId)
+    const [selectUser, setSelectUser] = useState(null)
     const [isSwitch, setIsSwitch] = useState(false)
 
     // Date
+    const [dateMode, setDateMode] = useState('เดือน')
     const [date, setDate] = useState({
         start: startOfMonth(today()),
         end: endOfMonth(today())
@@ -48,13 +50,25 @@ export function DashboardSalesProvider({ children }) {
     const fetchCommissionData = async () => {
         setIsLoading(true)
         try {
-            const [users] = await Promise.all([await userService.getAllUser(selectAgent)])
-            const Selectusers = users?.map(u => u.username)
-            const commissionData = await commissionService.getCommission(selectAgent, currentUser.username, formatDateObject(date.start), formatDateObject(date.end));
+            const [users] = await Promise.all([await userService.getAllUser(Number(selectAgent))])
+            setUserData(users)
+            const commissionData = await commissionService.getCommission(selectAgent, selectUserParams(), formatDateObject(date.start), formatDateObject(date.end));
             setCommissionData(commissionData)
             setIsLoading(false)
         } catch (err) {
             console.log('Can not get Commission Data At DashboardSalesContext', err)
+        }
+    }
+
+    const selectUserParams = () => {
+        if (isSuperAdmin) {
+            if (selectUser === null) {
+                return userData?.length > 0 ? userData.map(u => u.username) : []
+            } else {
+                return selectUser
+            }
+        } else {
+            return currentUser.username
         }
     }
 
@@ -63,8 +77,16 @@ export function DashboardSalesProvider({ children }) {
     }, [])
 
     useEffect(() => {
-        fetchCommissionData();
-    }, [date, selectAgent])
+        if (selectAgent !== null) {
+            fetchCommissionData();
+        }
+    }, [date, selectAgent, selectUser])
+
+    useEffect(() => {
+        if (agentData.length > 0 && selectAgent === null) {
+            setSelectAgent(agentData[0]?.agentId)
+        }
+    }, [agentData])
 
     // Get Commission
     const getCommissionData = () => {
@@ -156,12 +178,12 @@ export function DashboardSalesProvider({ children }) {
         return result;
     };
 
-
     const value = {
         commissionData,
         agentData,
         userData,
         isLoading,
+        setIsLoading,
         getCommissionData,
         getProfit,
         getOrder,
@@ -169,7 +191,16 @@ export function DashboardSalesProvider({ children }) {
         getMoneyStatus,
         isSwitch,
         setIsSwitch,
-        getOrderStatus
+        getOrderStatus,
+        date,
+        setDate,
+        dateMode,
+        setDateMode,
+        selectAgent,
+        setSelectAgent,
+        selectUser,
+        setSelectUser,
+        selectUserParams
     };
 
     return (

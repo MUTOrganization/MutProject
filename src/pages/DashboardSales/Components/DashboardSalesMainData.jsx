@@ -8,7 +8,6 @@ function DashboardSalesMainData() {
     const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus } = useDashboardSalesContext();
 
     const code = getMoneyStatus()
-    console.log(getOrderStatus())
 
     return (
         <div className='w-full flex flex-row justify-between items-start space-x-6'>
@@ -41,7 +40,7 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>ยอดยกไปเดือนหน้า</header>
+                    <header className='text-slate-500 text-sm'>ยอดยก</header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : formatNumber(getPaidIncome())}
