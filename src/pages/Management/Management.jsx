@@ -9,7 +9,7 @@ const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));
 const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
 const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
 const MasterAccess = lazy(() => import("./Pages/accessManage/MasterAccess"));
-import Page403 from "../page403";
+import Page403 from "../Page403";
 
 function Management() {
   const navigate = useNavigate();
