@@ -1,7 +1,7 @@
 import { Button, Skeleton } from "@heroui/react";
 import { ChevronsRight, DeleteIcon, EditIcon } from "lucide-react";
 import { useState } from "react";
-import AddGroupModal from "./addGroupModal";
+import AddGroupModal from "./AddGroupModal";
 import DelGroupModal from "./DelGroupModal";
 
 function GroupList({ groupList, groupSelected, setGroupSelected, isLoading, isFetchGroup }) {
