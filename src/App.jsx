@@ -20,6 +20,7 @@ const Login = lazy(() => import("./pages/Login/Login"));
 const Commission = lazy(() => import("./pages/Commission/Commission"));
 const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
 const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
+const DashBoardSales = lazy(() => import("./pages/DashboardSales/DashboardSalesBody"));
 const Page403 = lazy(() => import("./pages/page403"));
 const Page404 = lazy(() => import("./pages/Page404"));
 
@@ -64,7 +65,7 @@ const routes = [
     title: "ค่าใช้จ่าย",
     access: []
   },
-  { path: "/Commission", component: <Commission />, title: "คอมมิชชัน", access: [] },
+  { path: "/Commission", component: <DashBoardSales />, title: "คอมมิชชัน", access: [] },
   {
     path: "/Dashboard-CEO",
     component: <DashboardCEO />,
