@@ -14,7 +14,7 @@ import ChangeProfileImageModal from "./component/ChangeProfileImageModal";
 
 
 const Management = lazy(() => import("./pages/Management/Management"));
-const Setting = lazy(() => import("./pages/Setting/Setting"));
+const Setting = lazy(() => import("./pages/setting/Setting"));
 const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
 const Commission = lazy(() => import("./pages/Commission/Commission"));
