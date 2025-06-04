@@ -6,7 +6,7 @@ function DashboardSalesController() {
     const { commissionData, agentData, userData, isLoading } = useDashboardSalesContext();
 
     return (
-        <div>
+        <div className='w-full bg-white rounded-lg p-4 shadow-sm'>
             Controller
         </div>
     )

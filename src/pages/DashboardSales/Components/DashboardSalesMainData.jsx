@@ -13,7 +13,7 @@ function DashboardSalesMainData() {
     return (
         <div className='w-full flex flex-row justify-between items-start space-x-6'>
             <section className='w-full grid grid-cols-2 gap-4'>
-                <div className='bg-white rounded-lg p-4'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
                     <header className='text-slate-500 text-sm'>คอมมิชชั่น</header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
@@ -22,7 +22,7 @@ function DashboardSalesMainData() {
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-4'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
                     <header className='text-slate-500 text-sm'>ยอดขาย</header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
@@ -31,7 +31,7 @@ function DashboardSalesMainData() {
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-4'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
                     <header className='text-slate-500 text-sm'>ออเดอร์</header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
@@ -40,8 +40,8 @@ function DashboardSalesMainData() {
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-4'>
-                    <header className='text-slate-500 text-sm'>ยอดเงินเข้า</header>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
+                    <header className='text-slate-500 text-sm'>ยอดยกไปเดือนหน้า</header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : formatNumber(getPaidIncome())}
@@ -50,7 +50,7 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
             </section>
-            <div className='w-full bg-white rounded-lg p-4 h-full relative'>
+            <div className='w-full bg-white rounded-lg p-4 h-full relative shadow-sm border-8 border-slate-50'>
                 <div className='flex flex-row justify-end items-center space-x-3 text-sm absolute top-5 right-6 '>
                     <span>ยอดขาย</span>
                     <Switch checked={isSwitch} onChange={() => setIsSwitch(!isSwitch)} />
@@ -64,7 +64,10 @@ function DashboardSalesMainData() {
                                     <div>
                                         <div className='text-slate-500 flex flex-row justify-between items-center'>
                                             <span>ยอดรวม</span>
-                                            <span>{isSwitch ? code?.summary?.paidOrderCount : formatNumber(code?.summary?.paidIncome)} / {isSwitch ? code?.summary?.orderCount : formatNumber(code?.summary?.income)}</span>
+                                            <span className=''>
+                                                {isSwitch ?
+                                                    code?.summary?.paidOrderCount : formatNumber(code?.summary?.paidIncome)} / {isSwitch ? code?.summary?.orderCount : formatNumber(code?.summary?.income)}
+                                            </span>
                                         </div>
                                         <Progress value={isSwitch ? code?.summary?.paidOrderCount : code?.summary?.paidIncome} color='success' maxValue={isSwitch ? code?.summary?.orderCount : code?.summary?.income} size='sm' />
                                     </div>
@@ -87,7 +90,7 @@ function DashboardSalesMainData() {
                         )}
                     </Tab>
                     <Tab key='สถานะออเดอร์' title='สถานะออเดอร์'>
-                        {isLoading ? <Spinner/> : (
+                        {isLoading ? <Spinner /> : (
                             <div className='space-y-2 w-full mt-2 px-3'>
                                 <div className='flex flex-row justify-between items-center'>
                                     <span className='text-slate-600'>รอจัดส่ง</span>

@@ -90,7 +90,7 @@ export function DashboardSalesProvider({ children }) {
     // Get Paid Income
     const getPaidIncome = () => {
         return commissionData.reduce((acc, curr) => {
-            return acc + curr.data.reduce((sum, item) => sum + Number(item.adminPaidIncome || 0), 0)
+            return acc + curr.data.reduce((sum, item) => sum + Number(item.adminNextLiftIncome || 0), 0)
         }, 0)
     }
 
