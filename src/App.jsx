@@ -19,7 +19,7 @@ const Home = lazy(() => import("./pages/Home/Home"));
 const Login = lazy(() => import("./pages/Login/Login"));
 const Commission = lazy(() => import("./pages/Commission/Commission"));
 const ExpenseReport = lazy(() => import("./pages/ExpenseReport/ExpenseReport"));
-const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashboardCEO"));
+const DashboardCEO = lazy(() => import("./pages/DashboardCEO/DashBoardCEO"));
 const DashBoardSales = lazy(() => import("./pages/DashboardSales/DashboardSalesBody"));
 const Page403 = lazy(() => import("./pages/Page403"));
 const Page404 = lazy(() => import("./pages/Page404"));
