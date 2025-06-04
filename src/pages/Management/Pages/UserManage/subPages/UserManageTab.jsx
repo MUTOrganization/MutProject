@@ -3,7 +3,6 @@ import UserManageControllerBar from '../UserTabComponenets/UserManageControllerB
 import UserManageBody from '../UserTabComponenets/UserManageBody'
 import { useAppContext } from '@/contexts/AppContext'
 import userService from '@/services/userService'
-import User from "@/models/user";
 import roleService from '@/services/roleService'
 import departmentService from '@/services/departmentService'
 import agentService from '@/services/agentService'
