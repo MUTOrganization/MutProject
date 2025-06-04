@@ -17,6 +17,7 @@ export function DashboardSalesProvider({ children }) {
 
     // BaseRole Check
     const isSuperAdmin = currentUser?.baseRole === 'SUPER_ADMIN';
+    const isAdmin = currentUser?.baseRole === 'ADMIN';
 
     // Fetch Data
     const [commissionData, setCommissionData] = useState([])
@@ -25,7 +26,7 @@ export function DashboardSalesProvider({ children }) {
 
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
-    const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? null : currentUser?.agent?.agentId)
+    const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? 'ทั้งหมด' : currentUser?.agent?.agentId)
     const [selectUser, setSelectUser] = useState(null)
     const [isSwitch, setIsSwitch] = useState(false)
 
@@ -52,7 +53,8 @@ export function DashboardSalesProvider({ children }) {
         try {
             const [users] = await Promise.all([await userService.getAllUser(Number(selectAgent))])
             setUserData(users)
-            const commissionData = await commissionService.getCommission(selectAgent, selectUserParams(), formatDateObject(date.start), formatDateObject(date.end));
+            let user = selectUserParams(users)
+            const commissionData = await commissionService.getCommission(selectAgent, user, formatDateObject(date.start), formatDateObject(date.end));
             setCommissionData(commissionData)
             setIsLoading(false)
         } catch (err) {
@@ -60,33 +62,41 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
-    const selectUserParams = () => {
-        if (isSuperAdmin) {
-            if (selectUser === null) {
-                return userData?.length > 0 ? userData.map(u => u.username) : []
+    const selectUserParams = (users) => {
+        if (!users || users.length === 0) return [];
+
+        if (isSuperAdmin || isAdmin) {
+            if (selectUser === 'ทั้งหมด') {
+                return users.map(u => u.username);
             } else {
-                return selectUser
+                return [selectUser];
             }
         } else {
-            return currentUser.username
+            return [currentUser.username];
         }
     }
+
 
     useEffect(() => {
         fetchAgentData();
     }, [])
 
     useEffect(() => {
-        if (selectAgent !== null) {
+        if (selectAgent !== 'ทั้งหมด') {
             fetchCommissionData();
         }
     }, [date, selectAgent, selectUser])
 
+
     useEffect(() => {
-        if (agentData.length > 0 && selectAgent === null) {
+        if (agentData.length > 0 && selectAgent === 'ทั้งหมด') {
             setSelectAgent(agentData[0]?.agentId)
         }
     }, [agentData])
+
+    useEffect(() => {
+        setSelectUser('ทั้งหมด')
+    }, [selectAgent])
 
     // Get Commission
     const getCommissionData = () => {
@@ -112,7 +122,7 @@ export function DashboardSalesProvider({ children }) {
     // Get Paid Income
     const getPaidIncome = () => {
         return commissionData.reduce((acc, curr) => {
-            return acc + curr.data.reduce((sum, item) => sum + Number(item.adminNextLiftIncome || 0), 0)
+            return acc + curr.data.reduce((sum, item) => sum + Number(item.adminLiftIncome || 0), 0)
         }, 0)
     }
 
@@ -200,7 +210,9 @@ export function DashboardSalesProvider({ children }) {
         setSelectAgent,
         selectUser,
         setSelectUser,
-        selectUserParams
+        selectUser,
+        isSuperAdmin,
+        isAdmin,
     };
 
     return (

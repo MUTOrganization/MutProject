@@ -11,7 +11,7 @@ import { Spinner } from '@heroui/react';
 function DashboardSalesCustomerIncomeChart() {
 
     const { currentUser } = useAppContext()
-    const { selectAgent, dateMode, date } = useDashboardSalesContext()
+    const { selectAgent, dateMode, date, isSuperAdmin, userData, selectUser } = useDashboardSalesContext()
     const [isLoading, setIsLoading] = useState(false)
 
     const [dateChart, setDateChart] = useState({
@@ -19,13 +19,30 @@ function DashboardSalesCustomerIncomeChart() {
         end: endOfYear(today())
     })
 
+    const getUserParams = () => {
+        if (!userData || userData.length === 0) return [];
+
+        if (isSuperAdmin) {
+            if (selectUser === 'ทั้งหมด') {
+                return userData.map(u => u.username);
+            } else {
+                return Array.isArray(selectUser) ? selectUser : [selectUser];
+            }
+        } else {
+            return [currentUser.username];
+        }
+    }
+
     const fetchCommissionData = async () => {
         const oldIncome = Array(12).fill(0);
         const newIncome = Array(12).fill(0);
 
+        const usernames = getUserParams();
+        if (!usernames || usernames.length === 0) return;
+
         setIsLoading(true)
         try {
-            const commissionData = await commissionService.getCommission(selectAgent, currentUser.username, dateMode === 'ปี' ? formatDateObject(date.start) : formatDateObject(dateChart.start), dateMode === 'ปี' ? formatDateObject(date.end) : formatDateObject(dateChart.end));
+            const commissionData = await commissionService.getCommission(selectAgent, usernames, dateMode === 'ปี' ? formatDateObject(date.start) : formatDateObject(dateChart.start), dateMode === 'ปี' ? formatDateObject(date.end) : formatDateObject(dateChart.end));
             setIsLoading(false)
 
             commissionData.forEach(user => {
@@ -53,7 +70,7 @@ function DashboardSalesCustomerIncomeChart() {
 
     useEffect(() => {
         fetchCommissionData()
-    }, [dateChart, selectAgent])
+    }, [dateChart, selectAgent, userData])
 
     useEffect(() => {
         if (dateMode === 'ปี') {
