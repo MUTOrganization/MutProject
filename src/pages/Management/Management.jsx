@@ -8,7 +8,7 @@ import { useAppContext } from "../../contexts/AppContext";
 const AgentManage = lazy(() => import("./Pages/AgentManage/AgentManagePage"));
 const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
 const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
-const MasterAccess = lazy(() => import("./Pages/accessManage/MasterAccess"));
+const MasterAccess = lazy(() => import("./Pages/AccessManage/MasterAccess"));
 import Page403 from "../Page403";
 
 function Management() {
