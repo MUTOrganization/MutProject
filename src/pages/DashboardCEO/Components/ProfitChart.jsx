@@ -46,7 +46,7 @@ function ProfitChart({ commissionData, expensesData }) {
             data: profitData
         }])
     }, [commissionData, expensesData])
-    console.log(series)
+
     return (
         <div>
             <ReactApexChart options={options} series={series} type="line" height={350} />

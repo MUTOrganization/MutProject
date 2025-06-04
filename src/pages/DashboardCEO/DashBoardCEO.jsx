@@ -23,6 +23,7 @@ function DashboardCEO() {
     const [expensesData, setExpensesData] = useState([])
     const [commissionData, setCommissionData] = useState([])
     const [agentList, setAgentList] = useState([])
+    const [expensesType, setExpensesType] = useState([])
 
     //Access Check
     const isSuperAdmin = currentUser.baseRole === 'SUPER_ADMIN'
@@ -68,14 +69,16 @@ function DashboardCEO() {
                 userService.getAllUser(selectAgent),
             ])
             const Selectusers = users.map(u => u.username)
-            const [expenses, commission] = await Promise.all([
+            const [expenses, commission, expensesType] = await Promise.all([
                 expensesService.getExpensesDetails(selectAgent, formatDateObject(date.start), formatDateObject(date.end)),
-                commissionService.getCommission(selectAgent, Selectusers, formatDateObject(date.start), formatDateObject(date.end))
+                commissionService.getCommission(selectAgent, Selectusers, formatDateObject(date.start), formatDateObject(date.end)),
+                expensesService.getExpensesType(selectAgent)
             ])
 
             setAllUser(users)
             setExpensesData(expenses)
             setCommissionData(commission)
+            setExpensesType(expensesType)
         } catch (err) {
             console.log('Error fetching CEO dashboard data', err)
         } finally {
@@ -95,7 +98,7 @@ function DashboardCEO() {
             setSelectAgent(agentList[0]?.agentId)
         }
     }, [selectAgent])
-
+    
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>
@@ -113,10 +116,10 @@ function DashboardCEO() {
                         <Sales_ExpensesChart commissionData={commissionData} expensesData={expensesData} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-                        <ExpensesChart expensesData={expensesData} setSelectExpensesTypeFromChart={setSelectExpensesTypeFromChart} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
+                        <ExpensesDetails expensesType={expensesType} expensesData={expensesData} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
-                        <ExpensesDetails expensesData={expensesData} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
+                        <ExpensesChart expensesData={expensesData} setSelectExpensesTypeFromChart={setSelectExpensesTypeFromChart} selectExpensesTypeFromChart={selectExpensesTypeFromChart} />
                     </div>
                 </div>
             </div>

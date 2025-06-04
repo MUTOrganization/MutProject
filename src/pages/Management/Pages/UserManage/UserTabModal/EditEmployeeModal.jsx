@@ -19,6 +19,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         nickname: selectUserData.nickname,
         probStatus: selectUserData.probStatus ? '1' : '0',
         roleId: selectUserData.role.roleId || null,
+        probPassedDate: selectUserData.probPassedDate || null,
     })
 
     const [isLoadingEdit, setIsLoadingEdit] = useState(false)
@@ -60,12 +61,6 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         } catch (err) {
             console.log(err)
             toastError('ไม่สำเร็จ', 'แก้ไขข้อมูลพนักงานไม่สำเร็จ')
-        }
-    }
-
-    const handleKeyDown = (e) => {
-        if (e.key === ' ') {
-            e.preventDefault();
         }
     }
 
