@@ -32,7 +32,7 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
             </div>)
         }
     ]
-
+    
     return (
         <>
             <div className='text-end text-slate-500 font-semibold text-sm px-2'>

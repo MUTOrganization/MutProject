@@ -11,7 +11,7 @@ function CloseStatus({ isOpen, onClose, selectUserData, fetchData }) {
     const closeStatus = async () => {
         setIsLoadingCloseStatus(true)
         try {
-            await userService.changeStatus(selectUserData.username)
+            await userService.deleteUser(selectUserData.username)
             await fetchData()
             setIsLoadingCloseStatus(false)
             onClose()
