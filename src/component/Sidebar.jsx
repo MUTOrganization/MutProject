@@ -50,7 +50,7 @@ export const mainMenuItems = {
     path: "/management",
     text: "การจัดการ",
     icon: <ManagementIcon />,
-    access: [ACCESS.Management_access, ACCESS.Management_agent, ACCESS.Management_department, ACCESS.Managemnet_role, ACCESS.Management_user],
+    access: [ACCESS.Management_access, ACCESS.Management_agent, ACCESS.Management_department, ACCESS.Management_role, ACCESS.Management_user],
   },
   setting: {
     path: "/setting",

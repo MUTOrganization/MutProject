@@ -1,7 +1,8 @@
 import { Card, CircularProgress, Tab, Tabs } from "@heroui/react";
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../../../contexts/AppContext";
 import { SESSION_STORAGE_KEYS } from "@/configs/sessionStorageKeys";
+import { ACCESS } from "@/configs/accessids";
 
 const DepartmentManageTab = lazy(() => import('./subPages/DepartmentManageTab'))
 const RoleManageTab = lazy(() => import('./subPages/RoleManageTab'))
@@ -9,12 +10,23 @@ export default function DepartmentAndRoleManage(){
     const [activateTab, setActivateTab] = useState(sessionStorage.getItem(SESSION_STORAGE_KEYS.DEP_AND_ROLE_TABS)??"department");
     const {currentUser, accessCheck, agent: { selectedAgent }} = useAppContext()
 
+    const tabsAccess = {
+        department: [ACCESS.Management_department],
+        role: [ACCESS.Management_role],
+    }
+
     const allowTabs = useMemo(() => {
         return {
-            department: accessCheck.haveAny([]),
-            role: accessCheck.haveAny([]),
+            department: accessCheck.haveAny(tabsAccess.department),
+            role: accessCheck.haveAny(tabsAccess.role),
         }
     }, [currentUser])
+
+    useEffect(() => {
+        if(!allowTabs[activateTab]){
+            setActivateTab(Object.keys(allowTabs).find(key => allowTabs[key]))
+        }
+    }, [currentUser, allowTabs, activateTab])
 
     const handleTabChange = (key) => {
         setActivateTab(key);
