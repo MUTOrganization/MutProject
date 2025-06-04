@@ -1,61 +1,94 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react'
-import { formatNumber } from '@/component/FormatNumber'
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import dayjs from 'dayjs';
+import 'dayjs/locale/th';
+dayjs.locale('th');
 
-function ExpensesDetails({ expensesData, selectExpensesTypeFromChart }) {
-    const tableColumns = [
-        { key: 'type', label: 'ประเภท' },
-        { key: 'name', label: 'รายการ' },
-        { key: 'amount', label: 'จำนวนเงิน' },
-        { key: 'date', label: 'วันที่' },
-    ]
+function ExpensesDetails({ expensesType, expensesData, selectExpensesTypeFromChart }) {
+  const { series, categories } = useMemo(() => {
+    // เตรียมชื่อประเภทจาก typeId
+    const typeMap = {};
+    expensesType.forEach(type => {
+      typeMap[type.expensesTypeId] = type.typeName;
+    });
 
-    const filterExpenses = useMemo(() => {
-        if (!selectExpensesTypeFromChart) return expensesData
-        return expensesData?.filter(item =>
-            item?.expensesType?.typeName?.trim() === selectExpensesTypeFromChart.trim()
-        )
-    }, [expensesData, selectExpensesTypeFromChart])
+    // เตรียมโครง data
+    const result = {};
+    expensesType.forEach(type => {
+      result[type.typeName] = Array(12).fill(0);
+    });
 
-    const totalAmount = filterExpenses?.reduce((acc, item) => acc + item?.totalAmount, 0) || 0
+    expensesData.forEach(item => {
+      const typeName = typeMap[item.expensesTypeId] || 'ไม่ทราบประเภท';
+      const monthIndex = dayjs(item.expensesDate).month(); // 0 = ม.ค., 11 = ธ.ค.
+      result[typeName][monthIndex] += item.totalAmount;
+    });
 
-    return (
-        <div className="relative max-h-[400px] overflow-y-auto">
-            <Table aria-label="รายการค่าใช้จ่าย" isHeaderSticky removeWrapper>
-                <TableHeader columns={tableColumns}>
-                    {(column) => <TableColumn key={column.key} className='text-center'>{column.label}</TableColumn>}
-                </TableHeader>
-                <TableBody items={filterExpenses} emptyContent={<span>ไม่มีข้อมูล</span>}>
-                    {(item) => (
-                        <TableRow key={item.expensesId} className='h-12 border-b-1 border-slate-100 sticky bottom-0 bg-white'>
-                            <TableCell className='text-center'>{item?.expensesType?.typeName}</TableCell>
-                            <TableCell className='text-center'>{item?.remarks}</TableCell>
-                            <TableCell className='text-center'>{formatNumber(item?.totalAmount)}</TableCell>
-                            <TableCell className='text-center'>
-                                {new Date(item?.createdDate).toLocaleDateString('th-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric',
-                                    timeZone: 'Asia/Bangkok'
-                                })}
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+    const series = Object.entries(result).map(([typeName, data]) => ({
+      name: typeName,
+      data
+    }));
 
-            {/* Sticky footer row */}
-            <div className="sticky bottom-0 border-t border-gray-200 z-10 bg-slate-50 shadow-md rounded-lg h-12 flex flex-row justify-center items-center">
-                <div className="flex flex-row justify-between items-center px-4 py-2 font-medium text-sm w-full px-12">
-                    <div className="col-span-1">รวมทั้งหมด ({filterExpenses?.length} รายการ)</div>
-                    <div className="col-span-1 space-x-2">
-                        <span className='text-red-500'>{formatNumber(totalAmount)}</span>
-                        <span className='text-sm text-slate-500'>บาท</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+    const categories = [
+      'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+    ];
+
+    return { series, categories };
+  }, [expensesData, expensesType]);
+
+  const options = {
+    chart: {
+      type: 'bar',
+      stacked: true,
+      toolbar: { show: true },
+      events: {
+        dataPointSelection: (event, chartContext, config) => {
+          const selectedType = series[config.seriesIndex]?.name;
+          if (selectExpensesTypeFromChart && selectedType) {
+            selectExpensesTypeFromChart(selectedType);
+          }
+        }
+      }
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        borderRadius: 8,
+        borderRadiusApplication: 'end',
+        borderRadiusWhenStacked: 'last',
+        dataLabels: {
+          total: {
+            enabled: true,
+            style: {
+              fontSize: '13px',
+              fontWeight: 900
+            }
+          }
+        }
+      }
+    },
+    title: {
+      text: 'ประเภทค่าใช้จ่ายรายเดือน',
+      align: 'left'
+    },
+    xaxis: {
+      categories,
+    },
+    legend: {
+      position: 'right',
+      offsetY: 40
+    },
+    fill: {
+      opacity: 1
+    }
+  };
+
+  return (
+    <div>
+      <ReactApexChart options={options} series={series} type="bar" height={400} />
+    </div>
+  );
 }
 
-export default ExpensesDetails
+export default ExpensesDetails;

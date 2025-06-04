@@ -42,6 +42,12 @@ async function changeStatus(username) {
     return res.data
 }
 
+async function deleteUser(username) {
+    const url = `users/delete/${username}`
+    const res = await api.put(url)
+    return res.data
+}
+
 async function updateUser(userData, usernameList) {
     const url = 'users/update'
     const filteredData = Object.fromEntries(
@@ -68,7 +74,7 @@ async function changePassword(username, password) {
 
 async function changeProfileImage(username, file) {
     const url = 'users/changeProfileImage'
-    if(!file) throw new Error('File is required');
+    if (!file) throw new Error('File is required');
 
     const formData = new FormData();
     formData.append('username', username);
@@ -84,5 +90,6 @@ export default {
     changeStatus,
     updateUser,
     changePassword,
-    changeProfileImage
+    changeProfileImage,
+    deleteUser
 }

@@ -69,7 +69,6 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
 
     useEffect(() => {
         if (prevDate.start && prevDate.end && allUser.length > 0 && selectAgent !== null) {
-            console.log('Test')
             fetchPrevData()
         }
     }, [prevDate, allUser])
