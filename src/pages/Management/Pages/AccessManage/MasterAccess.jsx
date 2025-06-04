@@ -1,7 +1,5 @@
 import { Button, Card, CardBody, CardHeader, Tab, Tabs } from "@heroui/react";
-import { CustomFormatDate } from "@/utils/dateUtils";
 import { useEffect, useState } from "react";
-import { DeleteIcon, EditIcon } from "lucide-react";
 import GroupList from "./components/GroupList";
 import AccessList from "./components/AccessList";
 import { getAccess, getGroupAccess } from "@/services/accessService";
@@ -18,8 +16,8 @@ function MasterAccess() {
     async function fetchGetData() {
         setIsLoading(true)
         const [access, groupAccess] = await Promise.all([
-            getAccess(),
-            getGroupAccess()
+            getAccess(false),
+            getGroupAccess(false)
         ])
 
         setGroupList(groupAccess)

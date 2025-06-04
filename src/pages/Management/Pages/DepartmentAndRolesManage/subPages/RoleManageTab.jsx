@@ -1,6 +1,6 @@
 import { GroupListBox, GroupListItem } from "@/component/GroupListBox";
 import { useAppContext } from "@/contexts/AppContext"
-import { Button, Select, SelectItem, Tooltip } from "@heroui/react";
+import { Autocomplete, AutocompleteItem, Button, Select, SelectItem, Tooltip } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 import departmentService from "@/services/departmentService";
 import Department from "@/models/department";
@@ -11,6 +11,7 @@ import Role from "@/models/roles";
 import RoleDeleteModal from "../components/RoleComponents/RoleDeleteModal";
 import RoleSortingModal from "../components/RoleComponents/RoleSortingModal";
 import RoleAccessBox from "../components/RoleComponents/RoleAccessBox";
+import agentService from "@/services/agentService";
 
 export default function RoleManageTab() {
     const { currentUser } = useAppContext()
@@ -22,6 +23,9 @@ export default function RoleManageTab() {
     const [selectedRole, setSelectedRole] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const [agentList, setAgentList] = useState([]);
+    const [selectedAgent, setSelectedAgent] = useState(currentUser.agent);
+
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSortModalOpen, setIsSortModalOpen] = useState(false);
@@ -29,7 +33,7 @@ export default function RoleManageTab() {
     async function fetchDepartmentList(){
         try{
             setIsLoading(true);
-            const data = await departmentService.getDepartments(currentUser.agent.agentId);
+            const data = await departmentService.getDepartments(selectedAgent.agentId);
             data.sort((a, b) => a.isHq ? -1 : 1);
             setDepartmentList(data);
             if(data.length > 0){
@@ -53,8 +57,16 @@ export default function RoleManageTab() {
     }
 
     useEffect(() => {
+        if(currentUser.baseRole !== 'SUPER_ADMIN') return;
+        agentService.getAgent().then(data => {
+            setAgentList(data);
+        });
+    }, [currentUser])
+
+    useEffect(() => {
+        if(!selectedAgent) return;
         fetchDepartmentList();
-    }, [])
+    }, [selectedAgent])
 
     useEffect(() => {
         setSelectedRole(null);
@@ -63,6 +75,11 @@ export default function RoleManageTab() {
     const roleList = useMemo(() => {
         return selectedDepartment?.roles || [];
     }, [selectedDepartment, departmentList])
+
+    function handleAgentChange(value){
+        if(value === null) return;
+        setSelectedAgent(agentList.find(agent => agent.agentId === Number(value)));
+    }
 
     function handleSelectDepartment(departmentId){
         const foundDepartment = departmentList.find(d => String(d.departmentId) === departmentId);
@@ -106,7 +123,25 @@ export default function RoleManageTab() {
 
     return (
         <div className="max-h-[720px] overflow-auto scrollbar-hide">
-            <div className="flex mb-4 mt-2">
+            <div className="flex mb-4 mt-2 space-x-4">
+                {
+                    currentUser.baseRole === 'SUPER_ADMIN' &&
+                    <div className="max-w-64">
+                        <Autocomplete
+                            aria-label='ตัวแทน'
+                            variant='bordered'
+                            label='ตัวแทน'
+                            placeholder='เลือกตัวแทน'
+                            onSelectionChange={handleAgentChange}
+                            selectedKey={`${selectedAgent.agentId}`}
+                        >   
+                            {agentList.map(item => (
+                                <AutocompleteItem key={item.agentId} >{item.name}</AutocompleteItem>
+                            ))}
+                        </Autocomplete>
+
+                    </div>
+                }
                 <div className="w-full max-w-[280px]">
                     <Select
                         aria-label="ตัวเลือกแผนก"

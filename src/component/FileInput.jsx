@@ -17,6 +17,7 @@ export default function FileInput({ children, onChange = () => {}, accept = "*",
     }
     const handleChange = (e) => {
         onChange(e);
+        e.target.value = null;
     }
 
     useEffect(() => {

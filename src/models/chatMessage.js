@@ -13,7 +13,7 @@ export class ChatMessage {
         /** @type {String} */
         this.text = data.text
         /** @type {MessageFile[]} */
-        this.files = data.files
+        this.files = (Array.isArray(data.files) && data.files.length > 0) ? data.files.map(f => new MessageFile(f)) : null
         /** @type {'join' | 'leave' | 'invite'} */
         this.type = data.type
         /** @type {'user' | 'system'} */

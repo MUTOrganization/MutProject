@@ -7,5 +7,15 @@ export const ACCESS = {
     "Dashboard Commission_executive": 90004,
     "General_executive": 90005,
     "General_manager": 90006,
-    "General_staff": 90007
+    "General_staff": 90007,
+    "Dashboard_Sales_view": 150002,
+    "Dashboard_Executive_view": 150003,
+    "Expense_view": 150004,
+    "Management_access": 150005,
+    "Management_agent": 150006,
+    "Management_department": 150007,
+    "Management_role": 150008,
+    "Management_user": 150009,
+    "Settings_cod": 150010,
+    "Settings_commission": 150011
 }

@@ -27,7 +27,7 @@ export async function deleteGroupAccess({ groupId }) {
 //#endregion
 
 //#region สิทธิ์
-export async function getAccess(safe) {
+export async function getAccess(safe = true) {
     const res = await api.get(`/access/get`, {
         params: {
             safe

@@ -10,6 +10,7 @@ import FloatingButton from "./pages/Chat/FloatingButton";
 import { SocketProvider } from "./contexts/SocketContext";
 import ChatContextProvider from "./pages/Chat/ChatContext";
 import ChangeProfileImageModal from "./component/ChangeProfileImageModal";
+import { ACCESS } from "./configs/accessids";
 
 
 
@@ -57,20 +58,20 @@ function ProtectedRoute({ children }) {
 
 const routes = [
   { path: "/home", component: <Home />, title: "หน้าแรก", access: [] },
-  { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [] },
-  { path: "/management", component: <Management />, title: "การจัดการ", access: [] },
+  { path: "/setting", component: <Setting />, title: "การตั้งค่า", access: [ACCESS.Settings_cod, ACCESS.Settings_commission] },
+  { path: "/management", component: <Management />, title: "การจัดการ", access: [ACCESS.Management_access, ACCESS.Management_agent, ACCESS.Management_department, ACCESS.Management_role, ACCESS.Management_user] },
   {
     path: "/ExpenseReport",
     component: <ExpenseReport />,
     title: "ค่าใช้จ่าย",
-    access: []
+    access: [ACCESS.Expense_view]
   },
-  { path: "/Commission", component: <DashBoardSales />, title: "คอมมิชชัน", access: [] },
+  { path: "/Dashboard-Sales", component: <DashBoardSales />, title: "คอมมิชชัน", access: [ACCESS.Dashboard_Sales_view] },
   {
     path: "/Dashboard-CEO",
     component: <DashboardCEO />,
     title: "แดชบอร์ดผู้บริหาร",
-    access: []
+    access: [ACCESS.Dashboard_Executive_view]
   },
 ];
 

@@ -37,7 +37,7 @@ export default function MessageInput({onSendMessage = () => {}}) {
             toastWarning('สามารถส่งได้ไม่เกิน 10 ไฟล์')
             return
         }
-        const maxSize = 10 * 1024 * 1024 // 10 MB
+        const maxSize = 3 * 1024 * 1024 // 3 MB
         let _files = Array.from(e.target.files)
         let haveInvalidTypeFiles = false;
         let haveExceedSizeFiles = false;

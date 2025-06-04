@@ -10,6 +10,7 @@ const ManageUser = lazy(() => import("./Pages/UserManage/ManageUser"));
 const DepartmentAndRoleManage = lazy(() => import("./Pages/DepartmentAndRolesManage/DepartmentAndRoleManage"));
 const MasterAccess = lazy(() => import("./Pages/AccessManage/MasterAccess"));
 import Page403 from "../Page403";
+import { ACCESS } from "@/configs/accessids";
 
 function Management() {
   const navigate = useNavigate();
@@ -49,16 +50,17 @@ function Management() {
   const list = {
     การจัดการ: {
       // Home: { display: "จัดการหน้าแรก", component: <ManageHome />, access: [ACCESS.home.manage_home] },
-      accessManage: { display: "จัดการสิทธิ์", component: <MasterAccess />, access: [] },
-      agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [] },
+      accessManage: { display: "จัดการสิทธิ์", component: <MasterAccess />, access: [ACCESS.Management_access] },
+      agentManage: { display: "จัดการตัวแทน", component: <AgentManage />, access: [ACCESS.Management_agent] },
       depAndRole: {
         display: "จัดการแผนกและตำแหน่ง",
         component: <DepartmentAndRoleManage />,
         access: [
-
+          ACCESS.Management_department,
+          ACCESS.Management_role,
         ]
       },
-      usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [] },
+      usersManage: { display: 'จัดการผู้ใช้งาน', component: <ManageUser />, access: [ACCESS.Management_user] },
     },
   };
 

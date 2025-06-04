@@ -36,7 +36,7 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allow
             setRoleAccessList(data);
             setEditAccessList(new Set(data.map(e => e.accessId)));
         }).catch((err) => {
-            if (err.name === "AbortError") {
+            if (err.name === "CanceledError") {
                 return;
             }
             toastError('เกิดข้อผิดพลาด', 'ไม่สามารถดึงข้อมูลสิทธิ์ได้')

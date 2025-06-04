@@ -192,6 +192,9 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
                             file_type: file.type,
                             file_buffer: reader.result
                         });
+                        // setTimeout(() => {
+                        //     reject('timeout')
+                        // }, 4000)
                     }
                     reader.readAsArrayBuffer(file)
                 })
@@ -241,8 +244,8 @@ export default function ChatBox({selectedTab, selectedUser, onStartChat}) {
 
         if(Number(roomId) === Number(currentChatRoom?.chatRoomId)){ // ถ้าข้อความที่แจ้ง อยู่ในห้องแชทที่กำลังดูอยู่
             if(message.senderUsername === currentUser.username){ // ถ้าเป็นข้อความที่ส่งจากตัวเอง จะทำการอัพเดท pendingMessage เป็น false , แก้ id เป็น id จริง และลบ pendingMessage ออก
-                const files = !message.files ? null : message.files.map(f => new MessageFile(f))
-                setMessages(prev => prev.map(m => m.id === pendingMessageId ? {...m, id: `user-${message.userMessageId}`, files: files, isPending: false} : m))
+                const files = Array.isArray(message.files) && message.files.length > 0 ? message.files.map(f => new MessageFile(f)) : null
+                setMessages(prev => prev.map(m => m.id === pendingMessageId ? {...m, id: `user-${message.userMessageId}`, files: files, isPending: false, isFilePending: false} : m))
                 setPendingMessage(prev => prev.filter(m => m.id !== pendingMessageId))
                 
                 saveChatRoomLastReadTime()

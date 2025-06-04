@@ -21,6 +21,23 @@ async function getChatMessages(chatRoomId, page = 1, limit = 30){
     }
 }
 
+async function downloadFile(fileName, downloadName){
+    if(!fileName) throw new Error('File name is required')
+    const response = await api.get('chatMessages/downloadFile/' + fileName, {
+        responseType: 'blob'
+    })
+    const blob = await response.data;
+    const url = window.URL.createObjectURL(new Blob([blob]));
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.href = url;
+    a.download = downloadName ?? fileName;
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+}
+
 export default {
-    getChatMessages
+    getChatMessages,
+    downloadFile
 }

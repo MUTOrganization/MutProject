@@ -18,6 +18,7 @@ import {
 } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../contexts/AppContext";
+import { ACCESS } from "@/configs/accessids";
 
 export const mainMenuItems = {
   home: {
@@ -27,35 +28,35 @@ export const mainMenuItems = {
     access: [],
   },
   Commission: {
-    path: "/Commission",
+    path: "/Dashboard-Sales",
     text: "แดชบอร์ด Sales",
     icon: <DashboardCEOIcon />,
-    access: []
+    access: [ACCESS.Dashboard_Sales_view]
       
   },
   DashboardCEO: {
     path: "/Dashboard-CEO",
     text: "แดชบอร์ดผู้บริหาร",
     icon: <DashboardCEOIcon />,
-    access: [],
+    access: [ACCESS.Dashboard_Executive_view],
   },
   ExpenseReport: {
     path: "/ExpenseReport",
     text: "ค่าใช้จ่าย",
     icon: <BusinessCardHandIcon />,
-    access: [],
+    access: [ACCESS.Expense_view],
   },
   management: {
     path: "/management",
     text: "การจัดการ",
     icon: <ManagementIcon />,
-    access: [],
+    access: [ACCESS.Management_access, ACCESS.Management_agent, ACCESS.Management_department, ACCESS.Managemnet_role, ACCESS.Management_user],
   },
   setting: {
     path: "/setting",
     text: "การตั้งค่า",
     icon: <SettingIcon />,
-    access: [],
+    access: [ACCESS.Settings_cod, ACCESS.Settings_commission],
   }
 };
 
