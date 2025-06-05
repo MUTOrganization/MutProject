@@ -5,7 +5,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@herou
 import { Button, Checkbox, Input } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 
-export default function DepFormModal({isOpen, onClose = () => {}, selectedDepartment, onSubmit = () => {}}) {
+export default function DepFormModal({isOpen, onClose = () => {}, selectedDepartment, selectedAgent, onSubmit = () => {}}) {
     const { currentUser } = useAppContext()
     const isCurrentUserHq = currentUser.agent.businessType === 'H'
 
@@ -39,7 +39,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
                 await departmentService.updateDepartment(selectedDepartment.departmentId, editingDepartment.departmentName);
                 toastSuccess('ระบบทำการแก้ไขแผนกเรียบร้อย');
             }else{
-                await departmentService.createDepartment(currentUser.agent.agentId, editingDepartment.departmentName, isHq);
+                await departmentService.createDepartment(selectedAgent.agentId, editingDepartment.departmentName, isHq);
                 toastSuccess('ระบบทำการสร้างแผนกเรียบร้อย');
             }
             setEditingDepartment({

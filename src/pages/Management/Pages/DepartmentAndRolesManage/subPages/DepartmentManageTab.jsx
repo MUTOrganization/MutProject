@@ -117,6 +117,7 @@ export default function ManageDepartmentTab(){
                 isOpen={isFormModalOpen} 
                 onClose={() => setIsFormModalOpen(false)} 
                 selectedDepartment={selectedDepartment} 
+                selectedAgent={selectedAgent}
                 onSubmit={() => {
                     refreshDepartmentList();
                 }}
@@ -124,6 +125,7 @@ export default function ManageDepartmentTab(){
             <DepDeleteModal
                 isOpen={isDeleteModalOpen}
                 onClose={() => setIsDeleteModalOpen(false)}
+                selectedAgent={selectedAgent}
                 selectedDepartment={selectedDepartment}
                 onSubmit={() => {
                     refreshDepartmentList();

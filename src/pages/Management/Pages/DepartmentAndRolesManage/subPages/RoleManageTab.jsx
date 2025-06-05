@@ -65,6 +65,7 @@ export default function RoleManageTab() {
 
     useEffect(() => {
         if(!selectedAgent) return;
+        setSelectedDepartment(null);
         fetchDepartmentList();
     }, [selectedAgent])
 
@@ -116,7 +117,7 @@ export default function RoleManageTab() {
 
     const isAllowEdit = useMemo(() => {
         if(selectedDepartment?.isHq){
-            if(currentUser.baseRole === "SUPER_ADMIN") return true;
+            if(currentUser.baseRole === "SUPER_ADMIN" && selectedAgent.agentId === 1) return true;
             else return false;
         }else return true
     }, [selectedDepartment, currentUser])
