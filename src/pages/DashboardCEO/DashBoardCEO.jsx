@@ -62,7 +62,7 @@ function DashboardCEO() {
     }, [])
 
 
-    const fetchEverything = async () => {
+    const FetchData = async () => {
         setIsLoading(true)
         try {
             const [users] = await Promise.all([
@@ -90,7 +90,7 @@ function DashboardCEO() {
     useEffect(() => {
         setExpensesData([])
         setCommissionData([])
-        fetchEverything()
+        FetchData()
     }, [date, selectAgent])
 
     useEffect(() => {
