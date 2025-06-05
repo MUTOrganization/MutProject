@@ -72,20 +72,20 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
                                     <p className="text-sm font-medium text-gray-700">คำแนะนำในการกรอกรหัสสิทธิ์</p>
                                 </div>
                                 <div className="bg-gray-50 rounded-lg p-3 space-y-3">
-                                    <p className="text-sm text-gray-600">กรอกรหัสสิทธิ์เป็นตัวพิมพ์เล็กทั้งหมดและสอดคล้องกับชื่อสิทธิ์</p>
+                                    <p className="text-sm text-gray-600 text-wrap w-[300px]">กรอกชื่อสิทธิ์เป็นตัวพิมพ์ใหญ๋ทั้งหมดและรหัสสิทธิ์จะถูกขึ้นต้นด้วยชื่อกลุ่มสิทธิ์ตามด้วยรหัสสิทธิ์ที่กรอกเข้าไป</p>
                                     <div className="space-y-2">
                                         <p className="text-xs font-medium text-gray-500">ตัวอย่าง:</p>
                                         <div className="flex flex-col gap-2">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xs font-medium text-gray-500">ชื่อสิทธิ์:</span>
                                                 <span className="text-white bg-primary px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm">
-                                                    general_sale
+                                                    GENERAL SALE
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xs font-medium text-gray-500">รหัสสิทธิ์:</span>
                                                 <span className="text-white bg-primary px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm">
-                                                    sale
+                                                    General_sale
                                                 </span>
                                             </div>
                                         </div>
