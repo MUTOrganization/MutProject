@@ -86,7 +86,7 @@ function AccessList({ accessList, groupSelected, isFetchAccess, isLoading }) {
                                     <h3 className="font-semibold text-md text-gray-900">
                                         {access.accessName}
                                     </h3>
-                                    <p className="text-xs max-w-[150px] text-gray-500 mt-1">
+                                    <p className="text-xs max-w-[200px] text-gray-500 mt-1">
                                         {access.description}
                                     </p>
                                     <div className="mt-2">
