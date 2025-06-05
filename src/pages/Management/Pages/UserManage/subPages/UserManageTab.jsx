@@ -95,7 +95,7 @@ function UserManageTab() {
     }, [selector.agent])
 
     const filterUser = useMemo(() => {
-        let userList = allUser.filter(user => user?.username !== currentUser?.username)
+        let userList = allUser
         if (isManager) {
             userList = userList.filter(user => user?.department?.departmentId === currentUser?.department?.departmentId)
         }
