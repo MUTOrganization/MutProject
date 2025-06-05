@@ -1,13 +1,32 @@
 import React, { useState } from 'react'
 import { useDashboardSalesContext } from '../DashboardSalesContext'
-import { Progress, Spinner, Switch, Tab, Tabs } from '@heroui/react';
+import { Progress, Spinner, Switch, Tab, Tabs, Tooltip } from '@heroui/react';
 import { formatNumber } from '@/component/FormatNumber';
+import { FaInfoCircle } from 'react-icons/fa';
 
 function DashboardSalesMainData() {
 
-    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus } = useDashboardSalesContext();
+    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData } = useDashboardSalesContext();
 
     const code = getMoneyStatus()
+
+    const renderToolTip = () => {
+        const totalOld = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, data) => sum + data.oldCustomerOrderCount, 0)
+        }, 0)
+
+        const totalNew = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, data) => sum + data.newCustomerOrderCount, 0)
+        }, 0)
+
+        return (
+            <div className='flex flex-col space-y-2'>
+                <div>ออเดอร์ลูกค้าเก่า  : {totalOld}</div>
+                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew}</div>
+            </div>
+        )
+    }
+
 
     return (
         <div className='w-full flex flex-row justify-between items-start space-x-6'>
@@ -31,7 +50,12 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>ออเดอร์</header>
+                    <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
+                        <span>ออเดอร์</span>
+                        <Tooltip content={renderToolTip()} placement='bottom'>
+                            <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                        </Tooltip>
+                    </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : getOrder()}
