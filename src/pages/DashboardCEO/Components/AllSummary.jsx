@@ -161,7 +161,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                                 {isPercentLoading ? (
                                     <Spinner variant='dots' size='sm' color='primary' />
                                 ) : (
-                                    <span className={`text-sm`}>
+                                    <span className={`text-sm text-red-500`}>
                                         {summary.percent.commission}%
                                     </span>
                                 )}
@@ -183,7 +183,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                                 {isPercentLoading ? (
                                     <Spinner variant='dots' size='sm' color='primary' />
                                 ) : (
-                                    <span className={`text-sm`}>
+                                    <span className={`text-sm text-red-500`}>
                                         {summary.percent.expenses}%
                                     </span>
                                 )}

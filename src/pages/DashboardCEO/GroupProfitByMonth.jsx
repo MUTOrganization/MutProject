@@ -84,9 +84,9 @@ export const Summary = (commissionData = [], expensesData = []) => {
     const totalExpenses = expensesData.reduce((sum, item) => {
         return sum + (item.totalAmount || 0)
     }, 0)
-
-    const netExpense = Math.abs(totalCommission + totalExpenses)
-    const profit = Math.abs(totalSales - netExpense)
+    
+    const netExpense = totalCommission + totalExpenses
+    const profit = totalSales - netExpense
 
     const commissionPercent = netExpense > 0 ? (totalCommission / netExpense) * 100 : 0
     const expensesPercent = netExpense > 0 ? (totalExpenses / netExpense) * 100 : 0
@@ -175,12 +175,18 @@ export const getPrevPercentProfit = (
 
     // Helper: คำนวณ % + format สำหรับฝั่งกำไร
     const calculateProfitValue = (prev, current) => {
-        if (prev === 0 && current > 0) {
-            return { percent: 'New', icon: '▲', color: 'text-green-400' }
+        if (prev === 0) {
+            if (current === 0) {
+                return { percent: '0.00%', icon: '', color: 'text-slate-400' }
+            }
+            const isUp = current > 0
+            return {
+                percent: 'New',
+                icon: isUp ? '▲' : '▼',
+                color: isUp ? 'text-green-400' : 'text-red-400'
+            }
         }
-        if (prev === 0 && current === 0) {
-            return { percent: '0.00%', icon: '', color: 'text-slate-400' }
-        }
+
         const percent = ((current - prev) / Math.abs(prev)) * 100
         const isUp = percent > 0
         return {
@@ -192,12 +198,18 @@ export const getPrevPercentProfit = (
 
     // Helper: คำนวณ % + format สำหรับฝั่งค่าใช้จ่ายรวม
     const calculateNetExpensesValue = (prev, current) => {
-        if (prev === 0 && current > 0) {
-            return { percent: 'New', icon: '▲', color: 'text-green-400' }
+        if (prev === 0) {
+            if (current === 0) {
+                return { percent: '0.00%', icon: '', color: 'text-slate-400' }
+            }
+            const isUp = current > 0
+            return {
+                percent: 'New',
+                icon: isUp ? '▲' : '▼',
+                color: isUp ? 'text-green-400' : 'text-red-400'
+            }
         }
-        if (prev === 0 && current === 0) {
-            return { percent: '0.00%', icon: '', color: 'text-slate-400' }
-        }
+
         const percent = ((current - prev) / Math.abs(prev)) * 100
         const isUp = percent > 0
         return {
@@ -209,7 +221,10 @@ export const getPrevPercentProfit = (
 
     // คำนวณค่าจริง
     const profitValue = calculateProfitValue(prevProfit, currentProfit)
-    const netExpensesValue = calculateNetExpensesValue(prevExpenses + prevCommission, currentExpenses + currentCommission)
+    const netExpensesValue = calculateNetExpensesValue(
+        prevExpenses + prevCommission,
+        currentExpenses + currentCommission
+    )
 
     return {
         ProfitValue: profitValue,
