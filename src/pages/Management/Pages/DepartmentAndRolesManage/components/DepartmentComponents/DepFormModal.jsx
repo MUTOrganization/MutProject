@@ -5,7 +5,7 @@ import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@herou
 import { Button, Checkbox, Input } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 
-export default function DepFormModal({isOpen, onClose = () => {}, selectedDepartment, selectedAgent, onSubmit = () => {}}) {
+export default function DepFormModal({isOpen, onClose = () => {}, selectedDepartment, selectedAgent, onSubmit = () => {} , isModalAction}) {
     const { currentUser } = useAppContext()
     const isCurrentUserHq = currentUser.agent.businessType === 'H'
 
@@ -62,7 +62,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
     return (
         <Modal isOpen={isOpen} onClose={onClose} aria-label="department-form-modal">
             <ModalContent>
-                <ModalHeader>เพิ่มแผนก</ModalHeader>
+                <ModalHeader>{isModalAction === 'edit' ? 'แก้ไขแผนก' : 'เพิ่มแผนก'}</ModalHeader>
                 <ModalBody>
                     <div className="">
                         <div>
@@ -95,7 +95,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
                             ยกเลิก
                         </Button>
                         <Button type="submit" color="primary" onPress={handleSubmit} isLoading={isLoading}>
-                            สร้างแผนก
+                            {isModalAction === 'edit' ? 'ยืนยันการแก้ไข' : 'สร้างแผนก'}
                         </Button>
                     </div>
                 </ModalFooter>
