@@ -100,6 +100,9 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
               :
               (<>
                 <Input label='ประเภท' variant="bordered" isDisabled placeholder={selectData} type='text' />
+                <div className="text-center w-full text-red-500 text-xs">
+                    <span>หากมีรายการค่าใช้จ่ายที่เป็นประเภทนี้อยู่ ระบบจะทำการปิดการแสดงผลรายการค่าใช้จ่ายด้วย ต้องการหรือไม่?</span>
+                </div>
               </>)}
             <div>
               {action === 'edit' &&
