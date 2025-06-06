@@ -21,7 +21,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         roleId: selectUserData.role.roleId || null,
         probPassedDate: selectUserData.probPassedDate || null,
     })
-
+    
     const [isLoadingEdit, setIsLoadingEdit] = useState(false)
 
     const probItem = [
@@ -95,7 +95,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                             </Autocomplete>
                         </div>
                     </div>
-                    <Autocomplete aria-label='สถานะการทดลองงาน' isClearable={false} selectedKey={`${userData.probStatus}`} size='sm' className='mt-1' onSelectionChange={(value) => setUserData(prev => ({ ...prev, probStatus: value }))}>
+                    <Autocomplete aria-label='สถานะการทดลองงาน' isClearable={false} isDisabled={selectUserData.probStatus} selectedKey={`${userData.probStatus}`} size='sm' className='mt-1' onSelectionChange={(value) => setUserData(prev => ({ ...prev, probStatus: value }))}>
                         {probItem.map((item) => (
                             <AutocompleteItem key={item.key} value={item.key}>{item.value}</AutocompleteItem>
                         ))}

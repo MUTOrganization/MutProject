@@ -111,7 +111,7 @@ export const getPrevPercentSales = (prevData, currentData) => {
             return acc + item.data.reduce((sum, d) => sum + (d?.adminIncome || 0), 0)
         }, 0)
 
-    // ✅ ตรวจสอบว่าไม่มี currentData → ไม่ต้องแสดง %
+    // ตรวจสอบว่าไม่มี currentData → ไม่ต้องแสดง %
     if (currentData.length === 0) {
         return <span className="text-slate-400">0.00%</span>
     }
@@ -119,19 +119,29 @@ export const getPrevPercentSales = (prevData, currentData) => {
     const prev = getIncome(prevData)
     const current = getIncome(currentData)
 
-    // ✅ ทั้ง prev และ current เป็น 0
+    // ทั้ง prev และ current เป็น 0
     if (prev === 0 && current === 0) {
         return <span className="text-slate-400">0.00%</span>
     }
 
-    // ✅ ปกติ
+    // prev = 0 แต่ current > 0 → แสดง +100.00% แบบ custom
+    if (prev === 0 && current > 0) {
+        return (
+            <span className="flex items-center space-x-1 text-green-500">
+                <span>▲</span>
+                <span>New</span>
+            </span>
+        )
+    }
+
+    // ปกติ
     const percent = ((current - prev) / prev) * 100
     const formatted = percent.toFixed(2)
     const isPositive = percent > 0
 
     return (
         <span className={`flex items-center space-x-1 ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-            {isPositive ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+            {isPositive ? '▲' : '▼'}
             <span>{(isPositive ? '+' : '') + formatted}%</span>
         </span>
     )
@@ -145,64 +155,65 @@ export const getPrevPercentProfit = (
     prevExpensesData = [],
     currentExpensesData = []
 ) => {
-    // Prev
-    const prevCommission = prevCommissionData.reduce((sum, item) =>
-        sum + item.data.reduce((acc, d) => acc + (d?.commission || 0), 0), 0)
-    const prevExpenses = prevExpensesData.reduce((sum, item) =>
-        sum + (item.totalAmount || 0), 0)
-    const prevSales = prevCommissionData.reduce((sum, item) =>
-        sum + item.data.reduce((acc, d) => acc + (d?.adminIncome || 0), 0), 0)
+    // สรุปข้อมูลย้อนหลัง
+    const prevCommission = prevCommissionData.reduce(
+        (sum, item) => sum + item.data.reduce((acc, d) => acc + (d?.commission || 0), 0), 0)
+    const prevExpenses = prevExpensesData.reduce(
+        (sum, item) => sum + (item.totalAmount || 0), 0)
+    const prevSales = prevCommissionData.reduce(
+        (sum, item) => sum + item.data.reduce((acc, d) => acc + (d?.adminIncome || 0), 0), 0)
     const prevProfit = prevSales - (prevCommission + prevExpenses)
 
-    // Current
-    const currentCommission = currentCommissionData.reduce((sum, item) =>
-        sum + item.data.reduce((acc, d) => acc + (d?.commission || 0), 0), 0)
-    const currentExpenses = currentExpensesData.reduce((sum, item) =>
-        sum + (item.totalAmount || 0), 0)
-    const currentSales = currentCommissionData.reduce((sum, item) =>
-        sum + item.data.reduce((acc, d) => acc + (d?.adminIncome || 0), 0), 0)
+    // สรุปข้อมูลปัจจุบัน
+    const currentCommission = currentCommissionData.reduce(
+        (sum, item) => sum + item.data.reduce((acc, d) => acc + (d?.commission || 0), 0), 0)
+    const currentExpenses = currentExpensesData.reduce(
+        (sum, item) => sum + (item.totalAmount || 0), 0)
+    const currentSales = currentCommissionData.reduce(
+        (sum, item) => sum + item.data.reduce((acc, d) => acc + (d?.adminIncome || 0), 0), 0)
     const currentProfit = currentSales - (currentCommission + currentExpenses)
 
-    if (
-        prevProfit === 0 ||
-        currentCommissionData.length === 0 ||
-        currentExpensesData.length === 0
-    ) {
+    // Helper: คำนวณ % + format สำหรับฝั่งกำไร
+    const calculateProfitValue = (prev, current) => {
+        if (prev === 0 && current > 0) {
+            return { percent: 'New', icon: '▲', color: 'text-green-400' }
+        }
+        if (prev === 0 && current === 0) {
+            return { percent: '0.00%', icon: '', color: 'text-slate-400' }
+        }
+        const percent = ((current - prev) / Math.abs(prev)) * 100
+        const isUp = percent > 0
         return {
-            ProfitValue: {
-                percent: '0.00%',
-                icon: '▼',
-                color: 'text-red-400',
-            },
-            percentNetExpenses: {
-                percent: '0.00%',
-                icon: '▼',
-                color: 'text-red-400',
-            }
+            percent: `${percent.toFixed(2)}%`,
+            icon: isUp ? '▲' : '▼',
+            color: isUp ? 'text-green-400' : 'text-red-400'
         }
     }
 
-    // Final Percent Compare
-    const percent = ((currentProfit - prevProfit) / Math.abs(prevProfit)) * 100
-
-    const percentNetExpenses = (prevExpenses + prevCommission) <= 0
-        ? '0.00'
-        : (((currentExpenses + currentCommission) - (prevExpenses + prevCommission)) / (prevExpenses + prevCommission) * 100).toFixed(2)
-
-    const isUp = percent > 0
-    const isPercentExpensesUp = parseFloat(percentNetExpenses) > 0
-
-    return {
-        ProfitValue: {
+    // Helper: คำนวณ % + format สำหรับฝั่งค่าใช้จ่ายรวม
+    const calculateNetExpensesValue = (prev, current) => {
+        if (prev === 0 && current > 0) {
+            return { percent: 'New', icon: '▲', color: 'text-green-400' }
+        }
+        if (prev === 0 && current === 0) {
+            return { percent: '0.00%', icon: '', color: 'text-slate-400' }
+        }
+        const percent = ((current - prev) / Math.abs(prev)) * 100
+        const isUp = percent > 0
+        return {
             percent: `${percent.toFixed(2)}%`,
             icon: isUp ? '▲' : '▼',
-            color: isUp ? 'text-green-400' : 'text-red-400',
-        },
-        percentNetExpenses: {
-            percent: percentNetExpenses ? `${percentNetExpenses}%` : '',
-            icon: isPercentExpensesUp ? '▲' : '▼',
-            color: (isPercentExpensesUp ? 'text-green-400' : 'text-red-400'),
+            color: isUp ? 'text-green-400' : 'text-red-400'
         }
+    }
+
+    // คำนวณค่าจริง
+    const profitValue = calculateProfitValue(prevProfit, currentProfit)
+    const netExpensesValue = calculateNetExpensesValue(prevExpenses + prevCommission, currentExpenses + currentCommission)
+
+    return {
+        ProfitValue: profitValue,
+        percentNetExpenses: netExpensesValue
     }
 }
 
