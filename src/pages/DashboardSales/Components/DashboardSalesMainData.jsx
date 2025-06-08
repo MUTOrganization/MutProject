@@ -38,14 +38,17 @@ function DashboardSalesMainData() {
 
         const totalAdminIncome = Number(adminIncome) + Number(adminliftIncome)
 
-        if (commissionSetting.length === 0) return null
-        const comSetting = commissionSetting.rates.find(r => totalAdminIncome >= Number(r.minAmount) && totalAdminIncome <= Number(r.maxAmount))?.percentage
+        const comSetting = commissionSetting?.rates?.find(r => totalAdminIncome >= Number(r.minAmount) && totalAdminIncome <= Number(r.maxAmount))?.percentage
 
         return (
             <div className='flex flex-col space-y-2 p-2 min-w-48'>
                 <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดเงินเข้า  </span> {formatNumber(adminIncome)}</div>
                 <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ยอดยกมา  </span> {formatNumber(adminliftIncome)}</div>
-                <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ค่าคอมมิชชั่น  </span> {comSetting}%</div>
+                {
+                    commissionSetting && (
+                        <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ค่าคอมมิชชั่น  </span> {comSetting ?? 0}%</div>
+                    )
+                }
             </div>
         )
     }
@@ -86,11 +89,9 @@ function DashboardSalesMainData() {
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
                         <span>คอมมิชชั่น</span>
-                        {selectUser !== 'ทั้งหมด' && (
-                            <Tooltip content={renderToolTipCommission()} placement='bottom'>
-                                <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
-                            </Tooltip>
-                        )}
+                        <Tooltip content={renderToolTipCommission()} placement='bottom'>
+                            <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                        </Tooltip>
                     </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>

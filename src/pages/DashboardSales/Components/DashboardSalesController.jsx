@@ -1,8 +1,9 @@
 import React from 'react'
 import { useDashboardSalesContext } from '../DashboardSalesContext';
 import DateSelector from '@/component/DateSelector';
-import { Autocomplete, AutocompleteItem } from '@heroui/react';
+import { Autocomplete, AutocompleteItem, Button } from '@heroui/react';
 import { useAppContext } from '@/contexts/AppContext';
+import { HFRefresh } from '@/component/Icons';
 
 function DashboardSalesController() {
 
@@ -44,7 +45,9 @@ function DashboardSalesController() {
                 </Autocomplete>
             )}
 
-            <span className='cursor-pointer' onClick={() => fetchRefreshData()}>Refresh</span>
+            <Button isIconOnly color='primary' variant='light' onPress={() => fetchRefreshData()} className='text-lg'>
+                <HFRefresh size={20} />
+            </Button>
 
         </div>
     )
