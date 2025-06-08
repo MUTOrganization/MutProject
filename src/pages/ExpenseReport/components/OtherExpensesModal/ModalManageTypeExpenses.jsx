@@ -18,7 +18,6 @@ function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
     const [isCloseType, setIsCloseType] = useState(null)
 
     const tableColumn = [
-        { key: 'id', text: 'id' },
         { key: 'name', text: 'ประเภท' },
         // { key: 'create_By', text: 'ผู้สร้าง' },
         { key: 'create_Date', text: 'วันที่สร้าง' },
@@ -59,7 +58,6 @@ function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
                         <TableBody emptyContent='ไม่พบข้อมูลประเภทค่าใช้จ่าย'>
                             {typeData.map((data, index) => (
                                 <TableRow key={`${data.username}-${index}`} className='text-center text-slate-600'>
-                                    <TableCell className='text-center'>{data.expensesTypeId}</TableCell>
                                     <TableCell className='text-center'>{data.typeName}</TableCell>
                                     <TableCell className='text-center'>{new Date(data.createdDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })}</TableCell>
                                     <TableCell className={`text-center ${data.status ? 'text-green-500' : 'text-red-500'}`}>{data.status ? 'ใช้งานอยู่' : 'ปิดการใช้งาน'}</TableCell>

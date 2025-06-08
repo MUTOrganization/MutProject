@@ -1,19 +1,97 @@
 import React, { useState } from 'react'
 import { useDashboardSalesContext } from '../DashboardSalesContext'
-import { Progress, Spinner, Switch, Tab, Tabs } from '@heroui/react';
+import { Progress, Spinner, Switch, Tab, Tabs, Tooltip } from '@heroui/react';
 import { formatNumber } from '@/component/FormatNumber';
+import { FaInfoCircle } from 'react-icons/fa';
 
 function DashboardSalesMainData() {
 
-    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus } = useDashboardSalesContext();
+    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData, commissionSetting, selectUser } = useDashboardSalesContext();
 
     const code = getMoneyStatus()
+
+    const renderToolTip = () => {
+        const totalOld = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, data) => sum + data.oldCustomerOrderCount, 0)
+        }, 0)
+
+        const totalNew = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, data) => sum + data.newCustomerOrderCount, 0)
+        }, 0)
+
+        return (
+            <div className='flex flex-col space-y-2'>
+                <div>ออเดอร์ลูกค้าเก่า  : {totalOld}</div>
+                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew}</div>
+            </div>
+        )
+    }
+
+    const renderToolTipCommission = () => {
+        const adminIncome = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + d.adminPaidIncome, 0)
+        }, 0)
+
+        const adminliftIncome = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + d.adminLiftIncome, 0)
+        }, 0)
+
+        const totalAdminIncome = Number(adminIncome) + Number(adminliftIncome)
+
+        if (commissionSetting.length === 0) return null
+        const comSetting = commissionSetting.rates.find(r => totalAdminIncome >= Number(r.minAmount) && totalAdminIncome <= Number(r.maxAmount))?.percentage
+
+        return (
+            <div className='flex flex-col space-y-2 p-2 min-w-48'>
+                <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดเงินเข้า  </span> {formatNumber(adminIncome)}</div>
+                <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ยอดยกมา  </span> {formatNumber(adminliftIncome)}</div>
+                <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ค่าคอมมิชชั่น  </span> {comSetting}%</div>
+            </div>
+        )
+    }
+
+    const renderTooltipSales = () => {
+        const adminPaind = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + d.adminPaidIncome, 0)
+        }, 0)
+
+        const adminUnPaind = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + d.adminUnpaid, 0)
+        }, 0)
+
+        return (
+            <div className='flex flex-col space-y-2 p-2 min-w-48'>
+                <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>เงินเข้าแล้ว  </span> {formatNumber(adminPaind)}</div>
+                <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ยังไม่เข้า  </span> {formatNumber(adminUnPaind)}</div>
+            </div>
+        )
+    }
+
+    const renderTooltipLiftNextMounth = () => {
+        const adminLiftNextMonth = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + d.adminNextLiftIncome || 0, 0)
+        }, 0)
+
+        return (
+            <div className='flex flex-col space-y-2 p-1 min-w-48'>
+                <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดยกไปเดือนหน้า  </span> {formatNumber(adminLiftNextMonth)}</div>
+            </div>
+        )
+    }
+
 
     return (
         <div className='w-full flex flex-row justify-between items-start space-x-6'>
             <section className='w-full grid grid-cols-2 gap-4'>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>คอมมิชชั่น</header>
+                    <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
+                        <span>คอมมิชชั่น</span>
+                        {selectUser !== 'ทั้งหมด' && (
+                            <Tooltip content={renderToolTipCommission()} placement='bottom'>
+                                <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                            </Tooltip>
+                        )}
+                    </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : formatNumber(getCommissionData())}
@@ -22,7 +100,12 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>ยอดขาย</header>
+                    <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
+                        <span>ยอดขาย</span>
+                        <Tooltip content={renderTooltipSales()} placement='bottom'>
+                            <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                        </Tooltip>
+                    </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : formatNumber(getProfit())}
@@ -31,7 +114,12 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>ออเดอร์</header>
+                    <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
+                        <span>ออเดอร์</span>
+                        <Tooltip content={renderToolTip()} placement='bottom'>
+                            <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                        </Tooltip>
+                    </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : getOrder()}
@@ -40,7 +128,12 @@ function DashboardSalesMainData() {
                     </div>
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
-                    <header className='text-slate-500 text-sm'>ยอดยก</header>
+                    <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
+                        <span>ยอดยก</span>
+                        <Tooltip content={renderTooltipLiftNextMounth()} placement='bottom'>
+                            <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
+                        </Tooltip>
+                    </header>
                     <div className='text-center'>
                         <div className='text-center text-blue-500 font-bold text-3xl py-2'>
                             {isLoading ? <Spinner /> : formatNumber(getPaidIncome())}

@@ -6,7 +6,7 @@ import { useAppContext } from '@/contexts/AppContext';
 
 function DashboardSalesController() {
 
-    const { date, setDate, dateMode, setDateMode, agentData, selectAgent, setSelectAgent, userData, selectUser, setSelectUser, isSuperAdmin, isAdmin } = useDashboardSalesContext();
+    const { date, setDate, dateMode, setDateMode, agentData, selectAgent, setSelectAgent, userData, selectUser, setSelectUser, isSuperAdmin, isAdmin, fetchRefreshData } = useDashboardSalesContext();
 
     return (
         <div className='w-full bg-white rounded-lg p-4 shadow-sm flex flex-row justify-start items-center space-x-4'>
@@ -43,6 +43,8 @@ function DashboardSalesController() {
                     ))}
                 </Autocomplete>
             )}
+
+            <span className='cursor-pointer' onClick={() => fetchRefreshData()}>Refresh</span>
 
         </div>
     )

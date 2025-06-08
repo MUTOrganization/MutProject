@@ -1,6 +1,7 @@
 import { useAppContext } from '@/contexts/AppContext';
 import agentService from '@/services/agentService';
 import commissionService from '@/services/commissionService';
+import settingComService from '@/services/settingComService';
 import userService from '@/services/userService';
 import { formatDateObject } from '@/utils/dateUtils';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, today } from '@internationalized/date';
@@ -23,6 +24,7 @@ export function DashboardSalesProvider({ children }) {
     const [commissionData, setCommissionData] = useState([])
     const [agentData, setAgentData] = useState([])
     const [userData, setUserData] = useState([])
+    const [commissionSetting, setCommissionSetting] = useState([])
 
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
@@ -62,6 +64,41 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    // Refresh Data
+    const fetchRefreshData = async () => {
+        setIsLoading(true)
+        try {
+            const [users] = await Promise.all([await userService.getAllUser(Number(selectAgent))])
+            setUserData(users)
+            let user = selectUserParams(users)
+            const commissionData = await commissionService.getCommission(selectAgent, user, formatDateObject(date.start), formatDateObject(date.end), true);
+            setCommissionData(commissionData)
+            setIsLoading(false)
+        } catch (err) {
+            console.log('Can not get Commission Data At DashboardSalesContext', err)
+        }
+    }
+
+    const fetchComSettingData = async () => {
+        try {
+            const roleId = selectRoleIdParams()
+            const comSetting = await settingComService.getCommissionSetting(roleId, 1)
+            setCommissionSetting(comSetting)
+        } catch (err) {
+            console.log('Can not get Commission Setting Data At DashboardSalesContext', err)
+        }
+    }
+
+    const selectRoleIdParams = () => {
+        if (isSuperAdmin) {
+            if (selectUser === 'ทั้งหมด') return;
+            const userRoleId = userData.find(u => u?.username === selectUser)?.role?.roleId
+            return userRoleId
+        } else {
+            return currentUser.role.roleId
+        }
+    }
+    
     const selectUserParams = (users) => {
         if (!users || users.length === 0) return [];
 
@@ -84,6 +121,7 @@ export function DashboardSalesProvider({ children }) {
     useEffect(() => {
         if (selectAgent !== 'ทั้งหมด') {
             fetchCommissionData();
+            fetchComSettingData();
         }
     }, [date, selectAgent, selectUser])
 
@@ -213,6 +251,8 @@ export function DashboardSalesProvider({ children }) {
         selectUser,
         isSuperAdmin,
         isAdmin,
+        fetchRefreshData,
+        commissionSetting
     };
 
     return (
