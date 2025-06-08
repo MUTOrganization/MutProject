@@ -34,12 +34,16 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
 
     async function handleSubmit(){
         try{
+            if(editingDepartment.departmentName.trim() === ''){
+                toastWarning('กรุณากรอกชื่อแผนก');
+                return;
+            }
             setIsLoading(true);
             if(isEdit){
-                await departmentService.updateDepartment(selectedDepartment.departmentId, editingDepartment.departmentName);
+                await departmentService.updateDepartment(selectedDepartment.departmentId, editingDepartment.departmentName.trim());
                 toastSuccess('ระบบทำการแก้ไขแผนกเรียบร้อย');
             }else{
-                await departmentService.createDepartment(selectedAgent.agentId, editingDepartment.departmentName, isHq);
+                await departmentService.createDepartment(selectedAgent.agentId, editingDepartment.departmentName.trim(), isHq);
                 toastSuccess('ระบบทำการสร้างแผนกเรียบร้อย');
             }
             setEditingDepartment({
@@ -62,7 +66,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
     return (
         <Modal isOpen={isOpen} onClose={onClose} aria-label="department-form-modal">
             <ModalContent>
-                <ModalHeader>เพิ่มแผนก</ModalHeader>
+                <ModalHeader>{isEdit ? 'แก้ไขแผนก' : 'เพิ่มแผนก'}</ModalHeader>
                 <ModalBody>
                     <div className="">
                         <div>
@@ -73,6 +77,12 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
                                 variant="bordered"
                                 value={editingDepartment.departmentName}
                                 onChange={(e) => handleNameChange(e)}
+                                validate={(value) => {
+                                    if(value.trim() === ''){
+                                        return 'กรุณากรอกชื่อแผนก';
+                                    }
+                                    return true;
+                                }}
                             />
                         </div>
                         {
@@ -95,7 +105,7 @@ export default function DepFormModal({isOpen, onClose = () => {}, selectedDepart
                             ยกเลิก
                         </Button>
                         <Button type="submit" color="primary" onPress={handleSubmit} isLoading={isLoading}>
-                            สร้างแผนก
+                            {isEdit ? 'บันทึก' : 'สร้างแผนก'}
                         </Button>
                     </div>
                 </ModalFooter>
