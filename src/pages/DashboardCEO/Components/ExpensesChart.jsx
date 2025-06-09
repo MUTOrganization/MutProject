@@ -57,7 +57,7 @@ function ExpensesChart({ expensesData, setSelectExpensesTypeFromChart, selectExp
                 <ReactApexChart options={options} series={series} type="donut" height={380} />
             ) : (
                 <div className='flex flex-row justify-center items-center w-full h-full'>
-                    <span className='text-slate-500'>ไม่มีข้อมูลข้อมูล</span>
+                    <span className='text-slate-500'>ไม่มีข้อมูลค่าใช้จ่าย</span>
                 </div>
             )}
 

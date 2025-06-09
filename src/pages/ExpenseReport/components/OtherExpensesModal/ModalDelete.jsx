@@ -5,6 +5,7 @@ import expensesService from '@/services/expensesService';
 import { Data } from '../../TabsExpense/TabsOthersCost';
 import { toastError, toastSuccess } from '@/component/Alert';
 import { Select, SelectItem } from '@nextui-org/select';
+import { formatNumber } from '@/component/FormatNumber';
 
 function ModalDelete({ isOpen, onClose, data }) {
 
@@ -33,11 +34,6 @@ function ModalDelete({ isOpen, onClose, data }) {
                     <ModalHeader>
                         <div className='flex flex-col mb-4'>
                             <span className='text-xl'>ลบข้อมูล</span>
-                            {data.update_By && data.update_Date && (
-                                <>
-                                    <span className='text-slate-400 text-sm pt-2'>อัพเดทโดย : {data.update_By}</span>
-                                </>
-                            )}
                             <span></span>
                         </div>
                     </ModalHeader>
@@ -84,7 +80,7 @@ function ModalDelete({ isOpen, onClose, data }) {
                                 </div>
                                 <div className="text-end text-sm py-3 text-slate-500 me-2 space-x-4">
                                     <span>ยอดรวม</span>
-                                    <span className='text-red-500 font-bold'>{data.totalAmount.toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</span>
+                                    <span className='text-red-500 font-bold'>{formatNumber(data.totalAmount)}</span>
                                     <span>บาท</span>
                                 </div>
                             </div>
