@@ -131,6 +131,5 @@ export default function AccessManagePage(){
           </div>
         </Card>
       </div>
-    </div>
     )
 }
