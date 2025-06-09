@@ -29,17 +29,17 @@ function DashboardSalesMainData() {
 
     const renderToolTipCommission = () => {
         const adminIncome = commissionData.reduce((acc, item) => {
-            return acc + item.data.reduce((sum, d) => sum + d.adminPaidIncome, 0)
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminPaidIncome || 0), 0)
         }, 0)
 
         const adminliftIncome = commissionData.reduce((acc, item) => {
-            return acc + item.data.reduce((sum, d) => sum + d.adminLiftIncome, 0)
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminLiftIncome || 0), 0)
         }, 0)
 
         const totalAdminIncome = Number(adminIncome) + Number(adminliftIncome)
 
         const comSetting = commissionSetting?.rates?.find(r => totalAdminIncome >= Number(r.minAmount) && totalAdminIncome <= Number(r.maxAmount))?.percentage
-       
+
         return (
             <div className='flex flex-col space-y-2 p-2 min-w-48'>
                 <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดเงินเข้า  </span> {formatNumber(adminIncome)}</div>
@@ -55,29 +55,34 @@ function DashboardSalesMainData() {
 
     const renderTooltipSales = () => {
         const adminPaind = commissionData.reduce((acc, item) => {
-            return acc + item.data.reduce((sum, d) => sum + d.adminPaidIncome, 0)
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminPaidIncome || 0), 0)
         }, 0)
 
         const adminUnPaind = commissionData.reduce((acc, item) => {
-            return acc + item.data.reduce((sum, d) => sum + d.adminUnpaid, 0)
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminUnpaid || 0), 0)
+        }, 0)
+
+        const adminNextLiftIncome = commissionData.reduce((acc, item) => {
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminNextLiftIncome || 0), 0)
         }, 0)
 
         return (
             <div className='flex flex-col space-y-2 p-2 min-w-48'>
                 <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>เงินเข้าแล้ว  </span> {formatNumber(adminPaind)}</div>
                 <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ยังไม่เข้า  </span> {formatNumber(adminUnPaind)}</div>
+                <div className='flex flex-row justify-between items-center'><span className='font-bold text-slate-500'>ยอดยกไป  </span> {formatNumber(adminNextLiftIncome)}</div>
             </div>
         )
     }
 
     const renderTooltipLiftNextMounth = () => {
         const adminLiftNextMonth = commissionData.reduce((acc, item) => {
-            return acc + item.data.reduce((sum, d) => sum + d.adminNextLiftIncome || 0, 0)
+            return acc + item.data.reduce((sum, d) => sum + Number(d.adminNextLiftIncome || 0), 0)
         }, 0)
 
         return (
             <div className='flex flex-col space-y-2 p-1 min-w-48'>
-                <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดยกไปเดือนหน้า  </span> {formatNumber(adminLiftNextMonth)}</div>
+                <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดยกไป  </span> {formatNumber(adminLiftNextMonth)}</div>
             </div>
         )
     }
@@ -130,7 +135,7 @@ function DashboardSalesMainData() {
                 </div>
                 <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
-                        <span>ยอดยก</span>
+                        <span>ยอดยกมา</span>
                         <Tooltip content={renderTooltipLiftNextMounth()} placement='bottom'>
                             <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
                         </Tooltip>
@@ -177,6 +182,20 @@ function DashboardSalesMainData() {
                                             <span>{isSwitch ? code?.TRANSFER?.paidOrderCount || 0 : formatNumber(code?.TRANSFER?.paidIncome || 0)} / {isSwitch ? code?.TRANSFER?.orderCount || 0 : formatNumber(code?.TRANSFER?.income) || 0}</span>
                                         </div>
                                         <Progress value={isSwitch ? code?.TRANSFER?.paidOrderCount : code?.TRANSFER?.paidIncome} color='warning' maxValue={isSwitch ? code?.TRANSFER?.orderCount : code?.TRANSFER?.income || 0} size='sm' />
+                                    </div>
+                                    <div>
+                                        <div className='text-slate-500 flex flex-row justify-between items-center'>
+                                            <span>CREDIT CARD</span>
+                                            <span>{isSwitch ? code?.CREDIT_CARD?.paidOrderCount || 0 : formatNumber(code?.CREDIT_CARD?.paidIncome || 0)} / {isSwitch ? code?.CREDIT_CARD?.orderCount || 0 : formatNumber(code?.CREDIT_CARD?.income) || 0}</span>
+                                        </div>
+                                        <Progress value={isSwitch ? code?.CREDIT_CARD?.paidOrderCount : code?.CREDIT_CARD?.paidIncome} color='warning' maxValue={isSwitch ? code?.CREDIT_CARD?.orderCount : code?.CREDIT_CARD?.income || 0} size='sm' />
+                                    </div>
+                                    <div>
+                                        <div className='text-slate-500 flex flex-row justify-between items-center'>
+                                            <span>CASH</span>
+                                            <span>{isSwitch ? code?.CASH?.paidOrderCount || 0 : formatNumber(code?.CASH?.paidIncome || 0)} / {isSwitch ? code?.CASH?.orderCount || 0 : formatNumber(code?.CASH?.income) || 0}</span>
+                                        </div>
+                                        <Progress value={isSwitch ? code?.CASH?.paidOrderCount : code?.CASH?.paidIncome} color='warning' maxValue={isSwitch ? code?.CASH?.orderCount : code?.CASH?.income || 0} size='sm' />
                                     </div>
                                 </div>
                             </div>

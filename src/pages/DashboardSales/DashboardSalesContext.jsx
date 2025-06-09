@@ -70,7 +70,7 @@ export function DashboardSalesProvider({ children }) {
             setCommissionData(commissionData)
         } catch (err) {
             console.log('Can not get Commission Data At DashboardSalesContext', err)
-        }finally{
+        } finally {
             setIsLoading(false)
         }
     }
@@ -84,7 +84,7 @@ export function DashboardSalesProvider({ children }) {
             setCommissionData(commissionData)
         } catch (err) {
             console.error('Can not get Commission Data At DashboardSalesContext', err)
-        }finally{
+        } finally {
             setIsLoading(false)
         }
     }
@@ -93,16 +93,16 @@ export function DashboardSalesProvider({ children }) {
         try {
             //const roleId = selectRoleIdParams()
             const selectUserData = userData.find(u => u.username === selectUser)
-            if(!selectUserData) {
+            if (!selectUserData) {
                 setCommissionSetting(null)
                 return;
             }
             const comSetting = await settingComService.getCommissionSetting(selectUserData?.role?.roleId, selectUserData?.probStatus ? 1 : 0)
             setCommissionSetting(comSetting)
         } catch (err) {
-            if(err.response.status === 404){
+            if (err.response.status === 404) {
                 setCommissionSetting({})
-            }else{
+            } else {
                 console.error('Can not get Commission Setting Data At DashboardSalesContext', err)
                 setCommissionSetting(null)
             }
@@ -118,7 +118,7 @@ export function DashboardSalesProvider({ children }) {
             return currentUser.role.roleId
         }
     }
-    
+
     const selectUserParams = (users) => {
         if (!users || users.length === 0) return [];
 
@@ -154,9 +154,9 @@ export function DashboardSalesProvider({ children }) {
 
     useEffect(() => {
         fetchUserData()
-        if(currentUser.baseRole === 'SUPER_ADMIN'){
+        if (currentUser.baseRole === 'SUPER_ADMIN') {
             setSelectUser('ทั้งหมด')
-        }else{
+        } else {
             setSelectUser(currentUser.username)
         }
     }, [selectAgent])
@@ -194,7 +194,7 @@ export function DashboardSalesProvider({ children }) {
         const result = {
             summary: { income: 0, paidIncome: 0, orderCount: 0, paidOrderCount: 0 }
         };
-
+        
         commissionData.forEach(user => {
             user.data.forEach(item => {
                 item.paymentTypes.forEach(pt => {
