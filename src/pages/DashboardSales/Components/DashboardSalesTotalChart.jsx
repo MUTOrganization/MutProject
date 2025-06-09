@@ -12,7 +12,6 @@ function DashboardSalesTotalChart() {
 
     const { currentUser } = useAppContext()
     const { selectAgent, dateMode, date, selectUser, userData, isSuperAdmin } = useDashboardSalesContext()
-    console.log(selectUser)
     const [isLoading, setIsLoading] = useState(false)
     const [dateChart, setDateChart] = useState({
         start: startOfYear(today()),
@@ -106,6 +105,7 @@ function DashboardSalesTotalChart() {
         chart: {
             type: 'bar',
             height: 350,
+            stacked: true
         },
         stroke: {
             show: true,
@@ -135,7 +135,12 @@ function DashboardSalesTotalChart() {
         },
         yaxis: {
             labels: {
-                formatter: (val) => val / 1000 + 'K'
+                formatter: (val) => {
+                    return Number(val).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                }
             }
         },
         legend: {

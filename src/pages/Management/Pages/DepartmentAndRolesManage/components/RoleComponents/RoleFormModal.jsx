@@ -48,13 +48,16 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
     async function handleSubmit(){
         try{
             setIsLoading(true);
-            
+            if(editingRole.roleName.trim() === ''){
+                toastWarning('กรุณากรอกชื่อตำแหน่ง');
+                return;
+            }
             if(isEdit){
-                await roleService.updateRole(selectedRole.roleId, editingRole.roleName);
+                await roleService.updateRole(selectedRole.roleId, editingRole.roleName.trim());
             }else{
                 const roleAttach = roleList.find(role => String(role.roleId) === String(attachRoleId))
                 const roleLevel = roleAttach ? roleLevelAttachType === 'lower' ? roleAttach.roleLevel + 1 : roleAttach.roleLevel - 1 : 1;
-                await roleService.createRole(selectedDepartment.departmentId, editingRole.roleName, roleLevel);
+                await roleService.createRole(selectedDepartment.departmentId, editingRole.roleName.trim(), roleLevel);
             }
             toastSuccess('สำเร็จ', `${isEdit ? 'แก้ไข' : 'สร้าง'}ตำแหน่งเรียบร้อย`);
             onSubmit();
@@ -76,7 +79,7 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
     return (
         <Modal isOpen={isOpen} onClose={onClose} aria-label="role-form-modal">
             <ModalContent>
-                <ModalHeader>เพิ่มตำแหน่ง</ModalHeader>
+                <ModalHeader>{isEdit ? 'แก้ไขตำแหน่ง' : 'เพิ่มตำแหน่ง'}</ModalHeader>
                 <ModalBody>
                     <div className="">
                         <div>
@@ -87,6 +90,12 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
                                 variant="bordered"
                                 value={editingRole.roleName}
                                 onValueChange={(e) => handleInputChange('roleName', e)}
+                                validate={(value) => {
+                                    if(value.trim() === ''){
+                                        return 'กรุณากรอกชื่อตำแหน่ง';
+                                    }
+                                    return true;
+                                }}
                             />
                         </div>
                         {
@@ -132,7 +141,7 @@ export default function RoleFormModal({ isOpen, onClose = () => {}, selectedRole
                             ยกเลิก
                         </Button>
                         <Button type="submit" color="primary" onPress={handleSubmit} isLoading={isLoading}>
-                            สร้างตำแหน่ง
+                            {isEdit ? 'บันทึก' : 'สร้างตำแหน่ง'}
                         </Button>
                     </div>
                 </ModalFooter>

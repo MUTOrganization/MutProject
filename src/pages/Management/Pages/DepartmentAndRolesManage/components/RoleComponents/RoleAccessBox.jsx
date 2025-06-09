@@ -2,7 +2,7 @@ import { getAccessByAgentId, getAccessByRoleId } from "@/services/accessService"
 import { Button, Card, Checkbox, Spinner, Tooltip } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
 import { groupArray, moveToFirstOfArray } from "@/utils/arrayFunc";
-import { toastError, toastSuccess } from "@/component/Alert";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
 import roleService from "@/services/roleService";
 import { useAppContext } from "@/contexts/AppContext";
 
@@ -72,11 +72,15 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allow
             setIsSubmitting(true);
             const isHq = selectedRole.isHq;
             if(isHq){
-                await roleService.updateRoleAccessHq(selectedRole.roleId, Array.from(editAccessList));
+                const {deletedCount, updatedCount, haveNoAccessAgent} = await roleService.updateRoleAccessHq(selectedRole.roleId, Array.from(editAccessList));
+                if(haveNoAccessAgent.length > 0){
+                    toastWarning('บันทึกสำเร็จ', 'มีการเพิ่มสิทธิ์ที่บางตัวแทนไม่มีสิทธิ์ใช้งาน');
+                }else{
+                    toastSuccess('บันทึกสำเร็จ', 'สิทธิ์ของตำแหน่งถูกบันทึกเรียบร้อย')
+                }
             }else{
                 await roleService.updateRoleAccess(selectedRole.roleId, Array.from(editAccessList));
             }
-            toastSuccess('บันทึกสำเร็จ', 'สิทธิ์ของตำแหน่งถูกบันทึกเรียบร้อย')
             fetchRoleAccess();
             onSubmit();
         }catch(err){

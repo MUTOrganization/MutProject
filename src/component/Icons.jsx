@@ -7223,8 +7223,8 @@ export const MonitorGraphIcon = ({
       viewBox="0 0 24 24"
       id="Monitor-Graph--Streamline-Ultimate"
       fill="none"
-      height={size || height || 16}
-      width={size || width || 16}
+      height={size || height || 24}
+      width={size || width || 24}
       className={className}
       {...props}
     >

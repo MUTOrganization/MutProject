@@ -8,6 +8,7 @@ import {
   PadlockSquare,
   DashboardCEOIcon,
   BusinessCardHandIcon,
+  MonitorGraphIcon,
 } from "./Icons";
 import {
   Accordion,
@@ -23,7 +24,7 @@ import { ACCESS } from "@/configs/accessids";
 export const mainMenuItems = {
   home: {
     path: "/home",
-    text: "หน้าแรก", 
+    text: "หน้าแรก",
     icon: <HomeIcon />,
     access: [],
   },
@@ -32,12 +33,12 @@ export const mainMenuItems = {
     text: "แดชบอร์ด Sales",
     icon: <DashboardCEOIcon />,
     access: [ACCESS.Dashboard_Sales_view]
-      
+
   },
   DashboardCEO: {
     path: "/Dashboard-CEO",
     text: "แดชบอร์ดผู้บริหาร",
-    icon: <DashboardCEOIcon />,
+    icon: <MonitorGraphIcon />,
     access: [ACCESS.Dashboard_Executive_view],
   },
   ExpenseReport: {
@@ -175,7 +176,7 @@ function Sidebar() {
   );
 }
 
-export function MainMenu({ isShow, isNavMenu, onSelectMenu = () => {} }) {
+export function MainMenu({ isShow, isNavMenu, onSelectMenu = () => { } }) {
   const currentData = useAppContext();
   const location = useLocation();
   const [selectedMenu, setSelectedMenu] = useState(

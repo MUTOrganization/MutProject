@@ -78,12 +78,6 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
         setPrevExpensesData([])
     }, [selectAgent])
 
-    const isDataEmpty =
-        commissionData?.length === 0 ||
-        expensesData?.length === 0 ||
-        prevCommissionData?.length === 0 ||
-        prevExpensesData?.length === 0
-
     return (
         <div className='w-full flex flex-row justify-start items-center space-x-3'>
             <div className='bg-white px-4 w-4/12 rounded-lg border-8 border-slate-50'>
@@ -167,7 +161,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                                 {isPercentLoading ? (
                                     <Spinner variant='dots' size='sm' color='primary' />
                                 ) : (
-                                    <span className={`text-sm`}>
+                                    <span className={`text-sm text-red-500`}>
                                         {summary.percent.commission}%
                                     </span>
                                 )}
@@ -189,7 +183,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                                 {isPercentLoading ? (
                                     <Spinner variant='dots' size='sm' color='primary' />
                                 ) : (
-                                    <span className={`text-sm`}>
+                                    <span className={`text-sm text-red-500`}>
                                         {summary.percent.expenses}%
                                     </span>
                                 )}

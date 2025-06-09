@@ -19,6 +19,7 @@ export default function ManageDepartmentTab(){
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [isModalAction, setIsModalAction] = useState(null);
     /** @type {[Array<Agent>]} */
     const [agentList, setAgentList] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState(currentUser.agent);
@@ -61,8 +62,9 @@ export default function ManageDepartmentTab(){
         setIsFormModalOpen(true);
     }
 
-    function handleEditModalOpen(departmentId){
+    function handleEditModalOpen(departmentId, action){
         const department = departmentMap.get(Number(departmentId));
+        setIsModalAction(action);
         setSelectedDepartment(department);
         setIsFormModalOpen(true);
     }
@@ -106,7 +108,7 @@ export default function ManageDepartmentTab(){
                     selectedDepartmentId={selectedDepartment?.departmentId}
                     isLoading={isLoading}
                     onAddClick={() => handleAddModalOpen()}
-                    onEditClick={(departmentId) => handleEditModalOpen(departmentId)}
+                    onEditClick={(departmentId) => handleEditModalOpen(departmentId , 'edit')}
                     onDeleteClick={(departmentId) => handleDeleteModalOpen(departmentId)}
                 />
             </div>
@@ -118,6 +120,7 @@ export default function ManageDepartmentTab(){
                 onClose={() => setIsFormModalOpen(false)} 
                 selectedDepartment={selectedDepartment} 
                 selectedAgent={selectedAgent}
+                isModalAction={isModalAction}
                 onSubmit={() => {
                     refreshDepartmentList();
                 }}

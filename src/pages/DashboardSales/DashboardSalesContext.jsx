@@ -1,10 +1,12 @@
 import { useAppContext } from '@/contexts/AppContext';
+import User from '@/models/user';
 import agentService from '@/services/agentService';
 import commissionService from '@/services/commissionService';
+import settingComService from '@/services/settingComService';
 import userService from '@/services/userService';
 import { formatDateObject } from '@/utils/dateUtils';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, today } from '@internationalized/date';
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const DashboardSalesContext = createContext();
 
@@ -22,12 +24,14 @@ export function DashboardSalesProvider({ children }) {
     // Fetch Data
     const [commissionData, setCommissionData] = useState([])
     const [agentData, setAgentData] = useState([])
+    /** @type {[User[]]} */
     const [userData, setUserData] = useState([])
+    const [commissionSetting, setCommissionSetting] = useState(null)
 
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
     const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? 'ทั้งหมด' : currentUser?.agent?.agentId)
-    const [selectUser, setSelectUser] = useState(null)
+    const [selectUser, setSelectUser] = useState(isSuperAdmin || isAdmin ? 'ทั้งหมด' : currentUser?.username)
     const [isSwitch, setIsSwitch] = useState(false)
 
     // Date
@@ -47,21 +51,74 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    const fetchUserData = async () => {
+        try {
+            const users = await userService.getAllUser(Number(selectAgent))
+            setUserData(users)
+        } catch (err) {
+            console.log('Can not get User Data At DashboardSalesContext', err)
+            setUserData([])
+        }
+    }
+
     //  Fetch Commission && Users Data
     const fetchCommissionData = async () => {
         setIsLoading(true)
         try {
-            const [users] = await Promise.all([await userService.getAllUser(Number(selectAgent))])
-            setUserData(users)
-            let user = selectUserParams(users)
+            let user = selectUserParams(userData)
             const commissionData = await commissionService.getCommission(selectAgent, user, formatDateObject(date.start), formatDateObject(date.end));
             setCommissionData(commissionData)
-            setIsLoading(false)
         } catch (err) {
             console.log('Can not get Commission Data At DashboardSalesContext', err)
+        }finally{
+            setIsLoading(false)
         }
     }
 
+    // Refresh Data
+    const fetchRefreshData = async () => {
+        setIsLoading(true)
+        try {
+            let user = selectUserParams(userData)
+            const commissionData = await commissionService.getCommission(selectAgent, user, formatDateObject(date.start), formatDateObject(date.end), true);
+            setCommissionData(commissionData)
+        } catch (err) {
+            console.error('Can not get Commission Data At DashboardSalesContext', err)
+        }finally{
+            setIsLoading(false)
+        }
+    }
+
+    const fetchComSettingData = async () => {
+        try {
+            //const roleId = selectRoleIdParams()
+            const selectUserData = userData.find(u => u.username === selectUser)
+            if(!selectUserData) {
+                setCommissionSetting(null)
+                return;
+            }
+            const comSetting = await settingComService.getCommissionSetting(selectUserData?.role?.roleId, selectUserData?.probStatus ? 1 : 0)
+            setCommissionSetting(comSetting)
+        } catch (err) {
+            if(err.response.status === 404){
+                setCommissionSetting({})
+            }else{
+                console.error('Can not get Commission Setting Data At DashboardSalesContext', err)
+                setCommissionSetting(null)
+            }
+        }
+    }
+
+    const selectRoleIdParams = () => {
+        if (isSuperAdmin) {
+            if (selectUser === 'ทั้งหมด') return;
+            const userRoleId = userData.find(u => u?.username === selectUser)?.role?.roleId
+            return userRoleId
+        } else {
+            return currentUser.role.roleId
+        }
+    }
+    
     const selectUserParams = (users) => {
         if (!users || users.length === 0) return [];
 
@@ -82,10 +139,11 @@ export function DashboardSalesProvider({ children }) {
     }, [])
 
     useEffect(() => {
-        if (selectAgent !== 'ทั้งหมด') {
+        if (selectAgent !== 'ทั้งหมด' && userData.length > 0) {
             fetchCommissionData();
+            fetchComSettingData();
         }
-    }, [date, selectAgent, selectUser])
+    }, [date, selectUser, selectAgent, userData])
 
 
     useEffect(() => {
@@ -95,7 +153,12 @@ export function DashboardSalesProvider({ children }) {
     }, [agentData])
 
     useEffect(() => {
-        setSelectUser('ทั้งหมด')
+        fetchUserData()
+        if(currentUser.baseRole === 'SUPER_ADMIN'){
+            setSelectUser('ทั้งหมด')
+        }else{
+            setSelectUser(currentUser.username)
+        }
     }, [selectAgent])
 
     // Get Commission
@@ -213,6 +276,8 @@ export function DashboardSalesProvider({ children }) {
         selectUser,
         isSuperAdmin,
         isAdmin,
+        fetchRefreshData,
+        commissionSetting
     };
 
     return (

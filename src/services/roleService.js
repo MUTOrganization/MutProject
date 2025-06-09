@@ -106,10 +106,15 @@ async function updateRoleAccess(roleId, accessIdList) {
  */
 async function updateRoleAccessHq(roleId, accessIdList) {
     const url = `roleAccess/updateHq`
-    await api.put(url, {
+    const response = await api.put(url, {
         roleId,
         accessIdList
     })
+    return {
+        deletedCount: response?.data?.deletedCount,
+        updatedCount: response?.data?.updatedCount,
+        haveNoAccessAgent: response?.data?.haveNoAccessAgent
+    }
 }
 
 
