@@ -6,6 +6,7 @@ import { FaBan, FaCheck, FaEdit, FaTrash } from 'react-icons/fa'
 import ModalActionType from './ModalActionType'
 import fetchProtectedData from '@/utils/fetchData'
 import { Data } from '../../TabsExpense/TabsOthersCost'
+import { formatDateThai } from "@/utils/dateUtils"
 
 function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
 
@@ -21,6 +22,7 @@ function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
         { key: 'name', text: 'ประเภท' },
         // { key: 'create_By', text: 'ผู้สร้าง' },
         { key: 'create_Date', text: 'วันที่สร้าง' },
+        { key: 'update_Date', text: 'วันที่อัพเดต' },
         { key: 'status', text: 'สถานะ' },
         { key: 'action', text: '' },
     ]
@@ -59,7 +61,8 @@ function ModalManageTypeExpenses({ isOpen, onClose, getTypeData }) {
                             {typeData.map((data, index) => (
                                 <TableRow key={`${data.username}-${index}`} className='text-center text-slate-600'>
                                     <TableCell className='text-center'>{data.typeName}</TableCell>
-                                    <TableCell className='text-center'>{new Date(data.createdDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })}</TableCell>
+                                    <TableCell className='text-center'>{formatDateThai(data.createdDate, 'date')}</TableCell>
+                                    <TableCell className='text-center'>{formatDateThai(data.updatedDate, 'date')}</TableCell>
                                     <TableCell className={`text-center ${data.status ? 'text-green-500' : 'text-red-500'}`}>{data.status ? 'ใช้งานอยู่' : 'ปิดการใช้งาน'}</TableCell>
                                     <TableCell className='text-center'>
                                         <div className='flex justify-center space-x-4'>

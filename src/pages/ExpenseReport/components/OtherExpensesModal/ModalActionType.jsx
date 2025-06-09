@@ -81,7 +81,7 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
     <Modal isOpen={isOpen} onOpenChange={onClose}>
       <ModalContent>
         <ModalHeader>
-          {action === 'edit' ? 'แก้ไขประเภท' : 'ปิดการใช้งาน'}
+          {action === 'edit' ? 'แก้ไขประเภท' : isCloseType ? 'ปิดการใช้งาน' : 'เปิดการใช้งาน'}
         </ModalHeader>
         <ModalBody>
           <>
@@ -100,13 +100,14 @@ function ModalActionType({ isOpen, onClose, action, selectData, id, isCloseType,
               :
               (<>
                 <Input label='ประเภท' variant="bordered" isDisabled placeholder={selectData} type='text' />
-                <div className="text-center w-full text-red-500 text-xs">
+                {isCloseType && (
+                  <div className="text-center w-full text-red-500 text-xs">
                     <span>หากมีรายการค่าใช้จ่ายที่เป็นประเภทนี้อยู่ ระบบจะทำการปิดการแสดงผลรายการค่าใช้จ่ายด้วย ต้องการหรือไม่?</span>
-                </div>
+                  </div>
+                )}
               </>)}
             <div>
-              {action === 'edit' &&
-                sameClosedType &&
+              {action === 'edit' && sameClosedType &&
                 newValue.trim().toLowerCase() !== selectData.toLowerCase() && (
                   <div className="text-red-500 text-sm mt-1 bg-red-100 rounded-lg p-2 w-full flex flex-col justify-center items-center space-y-2">
                     <FaExclamationCircle className="text-xl" />

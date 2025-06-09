@@ -15,6 +15,8 @@ import ModalManageOtherExpenses from '../OtherExpensesModal/ModalManageOtherExpe
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ModalEdid from '../OtherExpensesModal/ModalEdid';
 import ModalDelete from '../OtherExpensesModal/ModalDelete';
+import { formatDateThai } from '@/utils/dateUtils';
+import { formatNumber } from '@/component/FormatNumber';
 
 export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
     const { typeData, setTypeValue, filterData } = useContext(Data)
@@ -98,6 +100,7 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
                         <TableColumn>รายการ</TableColumn>
                         <TableColumn>ยอดรวม</TableColumn>
                         <TableColumn>วันที่สร้าง</TableColumn>
+                        <TableColumn>วันที่อัพเดต</TableColumn>
                         <TableColumn>Actions</TableColumn>
                     </TableHeader>
                     <TableBody items={filterData || []} isLoading={isLoading} emptyContent={emptyContentRender()} loadingContent={<Spinner />}>
@@ -105,8 +108,9 @@ export default function Contents({ isLoading, isSuperAdmin, selectAgent }) {
                             <TableRow key={item.expensesId} onClick={() => { setSelectData(item); setIsModalOpen(true); }} className="hover:bg-slate-50 cursor-pointer text-slate-600 h-12">
                                 <TableCell>{item?.expensesType.typeName}</TableCell>
                                 <TableCell >{item?.remarks}</TableCell>
-                                <TableCell className='text-red-500 font-semibold'>{item?.totalAmount.toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</TableCell>
-                                <TableCell>{new Date(item?.createdDate).toLocaleDateString('th-GB', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Bangkok' })}</TableCell>
+                                <TableCell className='text-red-500 font-semibold'>{formatNumber(item?.totalAmount)}</TableCell>
+                                <TableCell className='w-2/12'>{formatDateThai(item?.createdDate, 'date')}</TableCell>
+                                <TableCell>{formatDateThai(item?.updatedDate, 'date')}</TableCell>
                                 <TableCell>
                                     <div className="flex flex-row space-x-2 transition duration-200 ease-in">
                                         <FaEdit

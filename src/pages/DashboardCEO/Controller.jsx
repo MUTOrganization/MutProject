@@ -17,6 +17,7 @@ function Controller({ agentList, setAgentList, currentUser, date, setDate, dateM
                     modeState={dateMode}
                     onModeChange={setDateMode}
                     isShowDateRange={false}
+                    disallowEmptySelection
                     isShowDay={false}
                 />
             </div>

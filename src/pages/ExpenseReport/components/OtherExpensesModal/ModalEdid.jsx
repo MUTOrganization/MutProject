@@ -10,6 +10,7 @@ import { Data } from '../../TabsExpense/TabsOthersCost';
 import { fromDate } from '@internationalized/date';
 import { Select, SelectItem } from '@nextui-org/select';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/modal';
+import { formatNumber } from '@/component/FormatNumber';
 
 function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
 
@@ -227,7 +228,7 @@ function ModalEdid({ isOpen, onClose, data, typeData, selectAgent }) {
                                 </div>
                                 <div className='text-end text-sm py-3 text-slate-500 space-x-4'>
                                     <span>ยอดรวม</span>
-                                    <span className='text-red-500 font-bold'>{sumTotal.toLocaleString('th-TH', { style: 'currency', currency: 'THB' })}</span>
+                                    <span className='text-red-500 font-bold'>{formatNumber(sumTotal)}</span>
                                     <span>บาท</span>
                                 </div>
                             </div>
