@@ -93,7 +93,7 @@ function UserManageTab() {
             fetchData()
         }
     }, [selector.agent])
-
+    
     const filterUser = useMemo(() => {
         let userList = allUser
         if (isManager) {

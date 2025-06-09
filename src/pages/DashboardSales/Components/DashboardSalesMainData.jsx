@@ -39,7 +39,7 @@ function DashboardSalesMainData() {
         const totalAdminIncome = Number(adminIncome) + Number(adminliftIncome)
 
         const comSetting = commissionSetting?.rates?.find(r => totalAdminIncome >= Number(r.minAmount) && totalAdminIncome <= Number(r.maxAmount))?.percentage
-
+       
         return (
             <div className='flex flex-col space-y-2 p-2 min-w-48'>
                 <div className='flex flex-row justify-between items-center space-x-4'><span className='font-bold text-slate-500'>ยอดเงินเข้า  </span> {formatNumber(adminIncome)}</div>

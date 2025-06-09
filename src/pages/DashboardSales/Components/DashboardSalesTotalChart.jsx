@@ -84,7 +84,7 @@ function DashboardSalesTotalChart() {
 
     useEffect(() => {
         fetchCommissionData()
-    }, [dateChart, selectAgent, userData])
+    }, [dateChart, selectAgent, selectUser, userData])
 
     useEffect(() => {
         if (dateMode === 'ปี') {

@@ -68,7 +68,7 @@ function DashboardCEO() {
             const [users] = await Promise.all([
                 userService.getAllUser(selectAgent),
             ])
-            const Selectusers = users.map(u => u.username)
+            const Selectusers = users.length > 0 ? users.map(u => u.username) : []
             const [expenses, commission, expensesType] = await Promise.all([
                 expensesService.getExpensesDetails(selectAgent, formatDateObject(date.start), formatDateObject(date.end)),
                 commissionService.getCommission(selectAgent, Selectusers, formatDateObject(date.start), formatDateObject(date.end)),
