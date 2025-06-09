@@ -7,6 +7,7 @@ import AddAgentModal from "../components/AddAgentModal";
 import { SearchIcon } from "@/component/Icons";
 import EditAgentModal from "../components/EditAgentModal";
 import DelAgentModal from "../components/DelAgentModal";
+import { formatDateThai } from "@/utils/dateUtils";
 
 function AgentPage() {
 
@@ -206,6 +207,7 @@ function AgentPage() {
                     isStriped
                     isHeaderSticky
                     aria-label="Agent List"
+                    align="center"
                     className="w-full h-full select-none"
                     classNames={{
                         th: "font-semibold text-md",
@@ -253,8 +255,18 @@ function AgentPage() {
                                         {item.status ? 'ใช้งานอยู่' : 'ปิดใช้งาน'}
                                     </span>
                                 </TableCell>
-                                <TableCell>{moment(item.createDate).format('DD/MM/YYYY HH:mm')}</TableCell>
-                                <TableCell>{moment(item.updateDate).format('DD/MM/YYYY HH:mm')}</TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col gap-1 items-center text-sm">
+                                        <p>{formatDateThai(item.createdDate, 'date')}</p>
+                                        <p className="text-gray-500">{formatDateThai(item.createdDate, 'time')}</p>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                <div className="flex flex-col gap-1 items-center text-sm">
+                                    <p>{formatDateThai(item.updatedDate, 'date')}</p>
+                                    <p className="text-gray-500">{formatDateThai(item.updatedDate, 'time')}</p>
+                                </div>
+                                </TableCell>
                                 <TableCell>
                                     <Button size="sm" isIconOnly variant="light" color="primary" className="hover:bg-primary-50" onPress={() => handleEditAgent(item)}>
                                         <EditIcon className="w-4 h-4" />
