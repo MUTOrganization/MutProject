@@ -25,7 +25,7 @@ export default function ChangeProfileImageModal({ isOpen, onClose = () => {} }) 
                     <ImageInput size="xl" oldImageUrl={currentUser.displayImgUrl} onChange={(file) => setSelectedFile(file)} />
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant="solid" color="primary" onPress={() => handleSubmit()} isLoading={isLoading}>ยืนยัน</Button>
+                    <Button variant="solid" color="primary" onPress={() => handleSubmit()} isLoading={isLoading} isDisabled={!selectedFile}>ยืนยัน</Button>
                 </ModalFooter>
             </ModalContent>
         </Modal>

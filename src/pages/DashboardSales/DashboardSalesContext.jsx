@@ -27,7 +27,6 @@ export function DashboardSalesProvider({ children }) {
     /** @type {[User[]]} */
     const [userData, setUserData] = useState([])
     const [commissionSetting, setCommissionSetting] = useState(null)
-
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
     const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? 'ทั้งหมด' : currentUser?.agent?.agentId)
