@@ -56,7 +56,7 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
                                         <UserProfileAvatar name={user.name} imageURL={user.displayImgUrl} className={'h-16 w-16'} />
                                         <div className='flex flex-col justify-start items-start space-y-1 text-sm text-slate-500'>
                                             <span>{user.username}</span>
-                                            <span>{user.name}</span>
+                                            <span>{user.name} ({user.nickname})</span>
                                         </div>
                                     </div>
 

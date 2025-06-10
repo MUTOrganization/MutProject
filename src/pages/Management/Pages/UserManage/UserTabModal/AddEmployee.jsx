@@ -1,4 +1,5 @@
 import { toastError, toastSuccess, toastWarning } from '@/component/Alert'
+import HqChip from '@/component/HqChip'
 import { useAppContext } from '@/contexts/AppContext'
 import departmentService from '@/services/departmentService'
 import roleService from '@/services/roleService'
@@ -96,7 +97,7 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
                             <span className='text-xs text-slate-500'>แผนก</span>
                             <Autocomplete allowsEmptyCollection isRequired aria-label='แผนก' placeholder='แผนก' selectedKey={`${selectDepartment}`} onSelectionChange={(value) => setSelectDepartment(Number(value) || null)}>
                                 {departmentId.map(department => (
-                                    <AutocompleteItem key={department.departmentId} value={department.departmentId} className='text-xs text-slate-500'>
+                                    <AutocompleteItem key={department.departmentId} value={department.departmentId} endContent={department.isHq ? <HqChip /> : null} className='text-xs text-slate-500'>
                                         {department.departmentName}
                                     </AutocompleteItem>
                                 ))}
