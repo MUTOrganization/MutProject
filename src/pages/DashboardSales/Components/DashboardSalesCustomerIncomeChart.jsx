@@ -47,7 +47,7 @@ function DashboardSalesCustomerIncomeChart() {
 
             commissionData.forEach(user => {
                 user.data.forEach(item => {
-                    const month = item.monthIndex - 1;
+                    const month = item.monthIndex;
                     oldIncome[month] += Number(item.oldCustomerIncome || 0);
                     newIncome[month] += Number(item.newCustomerIncome || 0);
                 });
@@ -70,7 +70,7 @@ function DashboardSalesCustomerIncomeChart() {
 
     useEffect(() => {
         fetchCommissionData()
-    }, [dateChart, selectAgent, userData])
+    }, [dateChart, selectAgent, userData, selectUser])
 
     useEffect(() => {
         if (dateMode === 'ปี') {

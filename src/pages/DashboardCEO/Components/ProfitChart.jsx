@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactApexChart from 'react-apexcharts'
 import GroupProfitByMonth from '../GroupProfitByMonth'
+import { formatNumber } from '@/component/FormatNumber'
 
 
 function ProfitChart({ commissionData, expensesData }) {
@@ -16,7 +17,10 @@ function ProfitChart({ commissionData, expensesData }) {
             type: 'line',
             zoom: { enabled: false }
         },
-        dataLabels: { enabled: true },
+        dataLabels: {
+            enabled: true,
+            formatter: val => Number(val).toLocaleString({ minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        },
         stroke: { curve: 'straight' },
         colors: ['#800080'],
         title: { text: 'Profit Chart', align: 'left' },
@@ -25,7 +29,7 @@ function ProfitChart({ commissionData, expensesData }) {
         },
         yaxis: {
             labels: {
-                formatter: val => val.toLocaleString()
+                formatter: val => formatNumber(val)
             },
             title: { text: 'บาท' },
             min: 0

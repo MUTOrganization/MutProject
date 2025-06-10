@@ -31,7 +31,7 @@ export function DashboardSalesProvider({ children }) {
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
     const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? 'ทั้งหมด' : currentUser?.agent?.agentId)
-    const [selectUser, setSelectUser] = useState(isSuperAdmin || isAdmin ? 'ทั้งหมด' : currentUser?.username)
+    const [selectUser, setSelectUser] = useState('ทั้งหมด')
     const [isSwitch, setIsSwitch] = useState(false)
 
     // Date
@@ -74,7 +74,7 @@ export function DashboardSalesProvider({ children }) {
             setIsLoading(false)
         }
     }
-
+    
     // Refresh Data
     const fetchRefreshData = async () => {
         setIsLoading(true)
@@ -122,7 +122,7 @@ export function DashboardSalesProvider({ children }) {
     const selectUserParams = (users) => {
         if (!users || users.length === 0) return [];
 
-        if (isSuperAdmin || isAdmin) {
+        if ((isSuperAdmin || isAdmin)) {
             if (selectUser === 'ทั้งหมด') {
                 return users.map(u => u.username);
             } else {
@@ -154,7 +154,7 @@ export function DashboardSalesProvider({ children }) {
 
     useEffect(() => {
         fetchUserData()
-        if (currentUser.baseRole === 'SUPER_ADMIN') {
+        if (currentUser.baseRole === 'SUPER_ADMIN' || currentUser.baseRole === 'ADMIN') {
             setSelectUser('ทั้งหมด')
         } else {
             setSelectUser(currentUser.username)
@@ -194,7 +194,7 @@ export function DashboardSalesProvider({ children }) {
         const result = {
             summary: { income: 0, paidIncome: 0, orderCount: 0, paidOrderCount: 0 }
         };
-        
+
         commissionData.forEach(user => {
             user.data.forEach(item => {
                 item.paymentTypes.forEach(pt => {
@@ -250,8 +250,9 @@ export function DashboardSalesProvider({ children }) {
 
         return result;
     };
-
+    
     const value = {
+        currentUser,
         commissionData,
         agentData,
         userData,

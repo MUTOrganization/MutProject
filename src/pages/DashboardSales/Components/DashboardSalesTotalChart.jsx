@@ -48,6 +48,7 @@ function DashboardSalesTotalChart() {
     const fetchCommissionData = async () => {
         const monthlyCommission = Array(12).fill(0);
         const monthlyIncome = Array(12).fill(0);
+        const monthlyNextLiftIncome = Array(12).fill(0);
 
         const usernames = getUserParams();
         if (!usernames || usernames.length === 0) return;
@@ -59,9 +60,10 @@ function DashboardSalesTotalChart() {
 
             commissionData.forEach(user => {
                 user.data.forEach(item => {
-                    const monthIndex = item.monthIndex - 1;
+                    const monthIndex = item.monthIndex;
                     monthlyCommission[monthIndex] += Number(item.commission || 0);
                     monthlyIncome[monthIndex] += Number(item.adminIncome || 0);
+                    monthlyNextLiftIncome[monthIndex] += Number(item.adminLiftIncome || 0);
                 });
             });
 
@@ -75,6 +77,11 @@ function DashboardSalesTotalChart() {
                     name: 'ค่าคอมมิชชัน',
                     color: '#008FFB',
                     data: monthlyCommission
+                },
+                {
+                    name: 'ยอดยกมา',
+                    color: '#FFA94D',
+                    data: monthlyNextLiftIncome
                 },
             ]);
         } catch (err) {

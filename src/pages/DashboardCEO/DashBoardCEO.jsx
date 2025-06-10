@@ -108,7 +108,7 @@ function DashboardCEO() {
                 <AllSummary expensesData={expensesData} selectAgent={selectAgent} commissionData={commissionData} isLoading={isLoading} currentUser={currentUser} date={date} dateMode={dateMode} allUser={allUser} />
 
                 {/* Chart Body */}
-                <div className='w-full mt-4 grid grid-cols-2 gap-4'>
+                <div className='w-full mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4'>
                     <div className='w-full p-4 rounded-lg shadow-sm bg-white'>
                         <ProfitChart commissionData={commissionData} expensesData={expensesData} />
                     </div>

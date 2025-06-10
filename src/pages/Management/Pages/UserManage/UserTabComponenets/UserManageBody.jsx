@@ -8,6 +8,7 @@ import roleService from '@/services/roleService'
 import CloseStatus from '../UserTabModal/CloseStatus'
 import EditEmployeeModal from '../UserTabModal/EditEmployeeModal'
 import ChangePassword from '../UserTabModal/ChangePassword'
+import { formatDateThai } from '@/utils/dateUtils'
 
 function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperAdmin, selector , isManager }) {
     // Open Modal
@@ -19,11 +20,11 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
     const [selectUserData, setSelectUserData] = useState(null)
     const columns = [
         { key: 'user', label: 'พนักงาน' },
-        { key: 'agent', label: 'ตัวแทนที่สังกัด' },
         { key: 'dep/role', label: 'แผนก | ตำแหน่ง' },
         { key: 'probStatus', label: 'สถานะการทดลองงาน' },
         { key: 'status', label: 'สถานะการใช้งาน' },
         { key: 'startWork', label: 'วันที่เริ่มทำงาน' },
+        { key: 'passProbDate', label: 'วันที่ผ่านการทดลองงาน' },
         {
             key: 'action', label: (<div className="text-right w-full">
                 <span className='text-green-500 cursor-pointer hover:bg-green-200 transition-all duration-200 px-2 py-1.5 rounded-md' onClick={() => setIsOpenAddmployeeModal(true)}>
@@ -60,7 +61,6 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
                                     </div>
 
                                 </TableCell>
-                                <TableCell><span className='text-slate-500 text-xs'>{user.agent.name}</span></TableCell>
                                 <TableCell><span className='text-slate-500 font-bold'>{user.department.departmentName}</span> | <span className='text-slate-500'>{user.role.roleName}</span></TableCell>
                                 <TableCell>
                                     <span className={`${user.probStatus ? 'text-blue-500 bg-blue-100' : 'text-red-500 bg-red-100'} rounded-lg px-2 py-1`}>{user.probStatus ? 'ผ่านการทดลองงาน' : 'ยังไม่ผ่านการทดลองงาน'}</span>
@@ -70,7 +70,12 @@ function UserManageBody({ userList, isLoading, fetchData, departmentId, isSuperA
                                 </TableCell>
                                 <TableCell>
                                     <div className='flex flex-row justify-start items-center'>
-                                        <span>{new Date(user.hireDate).toLocaleDateString('th-TH', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
+                                        <span>{formatDateThai(user.hireDate)}</span>
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <div className='flex flex-row justify-start items-center'>
+                                        <span>{user.probPassedDate ? formatDateThai(user.probPassedDate) : '-'}</span>
                                     </div>
                                 </TableCell>
                                 <TableCell>

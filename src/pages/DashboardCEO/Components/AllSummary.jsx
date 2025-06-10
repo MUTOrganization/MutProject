@@ -79,8 +79,8 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
     }, [selectAgent])
 
     return (
-        <div className='w-full flex flex-row justify-start items-center space-x-3'>
-            <div className='bg-white px-4 w-4/12 rounded-lg border-8 border-slate-50'>
+        <div className='w-full flex flex-col justify-center items-center lg:flex-row lg:justify-start lg:items-center lg:space-x-3 lg:space-y-0 space-x-0 space-y-3'>
+            <div className='bg-white px-4 w-full lg:w-4/12 rounded-lg border-8 border-slate-50'>
                 <header className='h-14 w-full flex flex-row justify-between items-center space-x-2'>
                     <span className='p-2 bg-blue-100 rounded-full '><FaMoneyCheckAlt className='text-xl text-blue-500' /></span>
                     <span>กำไรสุทธิ</span>
@@ -103,7 +103,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 </span>
             </div>
 
-            <div className='bg-white px-4 w-4/12 rounded-lg border-8 border-slate-50'>
+            <div className='bg-white px-4  w-full lg:w-4/12 rounded-lg border-8 border-slate-50'>
                 <header className='h-14 w-full flex flex-row justify-between items-center space-x-2'>
                     <span className='p-2 bg-green-100 rounded-full '><FaMoneyBillWaveAlt className='text-xl text-green-500' /></span>
                     <span>ยอดขาย</span>
@@ -124,7 +124,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 </span>
             </div>
 
-            <div className='bg-white px-4 w-4/12 rounded-lg border-8 border-slate-50'>
+            <div className='bg-white px-4 w-full lg:w-4/12 rounded-lg border-8 border-slate-50'>
                 <header className='h-14 w-full flex flex-row justify-between items-center space-x-2'>
                     <span className='p-2 bg-red-100 rounded-full '><FaMarkdown className='text-xl text-red-500' /></span>
                     <span>ค่าใช้จ่ายรวม</span>
@@ -147,7 +147,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 </span>
             </div>
 
-            <div className='bg-white px-4 w-5/12 rounded-lg border-8 border-slate-50 flex flex-row justify-between items-center'>
+            <div className='bg-white px-4 w-full lg:w-5/12 rounded-lg border-8 border-slate-50 flex flex-row justify-between items-center'>
                 <div className='subBox2 px-4'>
                     <header className='h-14 w-full flex flex-row justify-between items-center space-x-2'>
                         <span className='text-xs'>ค่าคอมมิชชั่น</span>
@@ -193,7 +193,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                 </div>
             </div>
 
-            <div className='bg-white px-4 w-3/12 rounded-lg border-8 border-slate-50'>
+            <div className='bg-white px-4 w-full lg:w-3/12 rounded-lg border-8 border-slate-50'>
                 <header className='h-14 w-full flex flex-row justify-between items-center space-x-2'>
                     <span className='p-2 bg-yellow-100 rounded-full '><FaCartPlus className='text-xl text-yellow-500' /></span>
                     <span>ออเดอร์</span>
