@@ -70,6 +70,7 @@ function UserManageTab() {
                 await departmentService.getDepartments(selectAgentParams())
             ])
             setRoleId(roles)
+            departments.sort((a, b) => a.isHq ? -1 : 1);
             setDepartmentId(departments)
             setAgentId(agent)
         } catch (err) {

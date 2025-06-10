@@ -12,6 +12,7 @@ import expensesService from "@/services/expensesService";
 import { endOfMonth, startOfMonth, today } from "@internationalized/date";
 import { formatDateObject } from "@/utils/dateUtils";
 import { FaEraser } from "react-icons/fa";
+import { ACCESS } from "@/configs/accessids";
 
 function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, isSuperAdmin, setSelectAgent, selectAgent, agentData }) {
 
@@ -60,7 +61,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
             list: [...prev.list, { name: '', qty: '', price: '', totalAmount: '' }]
         }));
     };
-    
+
     const handleExpenseChange = (index, field, value) => {
         const updatedList = [...selectedData.list];
 
@@ -96,7 +97,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
     return (
         <>
             <div className='flex flex-col lg:space-y-0 lg:flex-row lg:justify-between items-center w-full'>
-                <div className='header p-3 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-10/12'>
+                <div className='header p-3 flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:items-center space-x-0 lg:space-x-6 w-full lg:w-10/12'>
                     <DateSelector value={dateRange} onChange={setDateRange} />
                     {currentUser.baseRole === 'SUPER_ADMIN' && (
                         <>
@@ -105,7 +106,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                                 onSelectionChange={(value) => {
                                     if (value === null) return
                                     setSelectAgent(value)
-                                }} aria-label="Agent" label="ตัวแทน" className="w-2/12">
+                                }} aria-label="Agent" label="ตัวแทน" className="w-full lg:w-2/12">
                                 {agentData.map(item => (
                                     <AutocompleteItem key={item.agentId} value={item.agentId}>{item.name}</AutocompleteItem>
                                 ))}
@@ -154,7 +155,6 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                             />
                         </DropdownMenu>
                     </Dropdown>
-
                 </div>
             </div>
 

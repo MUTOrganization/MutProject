@@ -43,8 +43,13 @@ function EditAccess({ isOpen, onClose, accessItem, isFetchAccess, groupSelected 
                 handleClose();
             })
             .catch((err) => {
-                console.log(err);
-                toastError('เกิดข้อผิดพลาด', 'ไม่สามารถแก้ไขสิทธิ์ได้ กรุณาลองใหม่อีกครั้ง');
+                if (err.response.status === 400) {
+                    const e = err.response.data.error;
+                    setError(e);
+                    toastError(e);
+                } else {
+                    toastError('เกิดข้อผิดพลาด', 'ไม่สามารถแก้ไขสิทธิ์ได้ กรุณาลองใหม่อีกครั้ง');
+                }
             })
             .finally(() => {
                 setIsLoading(false);

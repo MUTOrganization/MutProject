@@ -39,8 +39,9 @@ function AddAgentModal({ isOpen, onClose, fetchAgentList }) {
             fetchAgentList()
         }).catch((err) => {
             if (err.status === 400) {
-                setError('รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว', 'กรุณากรอกรหัสตัวแทนและชื่อตัวแทนใหม่')
-                toastWarning('ไม่สามารถเพิ่มตัวแทนได้', 'รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว')
+                const e = err.response.data.error;
+                setError(e)
+                toastWarning('ไม่สามารถเพิ่มตัวแทนได้', e)
             } else {
                 toastError('ไม่สามารถเพิ่มตัวแทนได้', 'เนื่องจากมีข้อผิดพลาดทางระบบ')
             }

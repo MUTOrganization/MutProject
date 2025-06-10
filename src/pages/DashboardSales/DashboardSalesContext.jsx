@@ -30,7 +30,7 @@ export function DashboardSalesProvider({ children }) {
     //  Other State
     const [isLoading, setIsLoading] = useState(true)
     const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? 'ทั้งหมด' : currentUser?.agent?.agentId)
-    const [selectUser, setSelectUser] = useState(isSuperAdmin || isAdmin ? 'ทั้งหมด' : currentUser?.username)
+    const [selectUser, setSelectUser] = useState('ทั้งหมด')
     const [isSwitch, setIsSwitch] = useState(false)
 
     // Date
@@ -50,6 +50,7 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    // Fetch User Data
     const fetchUserData = async () => {
         try {
             const users = await userService.getAllUser(Number(selectAgent))
@@ -73,8 +74,8 @@ export function DashboardSalesProvider({ children }) {
             setIsLoading(false)
         }
     }
-
-    // Refresh Data
+    
+    // Refresh Commission Data
     const fetchRefreshData = async () => {
         setIsLoading(true)
         try {
@@ -88,6 +89,7 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    // Fetch Commission Setting Data
     const fetchComSettingData = async () => {
         try {
             //const roleId = selectRoleIdParams()
@@ -108,20 +110,10 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
-    const selectRoleIdParams = () => {
-        if (isSuperAdmin) {
-            if (selectUser === 'ทั้งหมด') return;
-            const userRoleId = userData.find(u => u?.username === selectUser)?.role?.roleId
-            return userRoleId
-        } else {
-            return currentUser.role.roleId
-        }
-    }
-
     const selectUserParams = (users) => {
         if (!users || users.length === 0) return [];
 
-        if (isSuperAdmin || isAdmin) {
+        if ((isSuperAdmin || isAdmin)) {
             if (selectUser === 'ทั้งหมด') {
                 return users.map(u => u.username);
             } else {
@@ -137,6 +129,7 @@ export function DashboardSalesProvider({ children }) {
         fetchAgentData();
     }, [])
 
+    // If not check It will not get data
     useEffect(() => {
         if (selectAgent !== 'ทั้งหมด' && userData.length > 0) {
             fetchCommissionData();
@@ -144,16 +137,17 @@ export function DashboardSalesProvider({ children }) {
         }
     }, [date, selectUser, selectAgent, userData])
 
-
+    // Set Select Agent
     useEffect(() => {
         if (agentData.length > 0 && selectAgent === 'ทั้งหมด') {
             setSelectAgent(agentData[0]?.agentId)
         }
     }, [agentData])
 
+    // Set Select User
     useEffect(() => {
         fetchUserData()
-        if (currentUser.baseRole === 'SUPER_ADMIN') {
+        if (currentUser.baseRole === 'SUPER_ADMIN' || currentUser.baseRole === 'ADMIN') {
             setSelectUser('ทั้งหมด')
         } else {
             setSelectUser(currentUser.username)
@@ -181,8 +175,8 @@ export function DashboardSalesProvider({ children }) {
         }, 0)
     }
 
-    // Get Paid Income
-    const getPaidIncome = () => {
+    // Get Lift Income
+    const getLiftIncome = () => {
         return commissionData.reduce((acc, curr) => {
             return acc + curr.data.reduce((sum, item) => sum + Number(item.adminLiftIncome || 0), 0)
         }, 0)
@@ -193,7 +187,7 @@ export function DashboardSalesProvider({ children }) {
         const result = {
             summary: { income: 0, paidIncome: 0, orderCount: 0, paidOrderCount: 0 }
         };
-        
+
         commissionData.forEach(user => {
             user.data.forEach(item => {
                 item.paymentTypes.forEach(pt => {
@@ -249,8 +243,9 @@ export function DashboardSalesProvider({ children }) {
 
         return result;
     };
-
+    
     const value = {
+        currentUser,
         commissionData,
         agentData,
         userData,
@@ -259,7 +254,7 @@ export function DashboardSalesProvider({ children }) {
         getCommissionData,
         getProfit,
         getOrder,
-        getPaidIncome,
+        getLiftIncome,
         getMoneyStatus,
         isSwitch,
         setIsSwitch,

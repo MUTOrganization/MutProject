@@ -173,6 +173,7 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                     labelPlacement="outside"
                                     placeholder="กรุณากรอกหมายเหตุ"
                                     className="max-w-full"
+                                    maxLength={50}
                                     isDisabled={isEnable}
                                     value={selectedData.remark}
                                     onChange={(e) => setSelectedData((prev) => ({ ...prev, remark: e.target.value }))}

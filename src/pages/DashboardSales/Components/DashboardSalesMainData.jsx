@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { useDashboardSalesContext } from '../DashboardSalesContext'
 import { Progress, Spinner, Switch, Tab, Tabs, Tooltip } from '@heroui/react';
 import { formatNumber } from '@/component/FormatNumber';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaBath, FaInfoCircle } from 'react-icons/fa';
 
 function DashboardSalesMainData() {
 
-    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData, commissionSetting, selectUser } = useDashboardSalesContext();
+    const { getCommissionData, getProfit, getOrder, getLiftIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData, commissionSetting, selectUser } = useDashboardSalesContext();
 
     const code = getMoneyStatus()
 
@@ -21,8 +21,8 @@ function DashboardSalesMainData() {
 
         return (
             <div className='flex flex-col space-y-2'>
-                <div>ออเดอร์ลูกค้าเก่า  : {totalOld}</div>
-                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew}</div>
+                <div>ออเดอร์ลูกค้าเก่า  : {totalOld.toLocaleString()}</div>
+                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew.toLocaleString()}</div>
             </div>
         )
     }
@@ -86,69 +86,81 @@ function DashboardSalesMainData() {
             </div>
         )
     }
-
+    
 
     return (
-        <div className='w-full flex flex-row justify-between items-start space-x-6'>
-            <section className='w-full grid grid-cols-2 gap-4'>
-                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
+        <div className='w-full flex flex-col h-[270px] justify-center items-center lg:flex-row lg:justify-between lg:items-start lg:space-x-6 lg:space-y-0 space-x-0 space-y-6'>
+            <section className='w-full grid grid-cols-2 gap-y-4 gap-x-4'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50 h-32'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
                         <span>คอมมิชชั่น</span>
                         <Tooltip content={renderToolTipCommission()} placement='bottom'>
                             <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
                         </Tooltip>
                     </header>
-                    <div className='text-center'>
-                        <div className='text-center text-blue-500 font-bold text-3xl py-2'>
-                            {isLoading ? <Spinner /> : formatNumber(getCommissionData())}
+                    <div className='text-center pt-3'>
+                        <div className='text-center text-blue-500 font-bold text-4xl py-2'>
+                            {isLoading ? <Spinner /> :
+                                <div className='flex flex-row justify-center items-start space-x-1'>
+                                    <span className='text-2xl'>฿</span>
+                                    <span className=''>{formatNumber(getCommissionData())}</span>
+                                </div>}
                         </div>
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50 h-32'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
                         <span>ยอดขาย</span>
                         <Tooltip content={renderTooltipSales()} placement='bottom'>
                             <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
                         </Tooltip>
                     </header>
-                    <div className='text-center'>
-                        <div className='text-center text-blue-500 font-bold text-3xl py-2'>
-                            {isLoading ? <Spinner /> : formatNumber(getProfit())}
+                    <div className='text-center pt-3'>
+                        <div className='text-center text-blue-500 font-bold text-4xl py-2'>
+                            {isLoading ? <Spinner /> :
+                                <div className='flex flex-row justify-center items-start space-x-1'>
+                                    <span className='text-2xl'>฿</span>
+                                    <span className=''>{formatNumber(getProfit())}</span>
+                                </div>}
                         </div>
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50 h-32'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
                         <span>ออเดอร์</span>
                         <Tooltip content={renderToolTip()} placement='bottom'>
                             <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
                         </Tooltip>
                     </header>
-                    <div className='text-center'>
-                        <div className='text-center text-blue-500 font-bold text-3xl py-2'>
-                            {isLoading ? <Spinner /> : getOrder()}
+                    <div className='text-center pt-3'>
+                        <div className='text-center text-blue-500 font-bold text-4xl py-2'>
+                            {isLoading ? <Spinner /> : getOrder().toLocaleString()}
                         </div>
 
                     </div>
                 </div>
-                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50'>
+                <div className='bg-white rounded-lg p-3 shadow-sm border-8 border-slate-50 h-32'>
                     <header className='text-slate-500 text-sm flex flex-row justify-between items-center'>
                         <span>ยอดยกมา</span>
                         <Tooltip content={renderTooltipLiftNextMounth()} placement='bottom'>
                             <span className='cursor-pointer'><FaInfoCircle className='text-blue-500 text-xl' /></span>
                         </Tooltip>
                     </header>
-                    <div className='text-center'>
-                        <div className='text-center text-blue-500 font-bold text-3xl py-2'>
-                            {isLoading ? <Spinner /> : formatNumber(getPaidIncome())}
+                    <div className='text-center pt-3'>
+                        <div className='text-center text-blue-500 font-bold text-4xl py-2'>
+                            {isLoading ? <Spinner /> :
+                                <div className='flex flex-row justify-center items-start space-x-1'>
+                                    <span className='text-2xl'>฿</span>
+                                    <span className=''>{formatNumber(getLiftIncome())}</span>
+                                </div>}
                         </div>
 
                     </div>
                 </div>
             </section>
-            <div className='w-full bg-white rounded-lg p-4 h-full relative shadow-sm border-8 border-slate-50'>
+            <div className='w-full bg-white rounded-lg lg:py-4 lg:px-4 px-2 py-12 h-full relative shadow-sm border-8 border-slate-50'>
                 <div className='flex flex-row justify-end items-center space-x-3 text-sm absolute top-5 right-6 '>
                     <span>ยอดขาย</span>
                     <Switch checked={isSwitch} onChange={() => setIsSwitch(!isSwitch)} />
@@ -158,7 +170,7 @@ function DashboardSalesMainData() {
                     <Tab key='สถานะการชำระเงิน' title='สถานะการชำระเงิน'>
                         {isLoading ? <div className='flex justify-center iitems-center'><Spinner variant='dots' /></div> : (
                             <div className='mt-3'>
-                                <div className='space-y-4'>
+                                <div className='space-y-4 overflow-y-auto h-[150px] scrollbar-hide'>
                                     <div>
                                         <div className='text-slate-500 flex flex-row justify-between items-center'>
                                             <span>ยอดรวม</span>
@@ -203,7 +215,7 @@ function DashboardSalesMainData() {
                     </Tab>
                     <Tab key='สถานะออเดอร์' title='สถานะออเดอร์'>
                         {isLoading ? <Spinner /> : (
-                            <div className='space-y-2 w-full mt-2 px-3'>
+                            <div className='space-y-4 w-full mt-2 px-3'>
                                 <div className='flex flex-row justify-between items-center'>
                                     <span className='text-slate-600'>รอจัดส่ง</span>
                                     <span>{isSwitch ? getOrderStatus()?.wait?.count : formatNumber(getOrderStatus()?.wait?.amount)}</span>
