@@ -84,7 +84,6 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                         onChange={(e) => handleExpenseChange(index, 'name', e.target.value)}
                                                         placeholder="รายการ"
                                                         size="sm"
-                                                        onKeyDown={handleKeyDown}
                                                     />
                                                 </TableCell>
                                                 <TableCell className="w-2/12">
