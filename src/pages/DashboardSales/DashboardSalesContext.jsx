@@ -51,6 +51,7 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    // Fetch User Data
     const fetchUserData = async () => {
         try {
             const users = await userService.getAllUser(Number(selectAgent))
@@ -75,7 +76,7 @@ export function DashboardSalesProvider({ children }) {
         }
     }
     
-    // Refresh Data
+    // Refresh Commission Data
     const fetchRefreshData = async () => {
         setIsLoading(true)
         try {
@@ -89,6 +90,7 @@ export function DashboardSalesProvider({ children }) {
         }
     }
 
+    // Fetch Commission Setting Data
     const fetchComSettingData = async () => {
         try {
             //const roleId = selectRoleIdParams()
@@ -106,16 +108,6 @@ export function DashboardSalesProvider({ children }) {
                 console.error('Can not get Commission Setting Data At DashboardSalesContext', err)
                 setCommissionSetting(null)
             }
-        }
-    }
-
-    const selectRoleIdParams = () => {
-        if (isSuperAdmin) {
-            if (selectUser === 'ทั้งหมด') return;
-            const userRoleId = userData.find(u => u?.username === selectUser)?.role?.roleId
-            return userRoleId
-        } else {
-            return currentUser.role.roleId
         }
     }
 
@@ -138,6 +130,7 @@ export function DashboardSalesProvider({ children }) {
         fetchAgentData();
     }, [])
 
+    // If not check It will not get data
     useEffect(() => {
         if (selectAgent !== 'ทั้งหมด' && userData.length > 0) {
             fetchCommissionData();
@@ -145,13 +138,14 @@ export function DashboardSalesProvider({ children }) {
         }
     }, [date, selectUser, selectAgent, userData])
 
-
+    // Set Select Agent
     useEffect(() => {
         if (agentData.length > 0 && selectAgent === 'ทั้งหมด') {
             setSelectAgent(agentData[0]?.agentId)
         }
     }, [agentData])
 
+    // Set Select User
     useEffect(() => {
         fetchUserData()
         if (currentUser.baseRole === 'SUPER_ADMIN' || currentUser.baseRole === 'ADMIN') {
@@ -182,8 +176,8 @@ export function DashboardSalesProvider({ children }) {
         }, 0)
     }
 
-    // Get Paid Income
-    const getPaidIncome = () => {
+    // Get Lift Income
+    const getLiftIncome = () => {
         return commissionData.reduce((acc, curr) => {
             return acc + curr.data.reduce((sum, item) => sum + Number(item.adminLiftIncome || 0), 0)
         }, 0)
@@ -261,7 +255,7 @@ export function DashboardSalesProvider({ children }) {
         getCommissionData,
         getProfit,
         getOrder,
-        getPaidIncome,
+        getLiftIncome,
         getMoneyStatus,
         isSwitch,
         setIsSwitch,

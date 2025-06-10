@@ -1,3 +1,4 @@
+import HqChip from '@/component/HqChip';
 import { useAppContext } from '@/contexts/AppContext';
 import { Autocomplete, AutocompleteItem } from '@heroui/react';
 import { Select, SelectItem } from '@nextui-org/select'
@@ -82,7 +83,7 @@ function UserManageControllerBar({ agentId, departmentId, roleId, selector, setS
                         isDisabled={isAdmin ? false : selector.agent === null}
                     >
                         {departmentId?.map(item => (
-                            <SelectItem key={item.departmentId} value={item.departmentId}>{item.departmentName}</SelectItem>
+                            <SelectItem key={item.departmentId} value={item.departmentId} endContent={item.isHq ? <HqChip /> : null}>{item.departmentName}</SelectItem>
                         ))}
                     </Select>
                 </div>

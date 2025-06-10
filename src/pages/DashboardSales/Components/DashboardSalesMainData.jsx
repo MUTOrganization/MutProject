@@ -6,7 +6,7 @@ import { FaBath, FaInfoCircle } from 'react-icons/fa';
 
 function DashboardSalesMainData() {
 
-    const { getCommissionData, getProfit, getOrder, getPaidIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData, commissionSetting, selectUser } = useDashboardSalesContext();
+    const { getCommissionData, getProfit, getOrder, getLiftIncome, getMoneyStatus, isLoading, isSwitch, setIsSwitch, getOrderStatus, commissionData, commissionSetting, selectUser } = useDashboardSalesContext();
 
     const code = getMoneyStatus()
 
@@ -153,7 +153,7 @@ function DashboardSalesMainData() {
                             {isLoading ? <Spinner /> :
                                 <div className='flex flex-row justify-center items-start space-x-1'>
                                     <span className='text-2xl'>฿</span>
-                                    <span className=''>{formatNumber(getPaidIncome())}</span>
+                                    <span className=''>{formatNumber(getLiftIncome())}</span>
                                 </div>}
                         </div>
 
