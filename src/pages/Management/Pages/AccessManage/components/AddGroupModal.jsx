@@ -1,4 +1,4 @@
-import { toastError, toastSuccess } from "@/component/Alert";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
 import { createGroupAccess } from "@/services/accessService";
 import { Alert, Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@heroui/react";
 import { MessageCircleQuestion } from "lucide-react";
@@ -36,8 +36,9 @@ function AddGroupModal({ isOpen, onClose, isFetchGroup }) {
             })
             .catch((err) => {
                 if (err.response.status === 400) {
-                    setError('หมวดหมู่สิทธิ์นี้มีอยู่ในระบบแล้ว');
-                    toastError('หมวดหมู่สิทธิ์นี้มีอยู่ในระบบแล้ว');
+                    const e = err.response.data.error;
+                    setError(e);
+                    toastWarning(e);
                 } else {
                     toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเพิ่มหมวดหมู่สิทธิ์ได้ กรุณาลองใหม่อีกครั้ง');
                 }
@@ -79,7 +80,8 @@ function AddGroupModal({ isOpen, onClose, isFetchGroup }) {
                     {error && (
                         <Alert
                             variant="solid"
-                            color="danger"
+                            color="warning"
+                            className="text-white"
                             description={error}
                         />
                     )}

@@ -1,4 +1,4 @@
-import { toastError, toastSuccess } from "@/component/Alert";
+import { toastError, toastSuccess, toastWarning } from "@/component/Alert";
 import { createAccess } from "@/services/accessService";
 import { Alert, Button, Chip, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Textarea, Tooltip } from "@heroui/react";
 import { InfoIcon, MessageCircleQuestion } from "lucide-react";
@@ -40,10 +40,10 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
                 handleClose();
             })
             .catch((err) => {
-                console.log(err);
                 if (err.response.status === 400) {
-                    setError('รหัสสิทธิ์นี้มีอยู่ในระบบแล้ว');
-                    toastError('รหัสสิทธิ์นี้มีอยู่ในระบบแล้ว');
+                    const e = err.response.data.error;
+                    setError(e);
+                    toastWarning(e);
                 } else {
                     toastError('เกิดข้อผิดพลาด', 'ไม่สามารถเพิ่มสิทธิ์ได้ กรุณาลองใหม่อีกครั้ง');
                 }
@@ -112,7 +112,8 @@ function AddAccessModal({ isOpen, onClose, groupSelected, isFetchAccess }) {
                     {error && (
                         <Alert
                             variant="solid"
-                            color="danger"
+                            color="warning"
+                            className="text-white"
                             description={error}
                         />
                     )}

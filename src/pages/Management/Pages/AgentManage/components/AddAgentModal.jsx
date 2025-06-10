@@ -38,10 +38,9 @@ function AddAgentModal({ isOpen, onClose, fetchAgentList }) {
             onClose()
             fetchAgentList()
         }).catch((err) => {
-            console.log(err.response.data.error)
             if (err.status === 400) {
                 const e = err.response.data.error;
-                setError('รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว', e)
+                setError(e)
                 toastWarning('ไม่สามารถเพิ่มตัวแทนได้', e)
             } else {
                 toastError('ไม่สามารถเพิ่มตัวแทนได้', 'เนื่องจากมีข้อผิดพลาดทางระบบ')

@@ -36,8 +36,9 @@ function EditAgentModal({ isOpen, onClose, selectedAgent, fetchAgentList }) {
             onClose()
         }).catch((err) => {
             if (err.status === 400) {
-                setError('รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว')
-                toastWarning('ไม่สามารถแก้ไขตัวแทนได้', 'รหัสตัวแทนหรือชื่อตัวแทนนี้มีอยู่ในระบบแล้ว')
+                const e = err.response.data.error;
+                setError(e)
+                toastWarning('ไม่สามารถแก้ไขตัวแทนได้', e)
             } else {
                 toastError('ไม่สามารถแก้ไขข้อมูลตัวแทนได้', 'เนื่องจากมีข้อผิดพลาดทางระบบ')
             }
