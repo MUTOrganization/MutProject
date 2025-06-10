@@ -122,7 +122,7 @@ function DashboardSalesCustomerIncomeChart() {
             curve: 'smooth'
         },
         title: {
-            text: 'รายได้ลูกค้าเก่า vs ลูกค้าใหม่ รายเดือน',
+            text: 'ยอดขายลูกค้าเก่า - ลูกค้าใหม่ รายเดือน',
             align: 'left'
         },
         grid: {
