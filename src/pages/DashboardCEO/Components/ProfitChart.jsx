@@ -5,7 +5,6 @@ import { formatNumber } from '@/component/FormatNumber'
 
 
 function ProfitChart({ commissionData, expensesData }) {
-
     const [series, setSeries] = useState([{
         name: 'กำไรสุทธิ',
         data: Array(12).fill(0)

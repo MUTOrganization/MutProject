@@ -45,7 +45,7 @@ export const mainMenuItems = {
     path: "/ExpenseReport",
     text: "ค่าใช้จ่าย",
     icon: <BusinessCardHandIcon />,
-    access: [ACCESS.Expense_view],
+    access: [ACCESS.Expense_manage],
   },
   management: {
     path: "/management",

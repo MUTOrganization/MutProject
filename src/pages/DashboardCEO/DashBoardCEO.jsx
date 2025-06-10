@@ -32,7 +32,7 @@ function DashboardCEO() {
     const [isLoading, setIsLoading] = useState(false)
 
     // Other State
-    const [selectAgent, setSelectAgent] = useState(isSuperAdmin ? null : currentUser.agent.agentId)
+    const [selectAgent, setSelectAgent] = useState(currentUser.agent.agentId)
     const [selectExpensesTypeFromChart, setSelectExpensesTypeFromChart] = useState(null)
 
     // Date Data
@@ -98,7 +98,7 @@ function DashboardCEO() {
             setSelectAgent(agentList[0]?.agentId)
         }
     }, [selectAgent])
-    
+
     return (
         <div className='body-contain w-full'>
             <div className='controller mb-4'>

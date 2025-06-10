@@ -63,7 +63,7 @@ const routes = [
     path: "/ExpenseReport",
     component: <ExpenseReport />,
     title: "ค่าใช้จ่าย",
-    access: [ACCESS.Expense_view]
+    access: [ACCESS.Expense_manage]
   },
   { path: "/Dashboard-Sales", component: <DashBoardSales />, title: "คอมมิชชัน", access: [ACCESS.Dashboard_Sales_view] },
   {

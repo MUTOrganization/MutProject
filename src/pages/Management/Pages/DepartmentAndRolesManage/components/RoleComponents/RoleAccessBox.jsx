@@ -80,6 +80,7 @@ export default function RoleAccessBox({ selectedRole, onSubmit = () => {}, allow
                 }
             }else{
                 await roleService.updateRoleAccess(selectedRole.roleId, Array.from(editAccessList));
+                toastSuccess('บันทึกสำเร็จ', 'สิทธิ์ของตำแหน่งถูกบันทึกเรียบร้อย')
             }
             fetchRoleAccess();
             onSubmit();
