@@ -273,7 +273,8 @@ export function DashboardSalesProvider({ children }) {
         isSuperAdmin,
         isAdmin,
         fetchRefreshData,
-        commissionSetting
+        commissionSetting,
+        isAdmin
     };
 
     return (

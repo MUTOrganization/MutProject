@@ -11,7 +11,7 @@ import { Spinner } from '@heroui/react';
 function DashboardSalesTotalChart() {
 
     const { currentUser } = useAppContext()
-    const { selectAgent, dateMode, date, selectUser, userData, isSuperAdmin } = useDashboardSalesContext()
+    const { selectAgent, dateMode, date, selectUser, userData, isSuperAdmin, isAdmin } = useDashboardSalesContext()
     const [isLoading, setIsLoading] = useState(false)
     const [dateChart, setDateChart] = useState({
         start: startOfYear(today()),
@@ -21,7 +21,7 @@ function DashboardSalesTotalChart() {
     const getUserParams = () => {
         if (!userData || userData.length === 0) return [];
 
-        if (isSuperAdmin) {
+        if (isSuperAdmin || isAdmin) {
             if (selectUser === 'ทั้งหมด') {
                 return userData.map(u => u.username);
             } else {
