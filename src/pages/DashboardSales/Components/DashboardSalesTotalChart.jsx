@@ -46,9 +46,8 @@ function DashboardSalesTotalChart() {
     ]);
 
     const fetchCommissionData = async () => {
-        const monthlyCommission = Array(12).fill(0);
-        const monthlyIncome = Array(12).fill(0);
-        const monthlyNextLiftIncome = Array(12).fill(0);
+        const monthlyPaidIncome = Array(12).fill(0);
+        const monthlyUnpaidIncome = Array(12).fill(0);
 
         const usernames = getUserParams();
         if (!usernames || usernames.length === 0) return;
@@ -61,27 +60,21 @@ function DashboardSalesTotalChart() {
             commissionData.forEach(user => {
                 user.data.forEach(item => {
                     const monthIndex = item.monthIndex;
-                    monthlyCommission[monthIndex] += Number(item.commission || 0);
-                    monthlyIncome[monthIndex] += Number(item.adminIncome || 0);
-                    monthlyNextLiftIncome[monthIndex] += Number(item.adminLiftIncome || 0);
+                    monthlyPaidIncome[monthIndex] += Number(item.adminPaidIncome || 0);
+                    monthlyUnpaidIncome[monthIndex] += Number(item.adminUnpaid || 0);
                 });
             });
 
             setSeries([
                 {
-                    name: 'ยอดขาย (Admin Income)',
-                    color: '#00C49F',
-                    data: monthlyIncome
+                    name: 'ยอดเงินเข้า',
+                    color: '#77DD77',
+                    data: monthlyPaidIncome
                 },
                 {
-                    name: 'ค่าคอมมิชชัน',
-                    color: '#008FFB',
-                    data: monthlyCommission
-                },
-                {
-                    name: 'ยอดยกมา',
-                    color: '#FFA94D',
-                    data: monthlyNextLiftIncome
+                    name: 'ยอดเงินยังไม่เข้า',
+                    color: '#FF746C',
+                    data: monthlyUnpaidIncome
                 },
             ]);
         } catch (err) {
