@@ -10,5 +10,6 @@ export const ACCESS = {
     "Dashboard_Sales_view": 9,
     "Dashboard_Executive_view": 10,
     "Expense_manage": 11,
-    "Chat_groupcreate": 12
+    "Chat_groupcreate": 12,
+    "General_admin": 13
 }
