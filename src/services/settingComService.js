@@ -4,6 +4,18 @@ import api from "@/configs/api";
 const route = 'settings/'
 
 
+async function getCommissionSettingByMonth(roleId, prob, date) {
+    const url = route + 'commissionSettingByMonth'
+    const res = await api.get(url,{
+        params:{
+            roleId: parseInt(roleId),
+            prob: prob == 1 ? true : false,
+            date: date
+        }
+    })
+    return res.data;
+}
+
 async function getCommissionSetting(roleId, prob) {
     const url = route + 'commissionSetting'
     const res = await api.get(url,{
@@ -43,4 +55,5 @@ export default {
     getCommissionSetting,
     addCommissionSetting,
     updateCommissionSetting,
+    getCommissionSettingByMonth
 }

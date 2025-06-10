@@ -6,6 +6,7 @@ import settingComService from '@/services/settingComService';
 import userService from '@/services/userService';
 import { formatDateObject } from '@/utils/dateUtils';
 import { endOfMonth, endOfYear, startOfMonth, startOfYear, today } from '@internationalized/date';
+import dayjs from 'dayjs';
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 const DashboardSalesContext = createContext();
@@ -98,7 +99,8 @@ export function DashboardSalesProvider({ children }) {
                 setCommissionSetting(null)
                 return;
             }
-            const comSetting = await settingComService.getCommissionSetting(selectUserData?.role?.roleId, selectUserData?.probStatus ? 1 : 0)
+            const comSetting = await settingComService.getCommissionSettingByMonth(selectUserData?.role?.roleId, selectUserData?.probStatus ? 1 : 0, dayjs(date.start).format('YYYY-MM-DD'))
+            console.log(comSetting);
             setCommissionSetting(comSetting)
         } catch (err) {
             if (err.response.status === 404) {
