@@ -1,4 +1,5 @@
 import { toastError, toastSuccess, toastWarning } from '@/component/Alert'
+import HqChip from '@/component/HqChip'
 import { useAppContext } from '@/contexts/AppContext'
 import roleService from '@/services/roleService'
 import userService from '@/services/userService'
@@ -21,7 +22,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
         roleId: selectUserData.role.roleId || null,
         probPassedDate: selectUserData.probPassedDate || null,
     })
-    
+
     const [isLoadingEdit, setIsLoadingEdit] = useState(false)
 
     const probItem = [
@@ -67,7 +68,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
     useEffect(() => {
         fetchRole()
     }, [selectDepartment])
-   
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} isKeyboardDismissDisabled={false} isDismissable={false} backdrop='blur'>
             <ModalContent>
@@ -82,7 +83,7 @@ function EditEmployeeModal({ isOpen, onClose, selectUserData, fetchData, departm
                             <span className='text-xs text-slate-500'>แผนก</span>
                             <Autocomplete aria-label='แผนก' allowsEmptyCollection isClearable={false} size='sm' selectedKey={`${selectDepartment}`} onSelectionChange={(value) => { setSelectDepartment(Number(value) || null); setUserData(prev => ({ ...prev, roleId: null })) }}>
                                 {departmentId.map((department) => (
-                                    <AutocompleteItem key={department.departmentId} value={department.departmentId}>{department.departmentName}</AutocompleteItem>
+                                    <AutocompleteItem key={department.departmentId} value={department.departmentId} endContent={department.isHq ? <HqChip /> : null}>{department.departmentName}</AutocompleteItem>
                                 ))}
                             </Autocomplete>
                         </div>
