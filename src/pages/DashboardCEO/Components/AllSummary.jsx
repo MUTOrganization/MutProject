@@ -199,7 +199,7 @@ function AllSummary({ expensesData, commissionData, isLoading, currentUser, date
                     <span>ออเดอร์</span>
                 </header>
                 <div className='text-center'>
-                    <div className='text-2xl text-slate-600'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.orderCount}</div>
+                    <div className='text-2xl text-slate-600'>{isLoading ? <div className='w-28'><Spinner variant='gradient' size='sm' color='primary' /></div> : summary.orderCount.toLocaleString()}</div>
                 </div>
                 <span className={`text-sm ${profitCompare?.percentNetExpenses?.color}`}>
                     <span className='text-white'>...</span>

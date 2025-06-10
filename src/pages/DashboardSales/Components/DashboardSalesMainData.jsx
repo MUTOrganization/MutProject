@@ -21,8 +21,8 @@ function DashboardSalesMainData() {
 
         return (
             <div className='flex flex-col space-y-2'>
-                <div>ออเดอร์ลูกค้าเก่า  : {totalOld}</div>
-                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew}</div>
+                <div>ออเดอร์ลูกค้าเก่า  : {totalOld.toLocaleString()}</div>
+                <div>ออเดอร์ลูกค้าใหม่ :  {totalNew.toLocaleString()}</div>
             </div>
         )
     }
