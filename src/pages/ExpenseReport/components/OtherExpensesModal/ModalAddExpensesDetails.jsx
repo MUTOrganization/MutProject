@@ -91,13 +91,12 @@ function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedDat
                                                         aria-label="Input a qty"
                                                         type="text"
                                                         inputMode="numeric"
-                                                        pattern="\d*"
                                                         maxLength={6}
                                                         value={item.qty}
                                                         size="sm"
                                                         onChange={(e) => {
                                                             const value = e.target.value;
-                                                            if (/^\d*$/.test(value)) {
+                                                            if (/^\d*$/.test(value)) { // Use Regular expression to check if the value is a number || sc start num replaceAmount stop sc
                                                                 handleExpenseChange(index, 'qty', value);
                                                             }
                                                         }}

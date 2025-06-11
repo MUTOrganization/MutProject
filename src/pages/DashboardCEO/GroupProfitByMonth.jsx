@@ -55,9 +55,9 @@ const groupExpensesByType = (expensesData = []) => {
         const typeName = item.expensesType?.typeName || 'ไม่ทราบประเภท'
         const amount = Number(item.totalAmount || 0)
 
-        if (map[typeName]) {
+        if (map[typeName]) { // if have this group
             map[typeName] += amount
-        } else {
+        } else { // i not doesn have this group
             map[typeName] = amount
         }
     })
