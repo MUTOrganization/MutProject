@@ -64,12 +64,17 @@ function AddEmployee({ isOpen, onClose, fetchData, departmentId, userList, isSup
         try {
             await userService.createUser(userData.username, userData.name, userData.nickname, userData.password, null, userData.roleId)
             await fetchData()
-            setIsLoadingAddUser(false)
             onClose()
             toastSuccess('สำเร็จ', 'เพิ่มพนักงานสำเร็จ')
         } catch (err) {
-            console.log('Can not Add Employee', err)
-            toastError('ไม่สำเร็จ', 'เพิ่มพนักงานไม่สำเร็จ')
+            if (err?.response?.status === 400) {
+                toastWarning('คำเตือน', 'รหัสพนักงานนี้มีอยู่ในระบบแล้ว')
+                return
+            }
+            // console.log('Can not Add Employee', err)
+            // toastError('ไม่สำเร็จ', 'เพิ่มพนักงานไม่สำเร็จ')
+        } finally {
+            setIsLoadingAddUser(false)
         }
     }
 
