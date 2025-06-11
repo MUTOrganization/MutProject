@@ -157,7 +157,7 @@ function ControlBar({ expensesDate, setExpensesDate, setSearchText, searchText, 
                     </Dropdown>
                 </div>
             </div>
-
+            
             {isOpenExpensesDetails && (
                 <ModalAddExpensesDetails
                     isOpen={isOpenExpensesDetails}

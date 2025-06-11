@@ -12,7 +12,7 @@ import { formatDateObject } from "@/utils/dateUtils";
 
 function ModalAddExpensesDetails({ isOpen, onClose, setSelectedData, selectedData, typeData, isEnable, getDataOtherExpenses, handleExpenseChange, handleDeleteList, addExpenseItem,
     expensesDate, setExpensesDate, setSelectType, selectType, selectAgent, handleValidate }) {
-
+        
     const [isLoadAdd, setIsLoadingAdd] = useState(false)
 
     const handleConfirmAdd = async () => {

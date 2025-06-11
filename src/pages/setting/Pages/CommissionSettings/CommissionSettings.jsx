@@ -1,8 +1,6 @@
 import { Card, CardBody, Tab, Tabs } from "@heroui/react"
 import { useEffect, useState } from "react"
 import SetCommission from "./SetCommission"
-import CommissionSettingsTable from "./CommissionSettingsTable"
-import fetchProtectedData from "@/utils/fetchData";
 import { toastError } from "@/component/Alert";
 import { useAppContext } from "@/contexts/AppContext";
 import departmentService from "@/services/departmentService";

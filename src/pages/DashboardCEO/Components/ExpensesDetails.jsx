@@ -6,6 +6,7 @@ dayjs.locale('th');
 
 function ExpensesDetails({ expensesType, expensesData, selectExpensesTypeFromChart }) {
   const { series, categories } = useMemo(() => {
+    
     // เตรียมชื่อประเภทจาก typeId
     const typeMap = {};
     expensesType.forEach(type => {
